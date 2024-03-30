@@ -11,8 +11,6 @@ import multer from 'multer'
 import { app } from 'electron'
 import path from 'path'
 import fs from 'fs-extra'
-import { marked } from 'marked'
-import { markdownContent } from './apiDoc'
 
 const DEFAULT_PORT = 36677
 const DEFAULT_HOST = '0.0.0.0'
@@ -83,9 +81,9 @@ class Server {
   }
 
   private handlePostRequest = (request: http.IncomingMessage, response: http.ServerResponse) => {
-    const [url, query] = request.url!.split('?')
-    if (!routers.getHandler(url!)) {
-      logger.warn(`[PicList Server] don't support [${url}] url`)
+    const [url, query] = (request.url || '').split('?')
+    if (!routers.getHandler(url, 'POST')) {
+      logger.warn(`[PicList Server] don't support [${url}] endpoint`)
       handleResponse({
         response,
         statusCode: 404,
@@ -110,7 +108,7 @@ class Server {
           // @ts-ignore
           const list = request.files.map(file => file.path)
           logger.info('[PicList Server] get a formData request')
-          const handler = routers.getHandler(url)?.handler
+          const handler = routers.getHandler(url!, 'POST')?.handler
           if (handler) {
             handler({
               list,
@@ -139,7 +137,7 @@ class Server {
             })
           }
           logger.info('[PicList Server] get the request', body)
-          const handler = routers.getHandler(url!)?.handler
+          const handler = routers.getHandler(url!, 'POST')?.handler
           handler!({
             ...postObj,
             response,
@@ -151,10 +149,20 @@ class Server {
   }
 
   private handleGetRequest = (_request: http.IncomingMessage, response: http.ServerResponse) => {
-    response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
-    const htmlContent = marked(markdownContent)
-    response.write(htmlContent)
-    response.end()
+    const [url, query] = (_request.url || '').split('?')
+    if (!routers.getHandler(url, 'GET')) {
+      console.log(`[PicList Server] don't support [${url}] endpoint`)
+      response.statusCode = 404
+      response.end()
+    } else {
+      const handler = routers.getHandler(url, 'GET')?.handler
+      if (handler) {
+        handler({
+          response,
+          urlparams: query ? new URLSearchParams(query) : undefined
+        })
+      }
+    }
   }
 
   // port as string is a bug

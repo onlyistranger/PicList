@@ -1,20 +1,36 @@
+type HttpMethod = 'GET' | 'POST'
+
 class Router {
-  private router = new Map<string, {handler: routeHandler, urlparams?: URLSearchParams}>()
+  private router = new Map<string, Map<HttpMethod, {handler: routeHandler, urlparams?: URLSearchParams}>>()
+
+  private addRoute (method: HttpMethod, url: string, callback: routeHandler, urlparams?: URLSearchParams): void {
+    if (!this.router.has(url)) {
+      this.router.set(url, new Map())
+    }
+    this.router.get(url)!.set(method, { handler: callback, urlparams })
+  }
 
   get (url: string, callback: routeHandler, urlparams?: URLSearchParams): void {
-    this.router.set(url, { handler: callback, urlparams })
+    this.addRoute('GET', url, callback, urlparams)
   }
 
   post (url: string, callback: routeHandler, urlparams?: URLSearchParams): void {
-    this.router.set(url, { handler: callback, urlparams })
+    this.addRoute('POST', url, callback, urlparams)
   }
 
-  getHandler (url: string) {
+  any (url: string, callback: routeHandler, urlparams?: URLSearchParams): void {
+    this.addRoute('GET', url, callback, urlparams)
+    this.addRoute('POST', url, callback, urlparams)
+  }
+
+  getHandler (url: string, method: HttpMethod) {
     if (this.router.has(url)) {
-      return this.router.get(url)
-    } else {
-      return null
+      const methods = this.router.get(url)!
+      if (methods.has(method)) {
+        return methods.get(method)
+      }
     }
+    return null
   }
 }
 

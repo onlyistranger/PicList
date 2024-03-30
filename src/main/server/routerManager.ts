@@ -12,6 +12,9 @@ import { changeCurrentUploader } from '../utils/handleUploaderConfig'
 import { app } from 'electron'
 import fs from 'fs-extra'
 import { AESHelper } from '../utils/aesHelper'
+import { marked } from 'marked'
+import { markdownContent } from './apiDoc'
+import http from 'http'
 
 const appPath = app.getPath('userData')
 const serverTempDir = path.join(appPath, 'serverTemp')
@@ -21,6 +24,16 @@ const LOG_PATH = path.join(STORE_PATH, 'piclist.log')
 
 const errorMessage = `upload error. see ${LOG_PATH} for more detail.`
 const deleteErrorMessage = `delete error. see ${LOG_PATH} for more detail.`
+
+async function responseForGet ({ response } : {response: http.ServerResponse}) {
+  response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
+  const htmlContent = marked(markdownContent)
+  response.write(htmlContent)
+  response.end()
+}
+
+router.get('/', responseForGet)
+router.get('/upload', responseForGet)
 
 router.post('/upload', async ({
   response,
@@ -203,7 +216,7 @@ router.post('/delete', async ({
   }
 })
 
-router.post('/heartbeat', async ({
+router.any('/heartbeat', async ({
   response
 } : {
   response: IHttpResponse,
