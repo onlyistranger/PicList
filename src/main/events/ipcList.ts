@@ -89,6 +89,7 @@ import SSHClient from '../utils/sshClient'
 import { ISftpPlistConfig } from 'piclist'
 
 import { removeFileFromS3InMain, removeFileFromDogeInMain, removeFileFromHuaweiInMain } from '~/main/utils/deleteFunc'
+import webServer from '../server/webServer'
 
 const STORE_PATH = app.getPath('userData')
 
@@ -359,6 +360,12 @@ export default {
 
     ipcMain.on('updateServer', () => {
       server.restart()
+    })
+    ipcMain.on('stopWebServer', () => {
+      webServer.stop()
+    })
+    ipcMain.on('restartWebServer', () => {
+      webServer.restart()
     })
     ipcMain.on(OPEN_DEVTOOLS, (event: IpcMainEvent) => {
       event.sender.openDevTools()

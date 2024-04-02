@@ -655,6 +655,18 @@
                   </el-button>
                 </el-form-item>
                 <el-form-item
+                  :label="$T('SETTINGS_SET_WEB_SERVER')"
+                >
+                  <el-button
+                    type="primary"
+                    round
+                    size="small"
+                    @click="webServerVisible = true"
+                  >
+                    {{ $T('SETTINGS_CLICK_TO_SET') }}
+                  </el-button>
+                </el-form-item>
+                <el-form-item
                   :label="$T('SETTINGS_SET_SERVER')"
                 >
                   <el-button
@@ -732,6 +744,7 @@
       :title="$T('SETTINGS_CUSTOM_LINK_FORMAT')"
       :modal-append-to-body="false"
       center
+      draggable
       append-to-body
     >
       <el-form
@@ -783,6 +796,7 @@
       :modal-append-to-body="false"
       width="70%"
       center
+      draggable
       append-to-body
     >
       <el-form
@@ -840,6 +854,7 @@
       :modal-append-to-body="false"
       width="70%"
       center
+      draggable
       append-to-body
     >
       <el-form
@@ -896,6 +911,7 @@
       :title="$T('SETTINGS_CHECK_UPDATE')"
       :modal-append-to-body="false"
       center
+      draggable
       append-to-body
     >
       <div>
@@ -1025,6 +1041,7 @@
       :modal-append-to-body="false"
       width="500px"
       center
+      draggable
       append-to-body
     >
       <el-form
@@ -1122,6 +1139,7 @@
       :title="$T('SETTINGS_SET_PICGO_SERVER')"
       :modal-append-to-body="false"
       center
+      draggable
       append-to-body
     >
       <div class="notice-text">
@@ -1188,12 +1206,76 @@
       </template>
     </el-dialog>
     <el-dialog
+      v-model="webServerVisible"
+      class="server-dialog"
+      width="60%"
+      :title="$T('SETTINGS_SET_WEB_SERVER')"
+      :modal-append-to-body="false"
+      align-center
+      draggable
+      append-to-body
+      @close="confirmWebServerSetting"
+    >
+      <div class="notice-text">
+        {{ $T('SETTINGS_TIPS_WEB_SERVER_NOTICE') }}
+      </div>
+      <el-form
+        label-position="right"
+        label-width="180px"
+      >
+        <el-form-item
+          :label="$T('SETTINGS_SET_ENABLE_WEB_SERVER')"
+        >
+          <el-switch
+            v-model="form.enableWebServer"
+            :active-text="$T('SETTINGS_OPEN')"
+            :inactive-text="$T('SETTINGS_CLOSE')"
+            @change="handleEnableWebServerChange"
+          />
+        </el-form-item>
+        <template v-if="form.enableWebServer">
+          <el-form-item
+            :label="$T('SETTINGS_SET_WEB_SERVER_HOST')"
+          >
+            <el-input
+              v-model="form.webServerHost"
+              type="input"
+              :placeholder="$T('SETTINGS_TIP_PLACEHOLDER_WEB_HOST')"
+              @change="handleWebServerHostChange"
+            />
+          </el-form-item>
+          <el-form-item
+            :label="$T('SETTINGS_SET_WEB_SERVER_PORT')"
+          >
+            <el-input-number
+              v-model="form.webServerPort"
+              :min="1"
+              :max="65535"
+              :placeholder="$T('SETTINGS_TIP_PLACEHOLDER_WEB_PORT')"
+              @change="handleWebServerPortChange"
+            />
+          </el-form-item>
+          <el-form-item
+            :label="$T('SETTINGS_SET_WEB_SERVER_PATH')"
+          >
+            <el-input
+              v-model="form.webServerPath"
+              type="input"
+              :placeholder="$T('SETTINGS_SET_WEB_SERVER_PATH')"
+              @change="handleWebServerPathChange"
+            />
+          </el-form-item>
+        </template>
+      </el-form>
+    </el-dialog>
+    <el-dialog
       v-model="syncVisible"
       class="server-dialog"
       width="60%"
       :title="$T('SETTINGS_SYNC_CONFIG_TITLE')"
       :modal-append-to-body="false"
       center
+      draggable
       append-to-body
     >
       <div class="notice-text">
@@ -1300,6 +1382,7 @@
       :title="$T('SETTINGS_UP_DOWN_DESC')"
       :modal-append-to-body="false"
       center
+      draggable
       append-to-body
     >
       <el-form
@@ -1871,7 +1954,11 @@ const form = reactive<ISettingForm>({
   deleteLocalFile: false,
   serverKey: '',
   aesPassword: '',
-  manualPageOpen: 'browser'
+  manualPageOpen: 'browser',
+  enableWebServer: false,
+  webServerHost: '0.0.0.0',
+  webServerPort: 37777,
+  webServerPath: ''
 })
 
 const languageList = i18nManager.languageList.map(item => ({
@@ -1888,6 +1975,7 @@ const logFileVisible = ref(false)
 const customLinkVisible = ref(false)
 const checkUpdateVisible = ref(false)
 const serverVisible = ref(false)
+const webServerVisible = ref(false)
 const syncVisible = ref(false)
 const upDownConfigVisible = ref(false)
 const proxyVisible = ref(false)
@@ -2039,6 +2127,10 @@ async function initData () {
     form.serverKey = settings.serverKey || ''
     form.aesPassword = settings.aesPassword || 'PicList-aesPassword'
     form.manualPageOpen = settings.manualPageOpen || 'window'
+    form.enableWebServer = settings.enableWebServer || false
+    form.webServerHost = settings.webServerHost || '0.0.0.0'
+    form.webServerPort = settings.webServerPort || 37777
+    form.webServerPath = settings.webServerPath || ''
     currentLanguage.value = settings.language ?? 'zh-CN'
     currentStartMode.value = settings.startMode || 'quiet'
     customLink.value = settings.customLink || '![$fileName]($url)'
@@ -2294,6 +2386,31 @@ function confirmCheckVersion () {
 
 function cancelCheckVersion () {
   checkUpdateVisible.value = false
+}
+
+function handleEnableWebServerChange (val: ICheckBoxValueType) {
+  saveConfig('settings.enableWebServer', val)
+}
+
+function handleWebServerHostChange (val: string) {
+  saveConfig('settings.webServerHost', val)
+}
+
+function handleWebServerPortChange (val?: number, oldVal?: number) {
+  saveConfig('settings.webServerPort', Number(val) || 37777)
+}
+
+function handleWebServerPathChange (val: string) {
+  saveConfig('settings.webServerPath', val)
+}
+
+function confirmWebServerSetting () {
+  console.log('confirmWebServerSetting')
+  if (form.enableWebServer) {
+    sendToMain('restartWebServer')
+  } else {
+    sendToMain('stopWebServer')
+  }
 }
 
 function handleServerKeyChange (val: string) {

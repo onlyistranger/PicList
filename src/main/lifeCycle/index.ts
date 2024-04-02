@@ -45,6 +45,7 @@ import path from 'path'
 import { CLIPBOARD_IMAGE_FOLDER } from '~/universal/utils/static'
 import fs from 'fs-extra'
 import { startFileServer } from '../fileServer'
+import webServer from '../server/webServer'
 import axios from 'axios'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -179,6 +180,7 @@ class LifeCycle {
       })
       server.startup()
       startFileServer()
+      webServer.start()
       if (process.env.NODE_ENV !== 'development') {
         handleStartUpFiles(process.argv, process.cwd())
       }

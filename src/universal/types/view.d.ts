@@ -32,7 +32,11 @@ interface ISettingForm {
   deleteLocalFile: boolean,
   serverKey: string,
   aesPassword: string,
-  manualPageOpen: string
+  manualPageOpen: string,
+  enableWebServer: boolean,
+  webServerHost: string,
+  webServerPort: number,
+  webServerPath: string,
 }
 
 interface IShortKeyMap {
