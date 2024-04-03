@@ -2405,7 +2405,6 @@ function handleWebServerPathChange (val: string) {
 }
 
 function confirmWebServerSetting () {
-  console.log('confirmWebServerSetting')
   if (form.enableWebServer) {
     sendToMain('restartWebServer')
   } else {

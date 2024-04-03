@@ -151,7 +151,7 @@ class Server {
   private handleGetRequest = (_request: http.IncomingMessage, response: http.ServerResponse) => {
     const [url, query] = (_request.url || '').split('?')
     if (!routers.getHandler(url, 'GET')) {
-      console.log(`[PicList Server] don't support [${url}] endpoint`)
+      logger.info(`[PicList Server] don't support [${url}] endpoint`)
       response.statusCode = 404
       response.end()
     } else {

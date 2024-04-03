@@ -36,7 +36,6 @@ const handleClipboardUploading = async (): Promise<false | ImgInfo[]> => {
 
 export const uploadClipboardFiles = async (): Promise<IStringKeyMap> => {
   const img = await handleClipboardUploading()
-  console.log(img)
   if (img !== false) {
     if (img.length > 0) {
       const trayWindow = windowManager.get(IWindowList.TRAY_WINDOW)
