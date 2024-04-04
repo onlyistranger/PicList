@@ -182,7 +182,7 @@ export const svg = `
 export function customStrMatch (str: string, pattern: string) : boolean {
   if (!str || !pattern) return false
   try {
-    const reg = new RegExp(pattern, 'g')
+    const reg = new RegExp(pattern, 'ug')
     return reg.test(str)
   } catch (e) {
     console.error(e)
@@ -195,7 +195,7 @@ export function customStrReplace (str: string, pattern: string, replacement: str
   replacement = replacement || ''
   let result = str
   try {
-    const reg = new RegExp(pattern, 'g')
+    const reg = new RegExp(pattern, 'ug')
     result = str.replace(reg, replacement)
     result = renameFileNameWithCustomString(result, result, str)
   } catch (e) {
