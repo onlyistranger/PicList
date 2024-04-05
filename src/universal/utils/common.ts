@@ -52,3 +52,9 @@ export function safeSliceF (str:string, total: number) {
   }
   return result
 }
+
+export function encodeFilePath (filePath: string) {
+  filePath = filePath.replace(/\\/g, '/')
+  const parts = filePath.split('/')
+  return parts.map(encodeURIComponent).join('/')
+}
