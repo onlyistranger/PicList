@@ -46,7 +46,7 @@ router.post('/upload', async ({
 }): Promise<void> => {
   try {
     const passedKey = urlparams?.get('key')
-    const serverKey = picgo.getConfig('settings.serverKey') || ''
+    const serverKey = picgo.getConfig<string>('settings.serverKey') || ''
     if (serverKey && passedKey !== serverKey) {
       handleResponse({
         response,

@@ -92,6 +92,17 @@ class Server {
         }
       })
     } else {
+      const remoteAddress = request.socket.remoteAddress || 'unknown'
+      logger.info('[PicList Server] get a POST request from IP:', remoteAddress)
+      let urlSP = query ? new URLSearchParams(query) : undefined
+      if (remoteAddress === '::1' || remoteAddress === '127.0.0.1') {
+        const serverKey = picgo.getConfig<string>('settings.serverKey') || ''
+        if (urlSP) {
+          urlSP.set('key', serverKey)
+        } else {
+          urlSP = new URLSearchParams('key=' + serverKey)
+        }
+      }
       if (request.headers['content-type'] && request.headers['content-type'].startsWith('multipart/form-data')) {
         // @ts-ignore
         uploadMulter.any()(request, response, (err: any) => {
@@ -113,7 +124,7 @@ class Server {
             handler({
               list,
               response,
-              urlparams: query ? new URLSearchParams(query) : undefined
+              urlparams: urlSP
             })
           }
         })
@@ -141,7 +152,7 @@ class Server {
           handler!({
             ...postObj,
             response,
-            urlparams: query ? new URLSearchParams(query) : undefined
+            urlparams: urlSP
           })
         })
       }
