@@ -1,8 +1,9 @@
 import picgo from '@core/picgo'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const getPicBeds = () => {
   const picBedTypes = picgo.helper.uploader.getIdList()
-  const picBedFromDB = picgo.getConfig<IPicBedType[]>('picBed.list') || []
+  const picBedFromDB = picgo.getConfig<IPicBedType[]>(configPaths.picBed.list) || []
   const picBeds = picBedTypes.map((item: string) => {
     const visible = picBedFromDB.find((i: IPicBedType) => i.type === item) // object or undefined
     return {

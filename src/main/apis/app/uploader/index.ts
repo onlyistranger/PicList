@@ -33,6 +33,7 @@ import {
   RENAME_FILE_NAME,
   TALKING_DATA_EVENT
 } from '~/universal/events/constants'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const waitForRename = (window: BrowserWindow, id: number): Promise<string|null> => {
   return new Promise((resolve) => {
@@ -80,7 +81,7 @@ class Uploader {
       this.webContents?.send('uploadProgress', progress)
     })
     picgo.on('beforeTransform', () => {
-      if (db.get('settings.uploadNotification')) {
+      if (db.get(configPaths.settings.uploadNotification)) {
         const notification = new Notification({
           title: T('UPLOAD_PROGRESS'),
           body: T('UPLOADING')
@@ -90,8 +91,8 @@ class Uploader {
     })
     picgo.helper.beforeUploadPlugins.register('renameFn', {
       handle: async (ctx: IPicGo) => {
-        const rename = db.get('settings.rename')
-        const autoRename = db.get('settings.autoRename')
+        const rename = db.get(configPaths.settings.rename)
+        const autoRename = db.get(configPaths.settings.autoRename)
         if (autoRename || rename) {
           await Promise.all(ctx.output.map(async (item, index) => {
             let name: undefined | string | null
@@ -163,7 +164,7 @@ class Uploader {
         if (this.webContents) {
           handleTalkingData(this.webContents, {
             fromClipboard: !img,
-            type: db.get('picBed.uploader') || db.get('picBed.current') || 'smms',
+            type: db.get(configPaths.picBed.uploader) || db.get(configPaths.picBed.current) || 'smms',
             count: img ? img.length : 1,
             duration: Date.now() - startTime
           } as IAnalyticsData)

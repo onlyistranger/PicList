@@ -1,11 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 
 interface IConfigMap {
-  config?: {
-    clientId?: string
-    username?: string
-    accessToken?: string
-  }
+  config?: Partial<IImgurConfig>
   hash?: string
 }
 

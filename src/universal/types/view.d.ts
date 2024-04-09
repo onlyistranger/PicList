@@ -13,30 +13,30 @@ interface ISettingForm {
   autoCopyUrl: boolean
   checkBetaUpdate: boolean
   useBuiltinClipboard: boolean
-  language: string
-  logFileSizeLimit: number,
-  deleteCloudFile: boolean,
-  isCustomMiniIcon: boolean,
-  customMiniIcon: string,
-  isHideDock: boolean,
-  autoImport: boolean,
-  autoImportPicBed: string[],
-  encodeOutputURL: boolean,
-  isAutoListenClipboard: boolean,
-  useShortUrl: boolean,
-  c1nToken: string,
-  shortUrlServer: string,
-  yourlsDomain: string,
-  yourlsSignature: string,
-  cfWorkerHost: string,
-  deleteLocalFile: boolean,
-  serverKey: string,
-  aesPassword: string,
-  manualPageOpen: string,
-  enableWebServer: boolean,
-  webServerHost: string,
-  webServerPort: number,
-  webServerPath: string,
+  language: 'zh-CN' | 'zh-TW' | 'en'
+  logFileSizeLimit: number
+  deleteCloudFile: boolean
+  isCustomMiniIcon: boolean
+  customMiniIcon: string
+  isHideDock: boolean
+  autoImport: boolean
+  autoImportPicBed: string[]
+  encodeOutputURL: boolean
+  isAutoListenClipboard: boolean
+  useShortUrl: boolean
+  c1nToken: string
+  shortUrlServer: string
+  yourlsDomain: string
+  yourlsSignature: string
+  cfWorkerHost: string
+  deleteLocalFile: boolean
+  serverKey: string
+  aesPassword: string
+  manualPageOpen: 'window' | 'browser'
+  enableWebServer: boolean
+  webServerHost: string
+  webServerPort: number
+  webServerPath: string
 }
 
 interface IShortKeyMap {

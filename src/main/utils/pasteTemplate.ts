@@ -2,6 +2,7 @@ import { IPasteStyle } from '#/types/enum'
 import { generateShortUrl } from '~/main/utils/common'
 import db from '~/main/apis/core/datastore'
 import { handleUrlEncodeWithSetting } from './common'
+import { configPaths } from '~/universal/utils/configPaths'
 
 export const formatCustomLink = (customLink: string, item: ImgInfo) => {
   const fileName = item.fileName!.replace(new RegExp(`\\${item.extname}$`), '')
@@ -28,7 +29,7 @@ export default async (style: IPasteStyle, item: ImgInfo, customLink: string | un
     url = item.imgUrl || item.url || ''
   }
   url = handleUrlEncodeWithSetting(url)
-  const useShortUrl = db.get('settings.useShortUrl') || false
+  const useShortUrl = db.get(configPaths.settings.useShortUrl) || false
   if (useShortUrl) {
     url = await generateShortUrl(url)
   }

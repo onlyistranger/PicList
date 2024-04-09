@@ -4,39 +4,39 @@ import { ILogger } from "piclist/dist/types";
 type Undefinable<T> = T | undefined;
 
 declare interface ManageError extends Error {
-  code?: number;
-  param?: string;
-  stack?: string;
-  picbed?: string;
+  code?: number
+  param?: string
+  stack?: string
+  picbed?: string
 }
 
 type PicBedMangeConfig = IStringKeyMap;
 
 interface PicBedManageConfigMap {
-  [key: string]: PicBedMangeConfig;
+  [key: string]: PicBedMangeConfig
 }
 
 interface ManageApiType {
   /**
    * logger
    */
-  logger: ILogger;
+  logger: ILogger
   /**
    * congif path
    */
-  configPath: string;
+  configPath: string
   /**
    * basedir
    */
-  baseDir: string;
+  baseDir: string
   /**
    * current picBed name
    */
-  currentPicBed: string;
+  currentPicBed: string
   /**
    * current picBed config
    */
-  currentPicBedConfig: PicBedMangeConfig;
+  currentPicBedConfig: PicBedMangeConfig
   /**
    * get manage config
    */
@@ -62,136 +62,136 @@ interface ManageApiType {
    */
   getBucketListRecursively: (
     param?: IStringKeyMap
-  ) => Promise<any | ManageError>;
+  ) => Promise<any | ManageError>
   /**
    * get bucket list
    */
   getBucketListBackstage: (
     param?: IStringKeyMap
-  ) => Promise<any | ManageError>;
+  ) => Promise<any | ManageError>
   /**
    * get bucket list
    */
   getBucketList: (
     param?: IStringKeyMap
-  ) => Promise<any | ManageError>;
+  ) => Promise<any | ManageError>
   getBucketDomain: (
     param: IStringKeyMap
-  ) => Promise<any>;
+  ) => Promise<any>
   /**
    * get bucket info
    */
   getBucketInfo: (
     param?: IStringKeyMap
-  ) => Promise<IStringKeyMap | ManageError>;
+  ) => Promise<IStringKeyMap | ManageError>
   /**
    * create bucket
    */
   createBucket: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * delete bucket
    */
   deleteBucket: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * get Operator list
    * specific for upyun
    */
   getOperatorList: (
     param?: IStringKeyMap
-  ) => Promise<string[] | ManageError>;
+  ) => Promise<string[] | ManageError>
   /**
    * add Operator
    * specific for upyun
    */
   addOperator: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * delete Operator
    * specific for upyun
    */
   deleteOperator: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * get bucket ACL policy
    */
   getBucketAclPolicy: (
     param?: IStringKeyMap
-  ) => Promise<IStringKeyMap | ManageError>;
+  ) => Promise<IStringKeyMap | ManageError>
   /**
    * set bucket ACL policy
    */
   setBucketAclPolicy: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * get bucket file list
    */
   getBucketFileList: (
     param?: IStringKeyMap
-  ) => Promise<IStringKeyMap | ManageError>;
+  ) => Promise<IStringKeyMap | ManageError>
   /**
    * delete bucket file
    */
   deleteBucketFile: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * delete folder
    */
   deleteBucketFolder: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * rename bucket file
    */
   renameBucketFile: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * download bucket file
    */
   downloadBucketFile: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * copy or move between buckets
    */
   copyMoveBucketFile: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * create folder
    */
   createBucketFolder: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
   /**
    * upload file
    */
   uploadBucketFile: (
     param?: IStringKeyMap
-  ) => Promise<boolean>;
+  ) => Promise<boolean>
     /**
    * get presigned url
    */
   getPreSignedUrl: (
     param?: IStringKeyMap
-  ) => Promise<string>;
+  ) => Promise<string>
 }
 
 /** PicList 存储管理功能配置文件类型定义 */
 interface ManageConfigType {
   picBed: {
-    [others: string]: any;
-  };
+    [others: string]: any
+  }
   settings: {
-    [others: string]: any;
-  };
-  [others: string]: any;
+    [others: string]: any
+  }
+  [others: string]: any
 }

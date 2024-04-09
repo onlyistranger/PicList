@@ -118,6 +118,7 @@ import { PICBEDS_PAGE, UPLOADER_CONFIG_PAGE } from '@/router/config'
 
 // 状态管理
 import { useStore } from '@/hooks/useStore'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const $router = useRouter()
 const $route = useRoute()
@@ -187,8 +188,8 @@ function addNewConfig () {
 
 function setDefaultPicBed (type: string) {
   saveConfig({
-    'picBed.current': type,
-    'picBed.uploader': type
+    [configPaths.picBed.current]: type,
+    [configPaths.picBed.uploader]: type
   })
 
   store?.setDefaultPicBed(type)

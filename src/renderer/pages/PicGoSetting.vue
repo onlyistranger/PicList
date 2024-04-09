@@ -1735,7 +1735,7 @@ import pkg from 'root/package.json'
 
 // 事件常量
 import { PICGO_OPEN_FILE, PICGO_OPEN_DIRECTORY, OPEN_URL, GET_PICBEDS, HIDE_DOCK } from '#/events/constants'
-import { IRPCActionType } from '~/universal/types/enum'
+import { IRPCActionType, ISartMode } from '~/universal/types/enum'
 
 // Electron 相关
 import {
@@ -1770,6 +1770,7 @@ import { invokeToMain } from '@/manage/utils/dataSender'
 
 // 内置重命名格式表
 import { buildInRenameFormatTable } from '../manage/utils/common'
+import { configPaths, ISartModeValues } from '~/universal/utils/configPaths'
 
 const imageProcessDialogVisible = ref(false)
 const activeName = ref<'system' | 'syncAndConfigure' | 'upload' | 'advanced' | 'upadte'>('system')
@@ -1863,14 +1864,14 @@ function handleSaveConfig () {
   const formatConvertObjFilter = Object.fromEntries(formatConvertObjEntriesFilter)
   formatConvertObj.value = JSON.stringify(formatConvertObjFilter)
   compressForm.formatConvertObj = formatConvertObjFilter
-  saveConfig('buildIn.compress', toRaw(compressForm))
-  saveConfig('buildIn.watermark', toRaw(waterMarkForm))
+  saveConfig(configPaths.buildIn.compress, toRaw(compressForm))
+  saveConfig(configPaths.buildIn.watermark, toRaw(waterMarkForm))
   closeDialog()
 }
 
 async function initForm () {
-  const compress = await getConfig<IBuildInCompressOptions>('buildIn.compress')
-  const watermark = await getConfig<IBuildInWaterMarkOptions>('buildIn.watermark')
+  const compress = await getConfig<IBuildInCompressOptions>(configPaths.buildIn.compress)
+  const watermark = await getConfig<IBuildInWaterMarkOptions>(configPaths.buildIn.watermark)
   if (compress) {
     compressForm.quality = compress.quality ?? 100
     compressForm.isConvert = compress.isConvert ?? false
@@ -1986,10 +1987,6 @@ const customLink = reactive({
   value: '![$fileName]($url)'
 })
 
-const shortKey = reactive<IShortKeyMap>({
-  upload: ''
-})
-
 const mainWindowWidth = ref(1200)
 const mainWindowHeight = ref(800)
 const rawPicGoSize = ref(false)
@@ -2051,7 +2048,7 @@ const syncType = [
 
 async function cancelSyncSetting () {
   syncVisible.value = false
-  sync.value = await getConfig('settings.sync') || {
+  sync.value = await getConfig(configPaths.settings.sync) || {
     type: 'github',
     username: '',
     repo: '',
@@ -2065,7 +2062,7 @@ async function cancelSyncSetting () {
 
 function confirmSyncSetting () {
   saveConfig({
-    'settings.sync': sync.value
+    [configPaths.settings.sync]: sync.value
   })
   syncVisible.value = false
 }
@@ -2134,7 +2131,6 @@ async function initData () {
     currentLanguage.value = settings.language ?? 'zh-CN'
     currentStartMode.value = settings.startMode || 'quiet'
     customLink.value = settings.customLink || '![$fileName]($url)'
-    shortKey.upload = settings.shortKey.upload
     proxy.value = picBed.proxy || ''
     npmRegistry.value = settings.registry || ''
     npmProxy.value = settings.proxy || ''
@@ -2152,7 +2148,7 @@ async function initData () {
     if (advancedRename.value.enable) {
       form.autoRename = false
       saveConfig({
-        'settings.autoRename': false
+        [configPaths.settings.autoRename]: false
       })
     }
     sync.value = settings.sync || {
@@ -2204,13 +2200,13 @@ function openLogSetting () {
 
 async function cancelCustomLink () {
   customLinkVisible.value = false
-  customLink.value = await getConfig<string>('settings.customLink') || '![$fileName]($url)'
+  customLink.value = await getConfig<string>(configPaths.settings.customLink) || '![$fileName]($url)'
 }
 
 function confirmCustomLink () {
   $customLink.value?.validate((valid: boolean) => {
     if (valid) {
-      saveConfig('settings.customLink', customLink.value)
+      saveConfig(configPaths.settings.customLink, customLink.value)
       customLinkVisible.value = false
       sendToMain('updateCustomLink')
     } else {
@@ -2220,7 +2216,7 @@ function confirmCustomLink () {
 }
 
 function handleEncodeOutputURL (val: ICheckBoxValueType) {
-  saveConfig('settings.encodeOutputURL', val)
+  saveConfig(configPaths.settings.encodeOutputURL, val)
   const successNotification = new Notification($T('SETTINGS_ENCODE_OUTPUT_URL'), {
     body: $T('TIPS_SET_SUCCEED')
   })
@@ -2231,17 +2227,17 @@ function handleEncodeOutputURL (val: ICheckBoxValueType) {
 
 async function handleCancelAdvancedRename () {
   advancedRenameVisible.value = false
-  advancedRename.value = toRaw((await getConfig<any>('buildIn.rename')) || {
+  advancedRename.value = toRaw((await getConfig<any>(configPaths.buildIn.rename)) || {
     enable: false,
     format: '{filename}'
   })
 }
 
 function handleSaveAdvancedRename () {
-  saveConfig('buildIn.rename', toRaw(advancedRename.value))
+  saveConfig(configPaths.buildIn.rename, toRaw(advancedRename.value))
   if (advancedRename.value.enable) {
     form.autoRename = false
-    saveConfig('settings.autoRename', false)
+    saveConfig(configPaths.settings.autoRename, false)
   }
   advancedRenameVisible.value = false
   const successNotification = new Notification($T('SETTINGS_ADVANCED_RENAME'), {
@@ -2254,15 +2250,15 @@ function handleSaveAdvancedRename () {
 
 async function cancelProxy () {
   proxyVisible.value = false
-  proxy.value = await getConfig<string>('picBed.proxy') || ''
+  proxy.value = await getConfig<string>(configPaths.picBed.proxy) || ''
 }
 
 function confirmProxy () {
   proxyVisible.value = false
   saveConfig({
-    'picBed.proxy': proxy.value,
-    'settings.proxy': npmProxy.value,
-    'settings.registry': npmRegistry.value
+    [configPaths.picBed.proxy]: proxy.value,
+    [configPaths.settings.proxy]: npmProxy.value,
+    [configPaths.settings.registry]: npmRegistry.value
   })
   const successNotification = new Notification($T('SETTINGS_SET_PROXY_AND_MIRROR'), {
     body: $T('TIPS_SET_SUCCEED')
@@ -2290,15 +2286,15 @@ function handleMigrateFromPicGo () {
 }
 
 function updateHelperChange (val: ICheckBoxValueType) {
-  saveConfig('settings.showUpdateTip', val)
+  saveConfig(configPaths.settings.showUpdateTip, val)
 }
 
 function autoImportChange (val: ICheckBoxValueType) {
-  saveConfig('settings.autoImport', val)
+  saveConfig(configPaths.settings.autoImport, val)
 }
 
 function handleAutoImportPicBedChange (val: string[]) {
-  saveConfig('settings.autoImportPicBed', val)
+  saveConfig(configPaths.settings.autoImportPicBed, val)
 }
 
 function handleHideDockChange (val: ICheckBoxValueType) {
@@ -2307,16 +2303,16 @@ function handleHideDockChange (val: ICheckBoxValueType) {
     form.isHideDock = false
     return
   }
-  saveConfig('settings.isHideDock', val)
+  saveConfig(configPaths.settings.isHideDock, val)
   sendToMain(HIDE_DOCK, val)
 }
 
 function useBuiltinClipboardChange (val: ICheckBoxValueType) {
-  saveConfig('settings.useBuiltinClipboard', val)
+  saveConfig(configPaths.settings.useBuiltinClipboard, val)
 }
 
 function handleIsAutoListenClipboard (val: ICheckBoxValueType) {
-  saveConfig('settings.isAutoListenClipboard', val)
+  saveConfig(configPaths.settings.isAutoListenClipboard, val)
 }
 
 function handleShowPicBedListChange (val: ICheckBoxValueType[]) {
@@ -2329,37 +2325,37 @@ function handleShowPicBedListChange (val: ICheckBoxValueType[]) {
     return item
   })
   saveConfig({
-    'picBed.list': list
+    [configPaths.picBed.list]: list
   })
   sendToMain(GET_PICBEDS)
 }
 
 function handleAutoStartChange (val: ICheckBoxValueType) {
-  saveConfig('settings.autoStart', val)
+  saveConfig(configPaths.settings.autoStart, val)
   sendToMain('autoStart', val)
 }
 
 function handleDeleteCloudFile (val: ICheckBoxValueType) {
   saveConfig({
-    'settings.deleteCloudFile': val
+    [configPaths.settings.deleteCloudFile]: val
   })
 }
 
 function handleDeleteLocalFile (val: ICheckBoxValueType) {
   saveConfig({
-    'settings.deleteLocalFile': val
+    [configPaths.settings.deleteLocalFile]: val
   })
 }
 
 function handleRename (val: ICheckBoxValueType) {
   saveConfig({
-    'settings.rename': val
+    [configPaths.settings.rename]: val
   })
 }
 
 function handleAutoRename (val: ICheckBoxValueType) {
   saveConfig({
-    'settings.autoRename': val
+    [configPaths.settings.autoRename]: val
   })
 }
 
@@ -2389,19 +2385,19 @@ function cancelCheckVersion () {
 }
 
 function handleEnableWebServerChange (val: ICheckBoxValueType) {
-  saveConfig('settings.enableWebServer', val)
+  saveConfig(configPaths.settings.enableWebServer, val)
 }
 
 function handleWebServerHostChange (val: string) {
-  saveConfig('settings.webServerHost', val)
+  saveConfig(configPaths.settings.webServerHost, val)
 }
 
 function handleWebServerPortChange (val?: number, oldVal?: number) {
-  saveConfig('settings.webServerPort', Number(val) || 37777)
+  saveConfig(configPaths.settings.webServerPort, Number(val) || 37777)
 }
 
 function handleWebServerPathChange (val: string) {
-  saveConfig('settings.webServerPath', val)
+  saveConfig(configPaths.settings.webServerPath, val)
 }
 
 function confirmWebServerSetting () {
@@ -2413,25 +2409,25 @@ function confirmWebServerSetting () {
 }
 
 function handleServerKeyChange (val: string) {
-  saveConfig('settings.serverKey', val)
+  saveConfig(configPaths.settings.serverKey, val)
 }
 
 function handleUploadNotification (val: ICheckBoxValueType) {
   saveConfig({
-    'settings.uploadNotification': val
+    [configPaths.settings.uploadNotification]: val
   })
 }
 
 function handleUploadResultNotification (val: ICheckBoxValueType) {
   saveConfig({
-    'settings.uploadResultNotification': val
+    [configPaths.settings.uploadResultNotification]: val
   })
 }
 
 async function cancelWindowSize () {
   mainWindowSizeVisible.value = false
-  mainWindowWidth.value = await getConfig<number>('settings.mainWindowWidth') || 1200
-  mainWindowHeight.value = await getConfig<number>('settings.mainWindowHeight') || 800
+  mainWindowWidth.value = await getConfig<number>(configPaths.settings.mainWindowWidth) || 1200
+  mainWindowHeight.value = await getConfig<number>(configPaths.settings.mainWindowHeight) || 800
 }
 
 async function confirmWindowSize () {
@@ -2439,8 +2435,8 @@ async function confirmWindowSize () {
   const width = enforceNumber(mainWindowWidth.value)
   const height = enforceNumber(mainWindowHeight.value)
   saveConfig({
-    'settings.mainWindowWidth': rawPicGoSize.value ? 800 : width < 100 ? 100 : width,
-    'settings.mainWindowHeight': rawPicGoSize.value ? 450 : height < 100 ? 100 : height
+    [configPaths.settings.mainWindowWidth]: rawPicGoSize.value ? 800 : width < 100 ? 100 : width,
+    [configPaths.settings.mainWindowHeight]: rawPicGoSize.value ? 450 : height < 100 ? 100 : height
   })
 
   const successNotification = new Notification($T('SETTINGS_MAIN_WINDOW_SIZE'), {
@@ -2452,15 +2448,15 @@ async function confirmWindowSize () {
 }
 
 function handleAutoCloseMainWindowChange (val: ICheckBoxValueType) {
-  saveConfig('settings.autoCloseMainWindow', val)
+  saveConfig(configPaths.settings.autoCloseMainWindow, val)
 }
 
 function handleAutoCloseMiniWindowChange (val: ICheckBoxValueType) {
-  saveConfig('settings.autoCloseMiniWindow', val)
+  saveConfig(configPaths.settings.autoCloseMiniWindow, val)
 }
 
 function handleMiniWindowOntop (val: ICheckBoxValueType) {
-  saveConfig('settings.miniWindowOntop', val)
+  saveConfig(configPaths.settings.miniWindowOntop, val)
   $message.info($T('TIPS_NEED_RELOAD'))
 }
 
@@ -2468,18 +2464,18 @@ async function handleMiniIconPath (evt: Event) {
   const result = await invokeToMain('openFileSelectDialog')
   if (result && result[0]) {
     form.customMiniIcon = result[0]
-    saveConfig('settings.customMiniIcon', form.customMiniIcon)
+    saveConfig(configPaths.settings.customMiniIcon, form.customMiniIcon)
     $message.info($T('TIPS_NEED_RELOAD'))
   }
 }
 
 function handleIsCustomMiniIcon (val: ICheckBoxValueType) {
-  saveConfig('settings.isCustomMiniIcon', val)
+  saveConfig(configPaths.settings.isCustomMiniIcon, val)
   $message.info($T('TIPS_NEED_RELOAD'))
 }
 
 function handleAutoCopyUrl (val: ICheckBoxValueType) {
-  saveConfig('settings.autoCopy', val)
+  saveConfig(configPaths.settings.autoCopy, val)
   const successNotification = new Notification($T('SETTINGS_AUTO_COPY_URL_AFTER_UPLOAD'), {
     body: $T('TIPS_SET_SUCCEED')
   })
@@ -2489,7 +2485,7 @@ function handleAutoCopyUrl (val: ICheckBoxValueType) {
 }
 
 function handleUseShortUrl (val: ICheckBoxValueType) {
-  saveConfig('settings.useShortUrl', val)
+  saveConfig(configPaths.settings.useShortUrl, val)
   const successNotification = new Notification($T('SETTINGS_SHORT_URL'), {
     body: $T('TIPS_SET_SUCCEED')
   })
@@ -2499,27 +2495,27 @@ function handleUseShortUrl (val: ICheckBoxValueType) {
 }
 
 function handleShortUrlServerChange (val: string) {
-  saveConfig('settings.shortUrlServer', val)
+  saveConfig(configPaths.settings.shortUrlServer, val)
 }
 
 function handleC1nTokenChange (val: string) {
-  saveConfig('settings.c1nToken', val)
+  saveConfig(configPaths.settings.c1nToken, val)
 }
 
 function handleYourlsDomainChange (val: string) {
-  saveConfig('settings.yourlsDomain', val)
+  saveConfig(configPaths.settings.yourlsDomain, val)
 }
 
 function handleYourlsSignatureChange (val: string) {
-  saveConfig('settings.yourlsSignature', val)
+  saveConfig(configPaths.settings.yourlsSignature, val)
 }
 
 function handleCfWorkerHostChange (val: string) {
-  saveConfig('settings.cfWorkerHost', val)
+  saveConfig(configPaths.settings.cfWorkerHost, val)
 }
 
 function handleAesPasswordChange (val: string) {
-  saveConfig('settings.aesPassword', val || 'PicList-aesPassword')
+  saveConfig(configPaths.settings.aesPassword, val || 'PicList-aesPassword')
 }
 
 function confirmLogLevelSetting () {
@@ -2527,8 +2523,8 @@ function confirmLogLevelSetting () {
     return $message.error($T('TIPS_PLEASE_CHOOSE_LOG_LEVEL'))
   }
   saveConfig({
-    'settings.logLevel': form.logLevel,
-    'settings.logFileSizeLimit': form.logFileSizeLimit
+    [configPaths.settings.logLevel]: form.logLevel,
+    [configPaths.settings.logFileSizeLimit]: form.logFileSizeLimit
   })
   const successNotification = new Notification($T('SETTINGS_SET_LOG_FILE'), {
     body: $T('TIPS_SET_SUCCEED')
@@ -2541,8 +2537,8 @@ function confirmLogLevelSetting () {
 
 async function cancelLogLevelSetting () {
   logFileVisible.value = false
-  let logLevel = await getConfig<string | string[]>('settings.logLevel')
-  const logFileSizeLimit = await getConfig<number>('settings.logFileSizeLimit') || 10
+  let logLevel = await getConfig<string | string[]>(configPaths.settings.logLevel)
+  const logFileSizeLimit = await getConfig<number>(configPaths.settings.logFileSizeLimit) || 10
   if (!Array.isArray(logLevel)) {
     if (logLevel && logLevel.length > 0) {
       logLevel = [logLevel]
@@ -2617,7 +2613,7 @@ async function downloadAll () {
 function confirmServerSetting () {
   server.value.port = parseInt(server.value.port as unknown as string, 10)
   saveConfig({
-    'settings.server': server.value
+    [configPaths.settings.server]: server.value
   })
   const successNotification = new Notification($T('SETTINGS_SET_PICGO_SERVER'), {
     body: $T('TIPS_SET_SUCCEED')
@@ -2631,7 +2627,7 @@ function confirmServerSetting () {
 
 async function cancelServerSetting () {
   serverVisible.value = false
-  server.value = await getConfig('settings.server') || {
+  server.value = await getConfig(configPaths.settings.server) || {
     port: 36677,
     host: '0.0.0.0',
     enable: true
@@ -2662,28 +2658,28 @@ function handleLevelDisabled (val: string) {
 function handleLanguageChange (val: string) {
   i18nManager.setCurrentLanguage(val)
   saveConfig({
-    'settings.language': val
+    [configPaths.settings.language]: val
   })
   sendToMain(GET_PICBEDS)
 }
 
-function handleStartModeChange (val: 'quiet' | 'mini' | 'main' | 'no-tray') {
-  if (val === 'no-tray') {
+function handleStartModeChange (val: ISartModeValues) {
+  if (val === ISartMode.NO_TRAY) {
     if (form.isHideDock) {
       ElMessage.warning($T('SETTINGS_ISHIDEDOCK_TIPS'))
-      currentStartMode.value = 'quiet'
+      currentStartMode.value = ISartMode.QUIET
       return
     }
     $message.info($T('TIPS_NEED_RELOAD'))
   }
   saveConfig({
-    'settings.startMode': val
+    [configPaths.settings.startMode]: val
   })
 }
 
 function handleManualPageOpenChange (val: string) {
   saveConfig({
-    'settings.manualPageOpen': val
+    [configPaths.settings.manualPageOpen]: val
   })
 }
 

@@ -47,6 +47,7 @@ import {
   SET_CURRENT_LANGUAGE,
   GET_CURRENT_LANGUAGE
 } from '#/events/constants'
+import { configPaths } from '~/universal/utils/configPaths'
 
 // eslint-disable-next-line
 const requireFunc = typeof __webpack_require__ === 'function' ? __non_webpack_require__ : require
@@ -360,8 +361,8 @@ const handlePicGoGalleryDB = () => {
   })
 
   ipcMain.handle(PASTE_TEXT, async (_, item: ImgInfo, copy = true) => {
-    const pasteStyle = picgo.getConfig<IPasteStyle>('settings.pasteStyle') || IPasteStyle.MARKDOWN
-    const customLink = picgo.getConfig<string>('settings.customLink')
+    const pasteStyle = picgo.getConfig<IPasteStyle>(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
+    const customLink = picgo.getConfig<string>(configPaths.settings.customLink)
     const txt = await pasteTemplate(pasteStyle, item, customLink)
     if (copy) {
       clipboard.writeText(txt)

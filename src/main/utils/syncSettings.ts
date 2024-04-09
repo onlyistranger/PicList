@@ -6,18 +6,7 @@ import db from '~/main/apis/core/datastore'
 import { HttpsProxyAgent } from 'hpagent'
 import { Octokit } from '@octokit/rest'
 import logger from 'apis/core/picgo/logger'
-
-interface SyncConfig {
-  type: string
-  file?: string
-  username: string
-  repo: string
-  branch: string
-  token: string
-  endpoint?: string
-  proxy?: string
-  interval?: number
-}
+import { configPaths } from '~/universal/utils/configPaths'
 
 const STORE_PATH = app.getPath('userData')
 
@@ -28,7 +17,7 @@ const configFileNames = [
   'manage.bak.json'
 ]
 
-function getOctokit (syncConfig: SyncConfig) {
+function getOctokit (syncConfig: ISyncConfig) {
   const { token, proxy } = syncConfig
   return new Octokit({
     auth: token,
@@ -47,7 +36,7 @@ function getOctokit (syncConfig: SyncConfig) {
 }
 
 function getSyncConfig () {
-  return db.get('settings.sync') || {
+  return db.get(configPaths.settings.sync) || {
     type: 'github',
     username: '',
     repo: '',
@@ -57,12 +46,12 @@ function getSyncConfig () {
   }
 }
 
-function syncConfigValidator (syncConfig: SyncConfig) {
+function syncConfigValidator (syncConfig: ISyncConfig) {
   const { type, username, repo, branch, token } = syncConfig
   return type && username && repo && branch && token
 }
 
-async function uploadLocalToRemote (syncConfig: SyncConfig, fileName: string) {
+async function uploadLocalToRemote (syncConfig: ISyncConfig, fileName: string) {
   const localFilePath = path.join(STORE_PATH, fileName)
   if (!fs.existsSync(localFilePath)) {
     return false
@@ -120,7 +109,7 @@ async function uploadLocalToRemote (syncConfig: SyncConfig, fileName: string) {
   }
 }
 
-async function updateLocalToRemote (syncConfig: SyncConfig, fileName: string) {
+async function updateLocalToRemote (syncConfig: ISyncConfig, fileName: string) {
   const localFilePath = path.join(STORE_PATH, fileName)
   if (!fs.existsSync(localFilePath)) {
     return false
@@ -201,7 +190,7 @@ async function updateLocalToRemote (syncConfig: SyncConfig, fileName: string) {
   }
 }
 
-async function downloadRemoteToLocal (syncConfig: SyncConfig, fileName: string) {
+async function downloadRemoteToLocal (syncConfig: ISyncConfig, fileName: string) {
   const localFilePath = path.join(STORE_PATH, fileName)
   const { username, repo, branch, token, proxy, type } = syncConfig
   if (type === 'gitee') {
@@ -304,7 +293,7 @@ async function uploadFile (fileName: string, all = false) {
   }
 }
 
-async function uploadFunc (syncConfig: SyncConfig, fileName: string) {
+async function uploadFunc (syncConfig: ISyncConfig, fileName: string) {
   let result = false
   try {
     result = await updateLocalToRemote(syncConfig, fileName)
@@ -342,7 +331,7 @@ async function downloadFile (fileName: string, all = false) {
   }
 }
 
-async function downloadFunc (syncConfig: SyncConfig, fileName: string) {
+async function downloadFunc (syncConfig: ISyncConfig, fileName: string) {
   const result = await downloadRemoteToLocal(syncConfig, fileName)
   if (!result) {
     logger.error(`download ${fileName} failed`)

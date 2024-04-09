@@ -1,14 +1,8 @@
 import COS from 'cos-nodejs-sdk-v5'
 
 interface IConfigMap {
-  fileName: string;
-  config: {
-    secretId: string;
-    secretKey: string;
-    bucket: string;
-    area: string;
-    path?: string;
-  };
+  fileName: string
+  config: PartialKeys<ITcYunConfig, 'path'>
 }
 
 export default class TcyunApi {

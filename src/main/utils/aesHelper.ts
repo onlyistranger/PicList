@@ -1,8 +1,10 @@
 import crypto from 'crypto'
 import picgo from '@core/picgo'
+import { DEFAULT_AES_PASSWORD } from '~/universal/utils/static'
+import { configPaths } from '~/universal/utils/configPaths'
 
 function getDerivedKey (): Buffer {
-  const userPassword = picgo.getConfig<string>('settings.aesPassword') || 'PicList-aesPassword'
+  const userPassword = picgo.getConfig<string>(configPaths.settings.aesPassword) || DEFAULT_AES_PASSWORD
   const fixedSalt = Buffer.from('a8b3c4d2e4f5098712345678feedc0de', 'hex')
   const fixedIterations = 100000
   const keyLength = 32

@@ -24,6 +24,8 @@ import { SHOW_INPUT_BOX } from '~/universal/events/constants'
 // External utility functions
 import { DBStore } from '@picgo/store'
 import { T } from '~/main/i18n'
+import { configPaths } from '~/universal/utils/configPaths'
+import { IPasteStyle } from '~/universal/types/enum'
 
 // Cross-process support may be required in the future
 class GuiApi implements IGuiApi {
@@ -85,15 +87,15 @@ class GuiApi implements IGuiApi {
     const rawInput = cloneDeep(input)
     const imgs = await uploader.setWebContents(webContents!).upload(input)
     if (imgs !== false) {
-      const pasteStyle = db.get('settings.pasteStyle') || 'markdown'
-      const deleteLocalFile = db.get('settings.deleteLocalFile') || false
+      const pasteStyle = db.get(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
+      const deleteLocalFile = db.get(configPaths.settings.deleteLocalFile) || false
       const pasteText: string[] = []
       for (let i = 0; i < imgs.length; i++) {
         if (deleteLocalFile) {
           await fs.remove(rawInput[i])
         }
-        pasteText.push(await (pasteTemplate(pasteStyle, imgs[i], db.get('settings.customLink'))))
-        const isShowResultNotification = db.get('settings.uploadResultNotification') === undefined ? true : !!db.get('settings.uploadResultNotification')
+        pasteText.push(await (pasteTemplate(pasteStyle, imgs[i], db.get(configPaths.settings.customLink))))
+        const isShowResultNotification = db.get(configPaths.settings.uploadResultNotification) === undefined ? true : !!db.get(configPaths.settings.uploadResultNotification)
         if (isShowResultNotification) {
           const notification = new Notification({
             title: T('UPLOAD_SUCCEED'),

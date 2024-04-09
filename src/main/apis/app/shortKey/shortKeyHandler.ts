@@ -18,6 +18,7 @@ import shortKeyService from './shortKeyService'
 
 // External utility functions
 import { TOGGLE_SHORTKEY_MODIFIED_MODE } from '#/events/constants'
+import { configPaths } from '~/universal/utils/configPaths'
 
 class ShortKeyHandler {
   private isInModifiedMode: boolean = false
@@ -33,7 +34,7 @@ class ShortKeyHandler {
   }
 
   private initBuiltInShortKey () {
-    const commands = db.get('settings.shortKey') as IShortKeyConfigs
+    const commands = db.get(configPaths.settings.shortKey._path) as IShortKeyConfigs
     Object.keys(commands)
       .filter(item => item.includes('picgo:'))
       .forEach(command => {
@@ -175,7 +176,7 @@ class ShortKeyHandler {
   }
 
   unregisterPluginShortKey (pluginName: string) {
-    const commands = db.get('settings.shortKey') as IShortKeyConfigs
+    const commands = db.get(configPaths.settings.shortKey._path) as IShortKeyConfigs
     const keyList = Object.keys(commands)
       .filter(command => command.includes(pluginName))
       .map(command => {
@@ -187,7 +188,7 @@ class ShortKeyHandler {
     keyList.forEach(item => {
       globalShortcut.unregister(item.key)
       shortKeyService.unregisterCommand(item.command)
-      db.unset('settings.shortKey', item.command)
+      db.unset(configPaths.settings.shortKey._path, item.command)
     })
   }
 }

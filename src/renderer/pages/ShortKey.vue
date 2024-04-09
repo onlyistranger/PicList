@@ -132,6 +132,7 @@ import { getConfig, sendToMain } from '@/utils/dataSender'
 
 // 国际化函数
 import { T as $T } from '@/i18n'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const list = ref<IShortKeyConfig[]>([])
 const keyBindingVisible = ref(false)
@@ -140,7 +141,7 @@ const shortKey = ref('')
 const currentIndex = ref(0)
 
 onBeforeMount(async () => {
-  const shortKeyConfig = (await getConfig<IShortKeyConfigs>('settings.shortKey'))!
+  const shortKeyConfig = (await getConfig<IShortKeyConfigs>(configPaths.settings.shortKey._path))!
   list.value = Object.keys(shortKeyConfig).map(item => {
     return {
       ...shortKeyConfig[item],

@@ -2,9 +2,7 @@ import axios, { AxiosResponse } from 'axios'
 
 interface IConfigMap {
   hash?: string
-  config?: {
-    token?: string
-  }
+  config?: Partial<ISMMSConfig>
 }
 
 export default class SmmsApi {

@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { trimValues } from '#/utils/common'
 import picgo from '@core/picgo'
+import { configPaths } from '~/universal/utils/configPaths'
 
 export const handleConfigWithFunction = (config: IPicGoPluginOriginConfig[]): IPicGoPluginConfig[] => {
   for (const i in config) {
@@ -61,8 +62,8 @@ export const changeCurrentUploader = (type: string, config?: IStringKeyMap, id?:
     })
   }
   picgo.saveConfig({
-    'picBed.current': type,
-    'picBed.uploader': type
+    [configPaths.picBed.current]: type,
+    [configPaths.picBed.uploader]: type
   })
 }
 

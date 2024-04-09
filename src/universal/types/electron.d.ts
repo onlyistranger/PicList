@@ -5,7 +5,7 @@ declare type IWindowList = import('./enum').IWindowList
 declare interface IWindowListItem {
   isValid: boolean
   multiple: boolean
-  options: () => IBrowserWindowOptions,
+  options: () => IBrowserWindowOptions
   callback: (window: BrowserWindow, windowManager: IWindowManager) => void
 }
 

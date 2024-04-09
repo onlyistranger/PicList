@@ -35,6 +35,18 @@ interface IServerConfig {
   enable: boolean
 }
 
+interface ISyncConfig {
+  type: string
+  file?: string
+  username: string
+  repo: string
+  branch: string
+  token: string
+  endpoint?: string
+  proxy?: string
+  interval?: number
+}
+
 // Image && PicBed
 interface ImgInfo {
   buffer?: Buffer
@@ -86,25 +98,25 @@ interface IOldShortKeyConfigs {
 }
 
 interface IKeyCommandType {
-  key: string,
+  key: string
   command: string
 }
 
 // Main process
 interface IBrowserWindowOptions {
-  height: number,
-  width: number,
-  show: boolean,
-  fullscreenable: boolean,
-  resizable: boolean,
+  height: number
+  width: number
+  show: boolean
+  fullscreenable: boolean
+  resizable: boolean
   webPreferences: {
-    nodeIntegration: boolean,
-    nodeIntegrationInWorker: boolean,
-    contextIsolation: boolean,
+    nodeIntegration: boolean
+    nodeIntegrationInWorker: boolean
+    contextIsolation: boolean
     backgroundThrottling: boolean
     webSecurity?: boolean
-  },
-  vibrancy?: string | any,
+  }
+  vibrancy?: string | any
   frame?: boolean
   center?: boolean
   title?: string
@@ -275,67 +287,148 @@ interface IShortKeyHandlerObj {
 
 type IShortKeyHandler = (ctx: ICtx, guiApi?: IGuiApi) => Promise<void | ICtx>
 
+type PartialKeys<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
+
 interface shortKeyHandlerMap {
   from: string
   handle: IShortKeyHandler
 }
 
 // PicBeds
+interface ITelegraphConfig {
+  proxy?: string
+}
+
+interface ILocalConfig {
+  path: string
+  customUrl?: string
+  webPath?: string
+}
+
 interface IAliYunConfig {
   accessKeyId: string
-  accessKeySecret: string,
-  bucket: string,
-  area: string,
-  path: string,
+  accessKeySecret: string
+  bucket: string
+  area: string
+  path: string
   customUrl: string
   options: string
 }
 
 interface IGitHubConfig {
-  repo: string,
-  token: string,
-  path: string,
-  customUrl: string,
+  repo: string
+  token: string
+  path: string
+  customUrl: string
   branch: string
 }
 
 interface IImgurConfig {
-  clientId: string,
+  clientId: string
   proxy: string
+  username: string
+  accessToken: string
+  album: string
 }
 
 interface IQiniuConfig {
-  accessKey: string,
-  secretKey: string,
-  bucket: string,
-  url: string,
-  area: string,
-  options: string,
+  accessKey: string
+  secretKey: string
+  bucket: string
+  url: string
+  area: 'z0' | 'z1' | 'z2' | 'na0' | 'as0' | string
+  options: string
   path: string
 }
 
 interface ISMMSConfig {
   token: string
+  backupDomain?: string
 }
 
 interface ITcYunConfig {
-  secretId: string,
-  secretKey: string,
-  bucket: string,
-  appId: string,
-  area: string,
-  path: string,
-  customUrl: string,
-  version: 'v4' | 'v5',
+  secretId: string
+  secretKey: string
+  bucket: string
+  appId: string
+  endpoint: string
+  area: string
+  path: string
+  customUrl: string
+  version: 'v4' | 'v5'
   options: string
+  slim: boolean
 }
 
 interface IUpYunConfig {
-  bucket: string,
-  operator: string,
-  password: string,
-  options: string,
+  bucket: string
+  operator: string
+  password: string
+  options: string
   path: string
+  url: string
+  antiLeechToken: string
+  expireTime: number
+  endpoint: string
+}
+
+interface IWebdavPlistConfig {
+  host: string
+  sslEnabled: boolean
+  username: string
+  password: string
+  path: string
+  webpath: string
+  customUrl: string
+  authType: string
+  options: string
+}
+
+interface ISftpPlistConfig {
+  host: string
+  port?: number
+  username: string
+  password?: string
+  privateKey?: string
+  passphrase?: string
+  uploadPath?: string
+  customUrl?: string
+  webPath?: string
+  fileUser?: string
+  fileMode?: string
+  dirMode?: string
+}
+
+interface IPicListConfig {
+  host: string
+  port?: number
+  picbed?: string
+  configName?: string
+  serverKey?: string
+}
+
+interface ILskyConfig {
+  version: string
+  host: string
+  token: string
+  strategyId: string
+  albumId: string
+  permission: IStringKeyMap
+}
+
+interface IAwsS3PListUserConfig {
+  accessKeyID: string
+  secretAccessKey: string
+  bucketName: string
+  uploadPath: string
+  region?: string
+  endpoint?: string
+  proxy?: string
+  urlPrefix?: string
+  pathStyleAccess?: boolean
+  rejectUnauthorized?: boolean
+  acl?: string
+  disableBucketPrefixToURL?: boolean | string
 }
 
 type ILoggerType = string | Error | boolean | number | undefined
@@ -362,9 +455,9 @@ type ILogArgvType = string | number
 type ILogArgvTypeWithError = ILogArgvType | Error
 
 interface IMiniWindowPos {
-  x: number,
-  y: number,
-  height: number,
+  x: number
+  y: number
+  height: number
   width: number
 }
 

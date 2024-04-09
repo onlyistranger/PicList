@@ -1,8 +1,18 @@
 import axios from 'axios'
 import path from 'path'
 
+interface IConfigMap {
+  fileName: string
+  config: {
+    version: string
+    url: string
+    uploadPath: string
+    token: string
+  }
+}
+
 export default class AlistApi {
-  static async delete (configMap: IStringKeyMap): Promise<boolean> {
+  static async delete (configMap: IConfigMap): Promise<boolean> {
     const { fileName, config } = configMap
     try {
       const { version, url, uploadPath, token } = config

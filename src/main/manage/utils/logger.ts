@@ -7,6 +7,7 @@ import { ILogType } from '#/types/enum'
 import { ILogColor, ILogger } from 'piclist/dist/types'
 import { ManageApiType, Undefinable } from '~/universal/types/manage'
 import { enforceNumber, isDev } from '#/utils/common'
+import { configPaths } from '~/universal/utils/configPaths'
 
 export class ManageLogger implements ILogger {
   private readonly level = {
@@ -29,9 +30,9 @@ export class ManageLogger implements ILogger {
       `[PicList ${type.toUpperCase()}]`
     )
     console.log(logHeader, ...msg)
-    this.logLevel = this.ctx.getConfig('settings.logLevel')
+    this.logLevel = this.ctx.getConfig(configPaths.settings.logLevel)
     this.logPath =
-      this.ctx.getConfig<Undefinable<string>>('settings.logPath') ||
+      this.ctx.getConfig<Undefinable<string>>(configPaths.settings.logPath) ||
       path.join(this.ctx.baseDir, './manage.log')
     setTimeout(() => {
       try {
@@ -61,7 +62,7 @@ export class ManageLogger implements ILogger {
       const logFileSizeLimit =
         enforceNumber(
           this.ctx.getConfig<Undefinable<number>>(
-            'settings.logFileSizeLimit'
+            configPaths.settings.logFileSizeLimit
           ) || 10
         ) *
         1024 *

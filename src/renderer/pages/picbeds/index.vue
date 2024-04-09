@@ -132,6 +132,7 @@ import dayjs from 'dayjs'
 
 // Element Plus 下拉菜单组件
 import { ElDropdown, ElMessage } from 'element-plus'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const type = ref('')
 const config = ref<IPicGoPluginConfig[]>([])
@@ -227,8 +228,8 @@ function handleNameClick () {
 
 async function handleCopyApi () {
   try {
-    const { port = 36677, host = '127.0.0.1' } = await getConfig<IStringKeyMap>('settings.server') || {}
-    const serverKey = await getConfig('settings.serverKey') || ''
+    const { port = 36677, host = '127.0.0.1' } = await getConfig<IStringKeyMap>(configPaths.settings.server) || {}
+    const serverKey = await getConfig(configPaths.settings.serverKey) || ''
     const uploader = await getConfig('uploader') as IStringKeyMap || {}
     const picBedConfigList = uploader[$route.params.type as string].configList || []
     const picBedConfig = picBedConfigList.find((item: IUploaderConfigListItem) => item._id === $route.params.configId)

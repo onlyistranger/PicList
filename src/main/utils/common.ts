@@ -5,9 +5,11 @@ import { handleUrlEncode } from '~/universal/utils/common'
 import axios from 'axios'
 import FormData from 'form-data'
 import logger from '../apis/core/picgo/logger'
+import { configPaths } from '~/universal/utils/configPaths'
+import { IShortUrlServer } from '~/universal/types/enum'
 
 export const handleCopyUrl = (str: string): void => {
-  if (db.get('settings.autoCopy') !== false) {
+  if (db.get(configPaths.settings.autoCopy) !== false) {
     clipboard.writeText(str)
   }
 }
@@ -122,16 +124,16 @@ export const getClipboardFilePath = (): string => {
   return ''
 }
 
-export const handleUrlEncodeWithSetting = (url: string) => db.get('settings.encodeOutputURL') ? handleUrlEncode(url) : url
+export const handleUrlEncodeWithSetting = (url: string) => db.get(configPaths.settings.encodeOutputURL) ? handleUrlEncode(url) : url
 
 const c1nApi = 'https://c1n.cn/link/short'
 
 export const generateShortUrl = async (url: string) => {
-  const server = db.get('settings.shortUrlServer') || 'c1n'
-  if (server === 'c1n') {
+  const server = db.get(configPaths.settings.shortUrlServer) || IShortUrlServer.C1N
+  if (server === IShortUrlServer.C1N) {
     const form = new FormData()
     form.append('url', url)
-    const c1nToken = db.get('settings.c1nToken') || ''
+    const c1nToken = db.get(configPaths.settings.c1nToken) || ''
     if (!c1nToken) {
       logger.warn('c1n token is not set')
       return url
@@ -148,9 +150,9 @@ export const generateShortUrl = async (url: string) => {
     } catch (e: any) {
       logger.error(e)
     }
-  } else if (server === 'yourls') {
-    let domain = db.get('settings.yourlsDomain') || ''
-    const signature = db.get('settings.yourlsSignature') || ''
+  } else if (server === IShortUrlServer.YOURLS) {
+    let domain = db.get(configPaths.settings.yourlsDomain) || ''
+    const signature = db.get(configPaths.settings.yourlsSignature) || ''
     if (domain && signature) {
       if (!/^https?:\/\//.test(domain)) {
         domain = `http://${domain}`
@@ -169,8 +171,8 @@ export const generateShortUrl = async (url: string) => {
     } else {
       logger.warn('Yourls server or signature is not set')
     }
-  } else if (server === 'cf_worker') {
-    let cfWorkerHost = db.get('settings.cfWorkerHost') || ''
+  } else if (server === IShortUrlServer.CFWORKER) {
+    let cfWorkerHost = db.get(configPaths.settings.cfWorkerHost) || ''
     cfWorkerHost = cfWorkerHost.replace(/\/$/, '')
     if (cfWorkerHost) {
       try {

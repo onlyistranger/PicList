@@ -30,6 +30,7 @@ import {
 } from '~/universal/events/constants'
 import { PicGo as PicGoCore } from 'piclist'
 import { T } from '~/main/i18n'
+import { configPaths } from '~/universal/utils/configPaths'
 
 interface GuiMenuItem {
   label: string
@@ -37,7 +38,7 @@ interface GuiMenuItem {
 }
 
 const buildMiniPageMenu = () => {
-  const isListeningClipboard = db.get('settings.isListeningClipboard') || false
+  const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
   const ClipboardWatcher = clipboardPoll
   const submenu = buildPicBedListMenu()
   const template = [
@@ -45,7 +46,7 @@ const buildMiniPageMenu = () => {
       label: T('OPEN_MAIN_WINDOW'),
       click () {
         windowManager.get(IWindowList.SETTING_WINDOW)!.show()
-        const autoCloseMiniWindow = db.get('settings.autoCloseMiniWindow') || false
+        const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
         if (autoCloseMiniWindow) {
           if (windowManager.has(IWindowList.MINI_WINDOW)) {
             windowManager.get(IWindowList.MINI_WINDOW)!.hide()
@@ -73,7 +74,7 @@ const buildMiniPageMenu = () => {
     {
       label: T('START_WATCH_CLIPBOARD'),
       click () {
-        db.set('settings.isListeningClipboard', true)
+        db.set(configPaths.settings.isListeningClipboard, true)
         ClipboardWatcher.startListening()
         ClipboardWatcher.on('change', () => {
           picgo.log.info('clipboard changed')
@@ -86,7 +87,7 @@ const buildMiniPageMenu = () => {
     {
       label: T('STOP_WATCH_CLIPBOARD'),
       click () {
-        db.set('settings.isListeningClipboard', false)
+        db.set(configPaths.settings.isListeningClipboard, false)
         ClipboardWatcher.stopListening()
         ClipboardWatcher.removeAllListeners()
         buildMiniPageMenu()
@@ -147,7 +148,7 @@ const buildMainPageMenu = (win: BrowserWindow) => {
 
 const buildPicBedListMenu = () => {
   const picBeds = getPicBeds()
-  const currentPicBed = picgo.getConfig('picBed.uploader')
+  const currentPicBed = picgo.getConfig(configPaths.picBed.uploader)
   const currentPicBedName = picBeds.find(item => item.type === currentPicBed)?.name
   const picBedConfigList = picgo.getConfig<IUploaderConfig>('uploader')
   const currentPicBedMenuItem = [{
@@ -184,8 +185,8 @@ const buildPicBedListMenu = () => {
       click: !hasSubmenu
         ? function () {
           picgo.saveConfig({
-            'picBed.current': item.type,
-            'picBed.uploader': item.type
+            [configPaths.picBed.current]: item.type,
+            [configPaths.picBed.uploader]: item.type
           })
           if (windowManager.has(IWindowList.SETTING_WINDOW)) {
             windowManager.get(IWindowList.SETTING_WINDOW)!.webContents.send('syncPicBed')
@@ -204,19 +205,19 @@ const buildPicBedListMenu = () => {
 
 const handleRestoreState = (item: string, name: string): void => {
   if (item === 'uploader') {
-    const current = picgo.getConfig('picBed.current')
+    const current = picgo.getConfig(configPaths.picBed.current)
     if (current === name) {
       picgo.saveConfig({
-        'picBed.current': 'smms',
-        'picBed.uploader': 'smms'
+        [configPaths.picBed.current]: 'smms',
+        [configPaths.picBed.uploader]: 'smms'
       })
     }
   }
   if (item === 'transformer') {
-    const current = picgo.getConfig('picBed.transformer')
+    const current = picgo.getConfig(configPaths.picBed.transformer)
     if (current === name) {
       picgo.saveConfig({
-        'picBed.transformer': 'path'
+        [configPaths.picBed.transformer]: 'path'
       })
     }
   }
@@ -286,20 +287,20 @@ const buildPluginPageMenu = (plugin: IPicGoPlugin) => {
 
   // handle transformer
   if (plugin.config.transformer.name) {
-    const currentTransformer = picgo.getConfig<string>('picBed.transformer') || 'path'
+    const currentTransformer = picgo.getConfig<string>(configPaths.picBed.transformer) || 'path'
     const pluginTransformer = plugin.config.transformer.name
     const obj = {
       label: `${currentTransformer === pluginTransformer ? T('DISABLE') : T('ENABLE')}transformer - ${plugin.config.transformer.name}`,
       click () {
         const transformer = plugin.config.transformer.name
-        const currentTransformer = picgo.getConfig<string>('picBed.transformer') || 'path'
+        const currentTransformer = picgo.getConfig<string>(configPaths.picBed.transformer) || 'path'
         if (currentTransformer === transformer) {
           picgo.saveConfig({
-            'picBed.transformer': 'path'
+            [configPaths.picBed.transformer]: 'path'
           })
         } else {
           picgo.saveConfig({
-            'picBed.transformer': transformer
+            [configPaths.picBed.transformer]: transformer
           })
         }
       }

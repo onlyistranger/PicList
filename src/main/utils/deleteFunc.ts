@@ -12,8 +12,8 @@ interface DogecloudTokenFull {
     accessKeyId: string
     secretAccessKey: string
     sessionToken: string
-  },
-  ExpiredAt: number,
+  }
+  ExpiredAt: number
   Buckets: {
     name: string
     s3Bucket: string

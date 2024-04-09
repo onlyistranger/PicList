@@ -279,6 +279,8 @@ import {
 // 数据发送工具函数
 import { getConfig, saveConfig, sendToMain } from '@/utils/dataSender'
 import { openURL } from '@/utils/common'
+import { configPaths, manualPageOpenType } from '~/universal/utils/configPaths'
+import { II18nLanguage } from '~/universal/types/enum'
 
 const version = ref(process.env.NODE_ENV === 'production' ? pkg.version : 'Dev')
 const routerConfig = reactive(config)
@@ -326,10 +328,10 @@ const handleGetPicPeds = () => {
 const handleSelect = async (index: string) => {
   defaultActive.value = index
   if (index === routerConfig.DocumentPage) {
-    const manualPageOpenSetting = await getConfig('settings.manualPageOpen')
-    const lang = await getConfig('settings.language') || 'zh-CN'
+    const manualPageOpenSetting = await getConfig<manualPageOpenType>(configPaths.settings.manualPageOpen)
+    const lang = await getConfig(configPaths.settings.language) || II18nLanguage.ZH_CN
     const openManual = () => ipcRenderer.send('openManualWindow')
-    const openExternal = () => openURL(lang === 'zh-CN' ? 'https://piclist.cn/app.html' : 'https://piclist.cn/en/app.html')
+    const openExternal = () => openURL(lang === II18nLanguage.ZH_CN ? 'https://piclist.cn/app.html' : 'https://piclist.cn/en/app.html')
 
     if (!manualPageOpenSetting) {
       ElMessageBox.confirm($T('MANUAL_PAGE_OPEN_TIP'), $T('MANUAL_PAGE_OPEN_TIP_TITLE'), {
@@ -338,10 +340,10 @@ const handleSelect = async (index: string) => {
         type: 'info',
         center: true
       }).then(() => {
-        saveConfig('settings.manualPageOpen', 'browser')
+        saveConfig(configPaths.settings.manualPageOpen, 'browser')
         openExternal()
       }).catch(() => {
-        saveConfig('settings.manualPageOpen', 'window')
+        saveConfig(configPaths.settings.manualPageOpen, 'window')
         openManual()
       })
     } else {

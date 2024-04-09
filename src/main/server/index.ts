@@ -11,6 +11,7 @@ import multer from 'multer'
 import { app } from 'electron'
 import path from 'path'
 import fs from 'fs-extra'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const DEFAULT_PORT = 36677
 const DEFAULT_HOST = '0.0.0.0'
@@ -49,10 +50,10 @@ class Server {
   }
 
   getConfigWithDefaults () {
-    let config = picgo.getConfig<IServerConfig>('settings.server')
+    let config = picgo.getConfig<IServerConfig>(configPaths.settings.server)
     if (!this.isValidConfig(config)) {
       config = { port: DEFAULT_PORT, host: DEFAULT_HOST, enable: true }
-      picgo.saveConfig({ 'settings.server': config })
+      picgo.saveConfig({ [configPaths.settings.server]: config })
     }
     config.host = config.host === '127.0.0.1' ? '0.0.0.0' : config.host
     return config
@@ -96,7 +97,7 @@ class Server {
       logger.info('[PicList Server] get a POST request from IP:', remoteAddress)
       let urlSP = query ? new URLSearchParams(query) : undefined
       if (remoteAddress === '::1' || remoteAddress === '127.0.0.1') {
-        const serverKey = picgo.getConfig<string>('settings.serverKey') || ''
+        const serverKey = picgo.getConfig<string>(configPaths.settings.serverKey) || ''
         if (urlSP) {
           urlSP.set('key', serverKey)
         } else {

@@ -1,7 +1,12 @@
 import Upyun from 'upyun'
 
+interface IConfigMap {
+  fileName: string
+  config: PartialKeys<IUpYunConfig, 'path'>
+}
+
 export default class UpyunApi {
-  static async delete (configMap: IStringKeyMap): Promise<boolean> {
+  static async delete (configMap: IConfigMap): Promise<boolean> {
     const { fileName, config: { bucket, operator, password, path } } = configMap
     try {
       const service = new Upyun.Service(bucket, operator, password)

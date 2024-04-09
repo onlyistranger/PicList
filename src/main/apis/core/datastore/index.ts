@@ -13,6 +13,7 @@ import { DBStore, JSONStore } from '@picgo/store'
 
 // External utility functions
 import { T } from '~/main/i18n'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const STORE_PATH = dbPathDir()
 
@@ -37,8 +38,8 @@ class ConfigStore {
       })
     }
 
-    if (!this.db.has('settings.shortKey')) {
-      this.db.set('settings.shortKey[picgo:upload]', {
+    if (!this.db.has(configPaths.settings.shortKey._path)) {
+      this.db.set(configPaths.settings.shortKey['picgo:upload'], {
         enable: true,
         key: 'CommandOrControl+Shift+P',
         name: 'upload',

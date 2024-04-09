@@ -274,6 +274,7 @@ import axios from 'axios'
 
 // 枚举类型声明
 import { IRPCActionType } from '~/universal/types/enum'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const $confirm = ElMessageBox.confirm
 const searchText = ref('')
@@ -416,7 +417,7 @@ onBeforeMount(async () => {
   })
   getPluginList()
   getSearchResult = debounce(_getSearchResult, 50)
-  needReload.value = await getConfig<boolean>('needReload') || false
+  needReload.value = await getConfig<boolean>(configPaths.needReload) || false
 })
 
 async function buildContextMenu (plugin: IPicGoPlugin) {
@@ -577,19 +578,19 @@ function handleSearchResult (item: INPMSearchResultObject) {
 // restore Uploader & Transformer
 async function handleRestoreState (item: string, name: string) {
   if (item === 'uploader') {
-    const current = await getConfig('picBed.current')
+    const current = await getConfig(configPaths.picBed.current)
     if (current === name) {
       saveConfig({
-        'picBed.current': 'smms',
-        'picBed.uploader': 'smms'
+        [configPaths.picBed.current]: 'smms',
+        [configPaths.picBed.uploader]: 'smms'
       })
     }
   }
   if (item === 'transformer') {
-    const current = await getConfig('picBed.transformer')
+    const current = await getConfig(configPaths.picBed.transformer)
     if (current === name) {
       saveConfig({
-        'picBed.transformer': 'path'
+        [configPaths.picBed.transformer]: 'path'
       })
     }
   }

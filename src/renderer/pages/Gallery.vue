@@ -499,6 +499,8 @@ import ALLApi from '@/apis/allApi'
 import { customRenameFormatTable, customStrMatch, customStrReplace } from '../manage/utils/common'
 import { picBedsCanbeDeleted } from '#/utils/static'
 import path from 'path'
+import { configPaths } from '~/universal/utils/configPaths'
+import { IPasteStyle } from '~/universal/types/enum'
 
 const images = ref<ImgInfo[]>([])
 const dialogVisible = ref(false)
@@ -731,7 +733,7 @@ function remove (item: ImgInfo) {
     type: 'warning'
   }).then(async () => {
     const file = await $$db.getById(item.id!)
-    if (await getConfig('settings.deleteCloudFile') && picBedsCanbeDeleted.includes(item?.type || 'placeholder')) {
+    if (await getConfig(configPaths.settings.deleteCloudFile) && picBedsCanbeDeleted.includes(item?.type || 'placeholder')) {
       const result = await ALLApi.delete(item)
       if (result) {
         ElNotification({
@@ -767,7 +769,7 @@ function remove (item: ImgInfo) {
 
 function handleDeleteCloudFile (val: ICheckBoxValueType) {
   saveConfig({
-    'settings.deleteCloudFile': val
+    [configPaths.settings.deleteCloudFile]: val
   })
 }
 
@@ -825,7 +827,7 @@ function multiRemove () {
     }).then(async () => {
       const files: IResult<ImgInfo>[] = []
       const imageIDList = Object.keys(choosedList)
-      const isDeleteCloudFile = await getConfig('settings.deleteCloudFile')
+      const isDeleteCloudFile = await getConfig(configPaths.settings.deleteCloudFile)
       if (isDeleteCloudFile) {
         for (let i = 0; i < imageIDList.length; i++) {
           const key = imageIDList[i]
@@ -919,12 +921,12 @@ function toggleHandleBar () {
 }
 
 async function handlePasteStyleChange (val: string) {
-  saveConfig('settings.pasteStyle', val)
+  saveConfig(configPaths.settings.pasteStyle, val)
   pasteStyle.value = val
 }
 
 function handleUseShortUrlChange (value: string) {
-  saveConfig('settings.useShortUrl', value === $T('UPLOAD_SHORT_URL'))
+  saveConfig(configPaths.settings.useShortUrl, value === $T('UPLOAD_SHORT_URL'))
   useShortUrl.value = value
 }
 
@@ -1046,8 +1048,8 @@ onBeforeUnmount(() => {
 })
 
 onActivated(async () => {
-  pasteStyle.value = (await getConfig('settings.pasteStyle')) || 'markdown'
-  useShortUrl.value = (await getConfig('settings.useShortUrl') ? $T('UPLOAD_SHORT_URL') : $T('UPLOAD_NORMAL_URL'))
+  pasteStyle.value = (await getConfig(configPaths.settings.pasteStyle)) || IPasteStyle.MARKDOWN
+  useShortUrl.value = (await getConfig(configPaths.settings.useShortUrl) ? $T('UPLOAD_SHORT_URL') : $T('UPLOAD_NORMAL_URL'))
   initDeleteCloud()
 })
 

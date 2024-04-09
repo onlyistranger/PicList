@@ -23,14 +23,15 @@ import { IWindowList } from '#/types/enum'
 // External utility functions
 import { CREATE_APP_MENU } from '@core/bus/constants'
 import { TOGGLE_SHORTKEY_MODIFIED_MODE } from '#/events/constants'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const windowList = new Map<IWindowList, IWindowListItem>()
 
 const handleWindowParams = (windowURL: string) => windowURL
 
 const getDefaultWindowSizes = (): { width: number, height: number } => {
-  const mainWindowWidth = picgo.getConfig<any>('settings.mainWindowWidth')
-  const mainWindowHeight = picgo.getConfig<any>('settings.mainWindowHeight')
+  const mainWindowWidth = picgo.getConfig<any>(configPaths.settings.mainWindowWidth)
+  const mainWindowHeight = picgo.getConfig<any>(configPaths.settings.mainWindowHeight)
   return {
     width: mainWindowWidth || 1200,
     height: mainWindowHeight || 800
@@ -127,7 +128,7 @@ const miniWindowOptions = {
   }
 } as IBrowserWindowOptions
 
-if (db.get('settings.miniWindowOntop')) {
+if (db.get(configPaths.settings.miniWindowOntop)) {
   miniWindowOptions.alwaysOnTop = true
 }
 

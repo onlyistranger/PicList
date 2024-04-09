@@ -11,7 +11,7 @@ import Dexie, { Table } from 'dexie'
 */
 
 export interface IFileCache {
-  key: string,
+  key: string
   value: any
 }
 

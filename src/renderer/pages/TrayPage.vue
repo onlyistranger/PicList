@@ -88,6 +88,7 @@ import { getConfig, sendToMain } from '@/utils/dataSender'
 
 // 工具函数
 import { handleUrlEncode } from '#/utils/common'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const files = ref<IResult<ImgInfo>[]>([])
 const notification = reactive({
@@ -128,8 +129,8 @@ const formatCustomLink = (customLink: string, item: ImgInfo) => {
 }
 
 async function copyTheLink (item: ImgInfo) {
-  const pasteStyle = await getConfig<IPasteStyle>('settings.pasteStyle') || IPasteStyle.MARKDOWN
-  const customLink = await getConfig<string>('settings.customLink')
+  const pasteStyle = await getConfig<IPasteStyle>(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
+  const customLink = await getConfig<string>(configPaths.settings.customLink)
   const txt = await pasteTemplate(pasteStyle, item, customLink)
   clipboard.writeText(txt)
   const myNotification = new Notification(notification.title, notification)
@@ -143,10 +144,10 @@ async function pasteTemplate (style: IPasteStyle, item: ImgInfo, customLink: str
   if (item.type === 'aws-s3' || item.type === 'aws-s3-plist') {
     url = item.imgUrl || item.url || ''
   }
-  if ((await getConfig('settings.encodeOutputURL')) === true) {
+  if ((await getConfig(configPaths.settings.encodeOutputURL)) === true) {
     url = handleUrlEncode(url)
   }
-  const useShortUrl = await getConfig('settings.useShortUrl') || false
+  const useShortUrl = await getConfig(configPaths.settings.useShortUrl) || false
   if (useShortUrl) {
     url = await ipcRenderer.invoke('getShortUrl', url)
   }

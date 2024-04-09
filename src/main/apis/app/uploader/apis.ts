@@ -18,15 +18,16 @@ import ALLApi from '@/apis/allApi'
 import picgo from '@core/picgo'
 import GuiApi from '../../gui'
 import uploader from '.'
-import { IWindowList } from '#/types/enum'
+import { IPasteStyle, IWindowList } from '#/types/enum'
 import { picBedsCanbeDeleted } from '#/utils/static'
 import path from 'path'
 import SSHClient from '~/main/utils/sshClient'
 import { ISftpPlistConfig } from 'piclist'
 import { getRawData } from '~/renderer/utils/common'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const handleClipboardUploading = async (): Promise<false | ImgInfo[]> => {
-  const useBuiltinClipboard = db.get('settings.useBuiltinClipboard') === undefined ? true : !!db.get('settings.useBuiltinClipboard')
+  const useBuiltinClipboard = db.get(configPaths.settings.useBuiltinClipboard) === undefined ? true : !!db.get(configPaths.settings.useBuiltinClipboard)
   const win = windowManager.getAvailableWindow()
   if (useBuiltinClipboard) {
     return await uploader.setWebContents(win!.webContents).uploadWithBuildInClipboard()
@@ -39,9 +40,9 @@ export const uploadClipboardFiles = async (): Promise<IStringKeyMap> => {
   if (img !== false) {
     if (img.length > 0) {
       const trayWindow = windowManager.get(IWindowList.TRAY_WINDOW)
-      const pasteStyle = db.get('settings.pasteStyle') || 'markdown'
-      handleCopyUrl(await (pasteTemplate(pasteStyle, img[0], db.get('settings.customLink'))))
-      const isShowResultNotification = db.get('settings.uploadResultNotification') === undefined ? true : !!db.get('settings.uploadResultNotification')
+      const pasteStyle = db.get(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
+      handleCopyUrl(await (pasteTemplate(pasteStyle, img[0], db.get(configPaths.settings.customLink))))
+      const isShowResultNotification = db.get(configPaths.settings.uploadResultNotification) === undefined ? true : !!db.get(configPaths.settings.uploadResultNotification)
       if (isShowResultNotification) {
         const notification = new Notification({
           title: T('UPLOAD_SUCCEED'),
@@ -88,8 +89,8 @@ export const uploadChoosedFiles = async (webContents: WebContents, files: IFileW
   const imgs = await uploader.setWebContents(webContents).upload(input)
   const result = []
   if (imgs !== false) {
-    const pasteStyle = db.get('settings.pasteStyle') || 'markdown'
-    const deleteLocalFile = db.get('settings.deleteLocalFile') || false
+    const pasteStyle = db.get(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
+    const deleteLocalFile = db.get(configPaths.settings.deleteLocalFile) || false
     const pasteText: string[] = []
     for (let i = 0; i < imgs.length; i++) {
       if (deleteLocalFile) {
@@ -99,8 +100,8 @@ export const uploadChoosedFiles = async (webContents: WebContents, files: IFileW
           picgo.log.error(err)
         })
       }
-      pasteText.push(await (pasteTemplate(pasteStyle, imgs[i], db.get('settings.customLink'))))
-      const isShowResultNotification = db.get('settings.uploadResultNotification') === undefined ? true : !!db.get('settings.uploadResultNotification')
+      pasteText.push(await (pasteTemplate(pasteStyle, imgs[i], db.get(configPaths.settings.customLink))))
+      const isShowResultNotification = db.get(configPaths.settings.uploadResultNotification) === undefined ? true : !!db.get(configPaths.settings.uploadResultNotification)
       if (isShowResultNotification) {
         const notification = new Notification({
           title: T('UPLOAD_SUCCEED'),
@@ -152,7 +153,7 @@ export const deleteChoosedFiles = async (list: ImgInfo[]): Promise<boolean[]> =>
         const dbStore = GalleryDB.getInstance()
         const file = await dbStore.getById(item.id)
         await dbStore.removeById(item.id)
-        if (await picgo.getConfig('settings.deleteCloudFile')) {
+        if (await picgo.getConfig(configPaths.settings.deleteCloudFile)) {
           if (item.type !== undefined && picBedsCanbeDeleted.includes(item.type)) {
             const noteFunc = (value: boolean) => {
               const notification = new Notification({

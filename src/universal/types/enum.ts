@@ -96,3 +96,22 @@ export enum IToolboxItemCheckStatus {
   SUCCESS = 'success',
   ERROR = 'error',
 }
+
+export enum ISartMode {
+  QUIET = 'quiet',
+  MINI = 'mini',
+  MAIN = 'main',
+  NO_TRAY = 'no-tray'
+}
+
+export enum II18nLanguage {
+  ZH_CN = 'zh-CN',
+  ZH_TW = 'zh-TW',
+  EN = 'en'
+}
+
+export enum IShortUrlServer {
+  C1N = 'c1n',
+  YOURLS = 'yourls',
+  CFWORKER = 'cf_worker'
+}

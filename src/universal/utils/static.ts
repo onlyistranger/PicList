@@ -22,3 +22,5 @@ export const picBedsCanbeDeleted = [
   'upyun',
   'webdavplist'
 ]
+
+export const DEFAULT_AES_PASSWORD = 'aesPassword'

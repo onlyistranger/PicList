@@ -18,7 +18,7 @@ import {
 import uploader from 'apis/app/uploader'
 import db, { GalleryDB } from '~/main/apis/core/datastore'
 import windowManager from 'apis/app/window/windowManager'
-import { IWindowList } from '#/types/enum'
+import { IPasteStyle, IWindowList } from '#/types/enum'
 import pasteTemplate from '~/main/utils/pasteTemplate'
 import pkg from 'root/package.json'
 import { ensureFilePath, handleCopyUrl } from '~/main/utils/common'
@@ -28,13 +28,14 @@ import { buildPicBedListMenu } from '~/main/events/remotes/menu'
 import clipboardPoll from '~/main/utils/clipboardPoll'
 import picgo from '../../core/picgo'
 import { uploadClipboardFiles } from '../uploader/apis'
+import { configPaths } from '~/universal/utils/configPaths'
 
 let contextMenu: Menu | null
 let tray: Tray | null
 
 export function setDockMenu () {
-  const isListeningClipboard = db.get('settings.isListeningClipboard') || false
-  const autoCloseMiniWindow = db.get('settings.autoCloseMiniWindow') || false
+  const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
+  const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
   const dockMenu = Menu.buildFromTemplate([
     {
       label: T('OPEN_MAIN_WINDOW'),
@@ -50,7 +51,7 @@ export function setDockMenu () {
     {
       label: T('START_WATCH_CLIPBOARD'),
       click () {
-        db.set('settings.isListeningClipboard', true)
+        db.set(configPaths.settings.isListeningClipboard, true)
         clipboardPoll.startListening()
         clipboardPoll.on('change', () => {
           picgo.log.info('clipboard changed')
@@ -63,7 +64,7 @@ export function setDockMenu () {
     {
       label: T('STOP_WATCH_CLIPBOARD'),
       click () {
-        db.set('settings.isListeningClipboard', false)
+        db.set(configPaths.settings.isListeningClipboard, false)
         clipboardPoll.stopListening()
         clipboardPoll.removeAllListeners()
         setDockMenu()
@@ -84,7 +85,7 @@ export function createMenu () {
           label: T('OPEN_MAIN_WINDOW'),
           click () {
             const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)
-            const autoCloseMiniWindow = db.get('settings.autoCloseMiniWindow') || false
+            const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
             settingWindow!.show()
             settingWindow!.focus()
             if (windowManager.has(IWindowList.MINI_WINDOW) && autoCloseMiniWindow) {
@@ -141,7 +142,7 @@ export function createMenu () {
 
 export function createContextMenu () {
   const ClipboardWatcher = clipboardPoll
-  const isListeningClipboard = db.get('settings.isListeningClipboard') || false
+  const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
   if (process.platform === 'darwin' || process.platform === 'win32') {
     const submenu = buildPicBedListMenu()
     const template = [
@@ -149,7 +150,7 @@ export function createContextMenu () {
         label: T('OPEN_MAIN_WINDOW'),
         click () {
           const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)
-          const autoCloseMiniWindow = db.get('settings.autoCloseMiniWindow') || false
+          const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
           settingWindow!.show()
           settingWindow!.focus()
           if (windowManager.has(IWindowList.MINI_WINDOW) && autoCloseMiniWindow) {
@@ -166,7 +167,7 @@ export function createContextMenu () {
       {
         label: T('START_WATCH_CLIPBOARD'),
         click () {
-          db.set('settings.isListeningClipboard', true)
+          db.set(configPaths.settings.isListeningClipboard, true)
           ClipboardWatcher.startListening()
           ClipboardWatcher.on('change', () => {
             picgo.log.info('clipboard changed')
@@ -179,7 +180,7 @@ export function createContextMenu () {
       {
         label: T('STOP_WATCH_CLIPBOARD'),
         click () {
-          db.set('settings.isListeningClipboard', false)
+          db.set(configPaths.settings.isListeningClipboard, false)
           ClipboardWatcher.stopListening()
           ClipboardWatcher.removeAllListeners()
           createContextMenu()
@@ -206,11 +207,11 @@ export function createContextMenu () {
           click () {
             const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
             miniWindow.removeAllListeners()
-            if (db.get('settings.miniWindowOntop')) {
+            if (db.get(configPaths.settings.miniWindowOntop)) {
               miniWindow.setAlwaysOnTop(true)
             }
             const { width, height } = screen.getPrimaryDisplay().workAreaSize
-            const lastPosition = db.get('settings.miniWindowPosition')
+            const lastPosition = db.get(configPaths.settings.miniWindowPosition)
             if (lastPosition) {
               miniWindow.setPosition(lastPosition[0], lastPosition[1])
             } else {
@@ -218,13 +219,13 @@ export function createContextMenu () {
             }
             const setPositionFunc = () => {
               const position = miniWindow.getPosition()
-              db.set('settings.miniWindowPosition', position)
+              db.set(configPaths.settings.miniWindowPosition, position)
             }
             miniWindow.on('close', setPositionFunc)
             miniWindow.on('move', setPositionFunc)
             miniWindow.show()
             miniWindow.focus()
-            const autoCloseMainWindow = db.get('settings.autoCloseMainWindow') || false
+            const autoCloseMainWindow = db.get(configPaths.settings.autoCloseMainWindow) || false
             if (windowManager.has(IWindowList.SETTING_WINDOW) && autoCloseMainWindow) {
               windowManager.get(IWindowList.SETTING_WINDOW)!.hide()
             }
@@ -246,7 +247,7 @@ export function createContextMenu () {
         label: T('OPEN_MAIN_WINDOW'),
         click () {
           const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)
-          const autoCloseMiniWindow = db.get('settings.autoCloseMiniWindow') || false
+          const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
           settingWindow!.show()
           settingWindow!.focus()
           if (windowManager.has(IWindowList.MINI_WINDOW) && autoCloseMiniWindow) {
@@ -259,11 +260,11 @@ export function createContextMenu () {
         click () {
           const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
           miniWindow.removeAllListeners()
-          if (db.get('settings.miniWindowOntop')) {
+          if (db.get(configPaths.settings.miniWindowOntop)) {
             miniWindow.setAlwaysOnTop(true)
           }
           const { width, height } = screen.getPrimaryDisplay().workAreaSize
-          const lastPosition = db.get('settings.miniWindowPosition')
+          const lastPosition = db.get(configPaths.settings.miniWindowPosition)
           if (lastPosition) {
             miniWindow.setPosition(lastPosition[0], lastPosition[1])
           } else {
@@ -271,13 +272,13 @@ export function createContextMenu () {
           }
           const setPositionFunc = () => {
             const position = miniWindow.getPosition()
-            db.set('settings.miniWindowPosition', position)
+            db.set(configPaths.settings.miniWindowPosition, position)
           }
           miniWindow.on('close', setPositionFunc)
           miniWindow.on('move', setPositionFunc)
           miniWindow.show()
           miniWindow.focus()
-          const autoCloseMainWindow = db.get('settings.autoCloseMainWindow') || false
+          const autoCloseMainWindow = db.get(configPaths.settings.autoCloseMainWindow) || false
           if (windowManager.has(IWindowList.SETTING_WINDOW) && autoCloseMainWindow) {
             windowManager.get(IWindowList.SETTING_WINDOW)!.hide()
           }
@@ -286,7 +287,7 @@ export function createContextMenu () {
       {
         label: T('START_WATCH_CLIPBOARD'),
         click () {
-          db.set('settings.isListeningClipboard', true)
+          db.set(configPaths.settings.isListeningClipboard, true)
           ClipboardWatcher.startListening()
           ClipboardWatcher.on('change', () => {
             picgo.log.info('clipboard changed')
@@ -299,7 +300,7 @@ export function createContextMenu () {
       {
         label: T('STOP_WATCH_CLIPBOARD'),
         click () {
-          db.set('settings.isListeningClipboard', false)
+          db.set(configPaths.settings.isListeningClipboard, false)
           ClipboardWatcher.stopListening()
           ClipboardWatcher.removeAllListeners()
           createContextMenu()
@@ -388,7 +389,7 @@ export function createTray () {
           windowManager.get(IWindowList.TRAY_WINDOW)!.hide()
         }
         const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)
-        const autoCloseMiniWindow = db.get('settings.autoCloseMiniWindow') || false
+        const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
         settingWindow!.show()
         settingWindow!.focus()
         if (windowManager.has(IWindowList.MINI_WINDOW) && autoCloseMiniWindow) {
@@ -412,21 +413,21 @@ export function createTray () {
     // drop-files only be supported in macOS
     // so the tray window must be available
     tray.on('drop-files', async (event: Event, files: string[]) => {
-      const pasteStyle = db.get('settings.pasteStyle') || 'markdown'
+      const pasteStyle = db.get(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
       const rawInput = cloneDeep(files)
       const trayWindow = windowManager.get(IWindowList.TRAY_WINDOW)!
       const imgs = await uploader
         .setWebContents(trayWindow.webContents)
         .upload(files)
-      const deleteLocalFile = db.get('settings.deleteLocalFile') || false
+      const deleteLocalFile = db.get(configPaths.settings.deleteLocalFile) || false
       if (imgs !== false) {
         const pasteText: string[] = []
         for (let i = 0; i < imgs.length; i++) {
           if (deleteLocalFile) {
             await fs.remove(rawInput[i])
           }
-          pasteText.push(await (pasteTemplate(pasteStyle, imgs[i], db.get('settings.customLink'))))
-          const isShowResultNotification = db.get('settings.uploadResultNotification') === undefined ? true : !!db.get('settings.uploadResultNotification')
+          pasteText.push(await (pasteTemplate(pasteStyle, imgs[i], db.get(configPaths.settings.customLink))))
+          const isShowResultNotification = db.get(configPaths.settings.uploadResultNotification) === undefined ? true : !!db.get(configPaths.settings.uploadResultNotification)
           if (isShowResultNotification) {
             const notification = new Notification({
               title: T('UPLOAD_SUCCEED'),

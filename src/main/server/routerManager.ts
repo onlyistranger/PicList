@@ -15,6 +15,7 @@ import { AESHelper } from '../utils/aesHelper'
 import { marked } from 'marked'
 import { markdownContent } from './apiDoc'
 import http from 'http'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const appPath = app.getPath('userData')
 const serverTempDir = path.join(appPath, 'serverTemp')
@@ -46,7 +47,7 @@ router.post('/upload', async ({
 }): Promise<void> => {
   try {
     const passedKey = urlparams?.get('key')
-    const serverKey = picgo.getConfig<string>('settings.serverKey') || ''
+    const serverKey = picgo.getConfig<string>(configPaths.settings.serverKey) || ''
     if (serverKey && passedKey !== serverKey) {
       handleResponse({
         response,

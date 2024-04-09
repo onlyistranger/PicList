@@ -2,13 +2,7 @@ import OSS from 'ali-oss'
 
 interface IConfigMap {
   fileName: string
-  config: {
-    accessKeyId: string
-    accessKeySecret: string
-    bucket: string
-    area: string
-    path?: string
-  }
+  config: PartialKeys<IAliYunConfig, 'path'>
 }
 
 export default class AliyunApi {

@@ -466,7 +466,8 @@ import { useRouter } from 'vue-router'
 
 // 路由配置常量
 import { PICBEDS_PAGE } from '@/router/config'
-import { IRPCActionType } from '~/universal/types/enum'
+import { IPasteStyle, IRPCActionType } from '~/universal/types/enum'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const $router = useRouter()
 
@@ -538,14 +539,14 @@ function handleSaveConfig () {
   const formatConvertObjFilter = Object.fromEntries(formatConvertObjEntriesFilter)
   formatConvertObj.value = JSON.stringify(formatConvertObjFilter)
   compressForm.formatConvertObj = formatConvertObjFilter
-  saveConfig('buildIn.compress', toRaw(compressForm))
-  saveConfig('buildIn.watermark', toRaw(waterMarkForm))
+  saveConfig(configPaths.buildIn.compress, toRaw(compressForm))
+  saveConfig(configPaths.buildIn.watermark, toRaw(waterMarkForm))
   closeDialog()
 }
 
 async function initData () {
-  const compress = await getConfig<IBuildInCompressOptions>('buildIn.compress')
-  const watermark = await getConfig<IBuildInWaterMarkOptions>('buildIn.watermark')
+  const compress = await getConfig<IBuildInCompressOptions>(configPaths.buildIn.compress)
+  const watermark = await getConfig<IBuildInWaterMarkOptions>(configPaths.buildIn.watermark)
   if (compress) {
     compressForm.quality = compress.quality ?? 100
     compressForm.isConvert = compress.isConvert ?? false
@@ -637,7 +638,7 @@ function onProgressChange (val: number) {
 
 async function handlePicBedNameClick (_picBedName: string, picBedConfigName: string | undefined) {
   const formatedpicBedConfigName = picBedConfigName || 'Default'
-  const currentPicBed = await getConfig<string>('picBed.current')
+  const currentPicBed = await getConfig<string>(configPaths.picBed.current)
   const currentPicBedConfig = await getConfig<any[]>(`uploader.${currentPicBed}`) as any || {}
   const configList = await triggerRPC<IUploaderConfigItem>(IRPCActionType.GET_PICBED_CONFIG_LIST, currentPicBed)
   const currentConfigList = configList?.configList ?? []
@@ -721,23 +722,23 @@ function ipcSendFiles (files: FileList) {
 }
 
 async function getPasteStyle () {
-  pasteStyle.value = await getConfig('settings.pasteStyle') || 'markdown'
-  customLink.value = await getConfig('settings.customLink') || '![$fileName]($url)'
+  pasteStyle.value = await getConfig(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
+  customLink.value = await getConfig(configPaths.settings.customLink) || '![$fileName]($url)'
 }
 
 async function getUseShortUrl () {
-  useShortUrl.value = await getConfig('settings.useShortUrl') || false
+  useShortUrl.value = await getConfig(configPaths.settings.useShortUrl) || false
 }
 
 async function handleUseShortUrlChange () {
   saveConfig({
-    'settings.useShortUrl': useShortUrl.value
+    [configPaths.settings.useShortUrl]: useShortUrl.value
   })
 }
 
 function handlePasteStyleChange (val: string | number | boolean) {
   saveConfig({
-    'settings.pasteStyle': val
+    [configPaths.settings.pasteStyle]: val
   })
 }
 
@@ -766,7 +767,7 @@ function handleInputBoxValue (val: string) {
 }
 
 async function getDefaultPicBed () {
-  const currentPicBed = await getConfig<string>('picBed.current')
+  const currentPicBed = await getConfig<string>(configPaths.picBed.current)
   picBed.value.forEach(item => {
     if (item.type === currentPicBed) {
       picBedName.value = item.name

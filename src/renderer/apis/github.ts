@@ -3,12 +3,7 @@ import { Octokit } from '@octokit/rest'
 interface IConfigMap {
   fileName: string
   hash: string
-  config: {
-    repo: string
-    token: string
-    branch: string
-    path?: string
-  }
+  config: PartialKeys<IGitHubConfig, 'path'>
 }
 
 export default class GithubApi {

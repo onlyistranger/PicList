@@ -33,7 +33,15 @@ export const enforceNumber = (num: number | string) => isNaN(+num) ? 0 : +num
 export const isDev = process.env.NODE_ENV === 'development'
 
 export const trimValues = <T extends IStringKeyMap>(obj: T): {[K in keyof T]: T[K] extends string ? string : T[K]} => {
-  return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, typeof value === 'string' ? value.trim() : value])) as {[K in keyof T]: T[K] extends string ? string : T[K]}
+  return Object
+    .fromEntries(
+      Object
+        .entries(obj)
+        .map(([key, value]) =>
+          [key, typeof value === 'string'
+            ? value.trim()
+            : value])
+    ) as {[K in keyof T]: T[K] extends string ? string : T[K]}
 }
 
 export function isNeedToShorten (alias: string, cutOff = 20) {
@@ -54,7 +62,9 @@ export function safeSliceF (str:string, total: number) {
 }
 
 export function encodeFilePath (filePath: string) {
-  filePath = filePath.replace(/\\/g, '/')
-  const parts = filePath.split('/')
-  return parts.map(encodeURIComponent).join('/')
+  return filePath
+    .replace(/\\/g, '/')
+    .split('/')
+    .map(encodeURIComponent)
+    .join('/')
 }

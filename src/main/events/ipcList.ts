@@ -14,7 +14,7 @@ import {
 import windowManager from 'apis/app/window/windowManager'
 
 // 枚举类型声明
-import { IWindowList } from '#/types/enum'
+import { IPasteStyle, IWindowList } from '#/types/enum'
 
 // 上传器
 import uploader from 'apis/app/uploader'
@@ -90,6 +90,7 @@ import { ISftpPlistConfig } from 'piclist'
 
 import { removeFileFromS3InMain, removeFileFromDogeInMain, removeFileFromHuaweiInMain } from '~/main/utils/deleteFunc'
 import webServer from '../server/webServer'
+import { configPaths } from '~/universal/utils/configPaths'
 
 const STORE_PATH = app.getPath('userData')
 
@@ -103,9 +104,9 @@ export default {
       // macOS use builtin clipboard is OK
       const img = await uploader.setWebContents(trayWindow.webContents).uploadWithBuildInClipboard()
       if (img !== false) {
-        const pasteStyle = db.get('settings.pasteStyle') || 'markdown'
-        handleCopyUrl(await (pasteTemplate(pasteStyle, img[0], db.get('settings.customLink'))))
-        const isShowResultNotification = db.get('settings.uploadResultNotification') === undefined ? true : !!db.get('settings.uploadResultNotification')
+        const pasteStyle = db.get(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
+        handleCopyUrl(await (pasteTemplate(pasteStyle, img[0], db.get(configPaths.settings.customLink))))
+        const isShowResultNotification = db.get(configPaths.settings.uploadResultNotification) === undefined ? true : !!db.get(configPaths.settings.uploadResultNotification)
         if (isShowResultNotification) {
           const notification = new Notification({
             title: T('UPLOAD_SUCCEED'),
@@ -299,7 +300,7 @@ export default {
 
     ipcMain.on('openSettingWindow', () => {
       windowManager.get(IWindowList.SETTING_WINDOW)!.show()
-      const autoCloseMiniWindow = db.get('settings.autoCloseMiniWindow') || false
+      const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
       if (autoCloseMiniWindow) {
         if (windowManager.has(IWindowList.MINI_WINDOW)) {
           windowManager.get(IWindowList.MINI_WINDOW)!.hide()
@@ -315,11 +316,11 @@ export default {
       const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
       const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)!
       miniWindow.removeAllListeners()
-      if (db.get('settings.miniWindowOntop')) {
+      if (db.get(configPaths.settings.miniWindowOntop)) {
         miniWindow.setAlwaysOnTop(true)
       }
       const { width, height } = screen.getPrimaryDisplay().workAreaSize
-      const lastPosition = db.get('settings.miniWindowPosition')
+      const lastPosition = db.get(configPaths.settings.miniWindowPosition)
       if (lastPosition) {
         miniWindow.setPosition(lastPosition[0], lastPosition[1])
       } else {
@@ -327,7 +328,7 @@ export default {
       }
       const setPositionFunc = () => {
         const position = miniWindow.getPosition()
-        db.set('settings.miniWindowPosition', position)
+        db.set(configPaths.settings.miniWindowPosition, position)
       }
       miniWindow.on('close', setPositionFunc)
       miniWindow.on('move', setPositionFunc)

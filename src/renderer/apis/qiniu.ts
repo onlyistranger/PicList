@@ -1,13 +1,8 @@
 import Qiniu from 'qiniu'
 
 interface IConfigMap {
-  fileName: string;
-  config: {
-    accessKey: string;
-    secretKey: string;
-    bucket: string;
-    path?: string;
-  }
+  fileName: string
+  config: PartialKeys<IQiniuConfig, 'path'>
 }
 
 export default class QiniuApi {

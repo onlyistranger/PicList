@@ -14,7 +14,7 @@ import {
 import beforeOpen from '~/main/utils/beforeOpen'
 import ipcList from '~/main/events/ipcList'
 import busEventList from '~/main/events/busEventList'
-import { IRemoteNoticeTriggerHook, IWindowList } from '#/types/enum'
+import { II18nLanguage, IRemoteNoticeTriggerHook, ISartMode, IWindowList } from '#/types/enum'
 import windowManager from 'apis/app/window/windowManager'
 import {
   uploadChoosedFiles,
@@ -47,6 +47,7 @@ import fs from 'fs-extra'
 import { startFileServer } from '../fileServer'
 import webServer from '../server/webServer'
 import axios from 'axios'
+import { configPaths } from '~/universal/utils/configPaths'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const handleStartUpFiles = (argv: string[], cwd: string) => {
@@ -74,10 +75,10 @@ autoUpdater.setFeedURL({
 autoUpdater.autoDownload = false
 
 autoUpdater.on('update-available', async (info: UpdateInfo) => {
-  const lang = db.get('settings.language') || 'zh-CN'
+  const lang = db.get(configPaths.settings.language) || II18nLanguage.ZH_CN
   let updateLog = ''
   try {
-    const url = lang === 'zh-CN' ? 'https://release.piclist.cn/currentVersion.md' : 'https://release.piclist.cn/currentVersion_en.md'
+    const url = lang === II18nLanguage.ZH_CN ? 'https://release.piclist.cn/currentVersion.md' : 'https://release.piclist.cn/currentVersion_en.md'
     const res = await axios.get(url)
     updateLog = res.data
   } catch (e: any) {
@@ -98,7 +99,7 @@ autoUpdater.on('update-available', async (info: UpdateInfo) => {
     } else {
       shell.openExternal('https://github.com/Kuingsmile/PicList/releases/latest')
     }
-    db.set('settings.showUpdateTip', !result.checkboxChecked)
+    db.set(configPaths.settings.showUpdateTip, !result.checkboxChecked)
   }).catch((err) => {
     logger.error(err)
   })
@@ -152,27 +153,27 @@ class LifeCycle {
       createProtocol('picgo')
       windowManager.create(IWindowList.TRAY_WINDOW)
       windowManager.create(IWindowList.SETTING_WINDOW)
-      const isAutoListenClipboard = db.get('settings.isAutoListenClipboard') || false
+      const isAutoListenClipboard = db.get(configPaths.settings.isAutoListenClipboard) || false
       const ClipboardWatcher = clipboardPoll
       if (isAutoListenClipboard) {
-        db.set('settings.isListeningClipboard', true)
+        db.set(configPaths.settings.isListeningClipboard, true)
         ClipboardWatcher.startListening()
         ClipboardWatcher.on('change', () => {
           picgo.log.info('clipboard changed')
           uploadClipboardFiles()
         })
       } else {
-        db.set('settings.isListeningClipboard', false)
+        db.set(configPaths.settings.isListeningClipboard, false)
       }
-      const isHideDock = db.get('settings.isHideDock') || false
-      const startMode = db.get('settings.startMode') || 'quiet'
+      const isHideDock = db.get(configPaths.settings.isHideDock) || false
+      const startMode = db.get(configPaths.settings.startMode) || ISartMode.QUIET
       if (process.platform === 'darwin') {
         isHideDock ? app.dock.hide() : setDockMenu()
-        startMode !== 'no-tray' && createTray()
+        startMode !== ISartMode.NO_TRAY && createTray()
       } else {
         createTray()
       }
-      db.set('needReload', false)
+      db.set(configPaths.needReload, false)
       updateChecker()
       // 不需要阻塞
       process.nextTick(() => {
@@ -194,15 +195,15 @@ class LifeCycle {
       }
       await remoteNoticeHandler.init()
       remoteNoticeHandler.triggerHook(IRemoteNoticeTriggerHook.APP_START)
-      if (startMode === 'mini') {
+      if (startMode === ISartMode.MINI) {
         windowManager.create(IWindowList.MINI_WINDOW)
         const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
         miniWindow.removeAllListeners()
-        if (db.get('settings.miniWindowOntop')) {
+        if (db.get(configPaths.settings.miniWindowOntop)) {
           miniWindow.setAlwaysOnTop(true)
         }
         const { width, height } = screen.getPrimaryDisplay().workAreaSize
-        const lastPosition = db.get('settings.miniWindowPosition')
+        const lastPosition = db.get(configPaths.settings.miniWindowPosition)
         if (lastPosition) {
           miniWindow.setPosition(lastPosition[0], lastPosition[1])
         } else {
@@ -210,13 +211,13 @@ class LifeCycle {
         }
         const setPositionFunc = () => {
           const position = miniWindow.getPosition()
-          db.set('settings.miniWindowPosition', position)
+          db.set(configPaths.settings.miniWindowPosition, position)
         }
         miniWindow.on('close', setPositionFunc)
         miniWindow.on('move', setPositionFunc)
         miniWindow.show()
         miniWindow.focus()
-      } else if (startMode === 'main') {
+      } else if (startMode === ISartMode.MAIN) {
         const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)!
         settingWindow.show()
         settingWindow.focus()
@@ -251,7 +252,7 @@ class LifeCycle {
       }
     })
     app.setLoginItemSettings({
-      openAtLogin: db.get('settings.autoStart') || false
+      openAtLogin: db.get(configPaths.settings.autoStart) || false
     })
     if (process.platform === 'win32') {
       app.setAppUserModelId('com.kuingsmile.piclist')
