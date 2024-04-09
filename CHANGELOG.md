@@ -1,3 +1,36 @@
+## :tada: 2.8.1 (2024-04-09)
+
+
+### :sparkles: Features
+
+* **custom:** add api doc for 36677 port ([872a1a7](https://github.com/Kuingsmile/piclist/commit/872a1a7))
+* **custom:** add buildin web server ([ab8b62e](https://github.com/Kuingsmile/piclist/commit/ab8b62e)), closes [#180](https://github.com/Kuingsmile/piclist/issues/180)
+* **custom:** add log for image processing ([e4c1c7f](https://github.com/Kuingsmile/piclist/commit/e4c1c7f))
+* **custom:** add u flag for gallery regexp match ([aa9e535](https://github.com/Kuingsmile/piclist/commit/aa9e535))
+* **custom:** change buildin rename md5 calculate ([bf8d7b4](https://github.com/Kuingsmile/piclist/commit/bf8d7b4)), closes [#178](https://github.com/Kuingsmile/piclist/issues/178)
+* **custom:** exclude svg from watermarker ([75b0c7f](https://github.com/Kuingsmile/piclist/commit/75b0c7f)), closes [#182](https://github.com/Kuingsmile/piclist/issues/182)
+* **custom:** optimize the processing of upload path and custom url ([ae40a16](https://github.com/Kuingsmile/piclist/commit/ae40a16))
+* **custom:** optimize webServer ([e6e9472](https://github.com/Kuingsmile/piclist/commit/e6e9472))
+* **custom:** refactor upload and delete api ([475b85e](https://github.com/Kuingsmile/piclist/commit/475b85e))
+* **custom:** update api doc ([922f04f](https://github.com/Kuingsmile/piclist/commit/922f04f))
+
+
+### :bug: Bug Fixes
+
+* **custom:** fix compatiblity with typora ([762913c](https://github.com/Kuingsmile/piclist/commit/762913c))
+* **custom:** fix error handling in server startup ([cf0450f](https://github.com/Kuingsmile/piclist/commit/cf0450f))
+* **custom:** fix image watermark bug ([8e5e6d4](https://github.com/Kuingsmile/piclist/commit/8e5e6d4))
+
+
+### :pencil: Documentation
+
+* **custom:** add tg group qr code ([5cd34a6](https://github.com/Kuingsmile/piclist/commit/5cd34a6))
+* **custom:** prepare for 2.8.1 ([f73badd](https://github.com/Kuingsmile/piclist/commit/f73badd))
+* **custom:** prepare for 2.81 ([0476346](https://github.com/Kuingsmile/piclist/commit/0476346))
+* **custom:** update tg group link ([20f6acc](https://github.com/Kuingsmile/piclist/commit/20f6acc))
+
+
+
 # :tada: 2.8.0 (2024-03-14)
 
 
