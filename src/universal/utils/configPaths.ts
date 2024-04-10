@@ -94,7 +94,7 @@ export interface IConfigStruct {
   uploader: IUploaderConfig
   buildIn: {
     compress: IBuildInCompressOptions
-    waterMark: IBuildInWaterMarkOptions
+    watermark: IBuildInWaterMarkOptions
     rename: {
       enable: boolean
       format: string
@@ -249,7 +249,7 @@ export const configPaths: IConfigPaths = {
   uploader: 'uploader',
   buildIn: {
     compress: 'buildIn.compress',
-    watermark: 'buildIn.waterMark',
+    watermark: 'buildIn.watermark',
     rename: 'buildIn.rename'
   },
   debug: 'debug',
