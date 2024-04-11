@@ -106,9 +106,13 @@ class Uploader {
               const window = windowManager.create(IWindowList.RENAME_WINDOW)!
               logger.info('create rename window')
               ipcMain.on(GET_RENAME_FILE_NAME, (evt) => {
-                if (evt.sender.id === window.webContents.id) {
-                  logger.info('rename window ready, wait for rename...')
-                  window.webContents.send(RENAME_FILE_NAME, fileName, item.fileName, window.webContents.id)
+                try {
+                  if (evt.sender.id === window.webContents.id) {
+                    logger.info('rename window ready, wait for rename...')
+                    window.webContents.send(RENAME_FILE_NAME, fileName, item.fileName, window.webContents.id)
+                  }
+                } catch (e: any) {
+                  logger.error(e)
                 }
               })
               name = await waitForRename(window, window.webContents.id)
