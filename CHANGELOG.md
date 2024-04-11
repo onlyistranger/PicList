@@ -1,3 +1,20 @@
+## :tada: 2.8.2 (2024-04-11)
+
+
+### :bug: Bug Fixes
+
+* **custom:** exclude gif from format convert ([715f662](https://github.com/Kuingsmile/piclist/commit/715f662))
+* **custom:** fix rename window bug ([45fae30](https://github.com/Kuingsmile/piclist/commit/45fae30)), closes [#186](https://github.com/Kuingsmile/piclist/issues/186) [#117](https://github.com/Kuingsmile/piclist/issues/117)
+* **custom:** fix rename window position bug ([1798220](https://github.com/Kuingsmile/piclist/commit/1798220))
+* **custom:** fix watermark bug ([a6e3542](https://github.com/Kuingsmile/piclist/commit/a6e3542)), closes [#188](https://github.com/Kuingsmile/piclist/issues/188)
+
+
+### :pencil: Documentation
+
+* **custom:** prepare for 2.8.2 ([ef9d34c](https://github.com/Kuingsmile/piclist/commit/ef9d34c))
+
+
+
 ## :tada: 2.8.1 (2024-04-09)
 
 
