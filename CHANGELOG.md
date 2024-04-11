@@ -1,3 +1,12 @@
+## :tada: 2.8.3 (2024-04-11)
+
+
+### :sparkles: Features
+
+* **custom:** exclude gif from format convert ([0b0b2ad](https://github.com/Kuingsmile/piclist/commit/0b0b2ad))
+
+
+
 ## :tada: 2.8.2 (2024-04-11)
 
 
