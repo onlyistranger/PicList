@@ -236,7 +236,7 @@ windowList.set(IWindowList.RENAME_WINDOW, {
   options: () => renameWindowOptions,
   async callback (window, windowManager) {
     window.loadURL(handleWindowParams(RENAME_WINDOW_URL))
-    const currentWindow = windowManager.getAvailableWindow()
+    const currentWindow = windowManager.getAvailableWindow(true)
     if (currentWindow && currentWindow.isVisible()) {
     // bounds: { x: 821, y: 75, width: 800, height: 450 }
       const bounds = currentWindow.getBounds()
@@ -259,7 +259,7 @@ windowList.set(IWindowList.TOOLBOX_WINDOW, {
   options: () => toolboxWindowOptions,
   async callback (window, windowManager) {
     window.loadURL(TOOLBOX_WINDOW_URL)
-    const currentWindow = windowManager.getAvailableWindow()
+    const currentWindow = windowManager.getAvailableWindow(true)
     if (currentWindow && currentWindow.isVisible()) {
       const bounds = currentWindow.getBounds()
       const positionX = bounds.x + bounds.width / 2 - 400

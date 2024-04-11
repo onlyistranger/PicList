@@ -58,9 +58,9 @@ class WindowManager implements IWindowManager {
     }
   }
 
-  getAvailableWindow () {
+  getAvailableWindow (isSkipMiniWindow = false) {
     const miniWindow = this.windowMap.get(IWindowList.MINI_WINDOW)
-    if (miniWindow && miniWindow.isVisible()) {
+    if (miniWindow && miniWindow.isVisible() && !isSkipMiniWindow) {
       return miniWindow
     } else {
       const settingWindow = this.windowMap.get(IWindowList.SETTING_WINDOW)

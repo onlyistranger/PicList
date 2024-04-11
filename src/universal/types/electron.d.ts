@@ -15,7 +15,7 @@ declare interface IWindowManager {
   has: (name: IWindowList) => boolean
   // delete: (name: IWindowList) => void
   deleteById: (id: number) => void
-  getAvailableWindow: () => BrowserWindow
+  getAvailableWindow: (isSkipMiniWindow?: boolean) => BrowserWindow
 }
 
 type IpcRendererListener = (event: import('electron').IpcRendererEvent, ...args: any[]) => void
