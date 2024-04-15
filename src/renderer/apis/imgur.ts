@@ -5,28 +5,8 @@ interface IConfigMap {
   hash?: string
 }
 
-interface IConfig {
-  headers: {
-    Authorization: string
-  }
-  timeout: number
-}
-
 export default class ImgurApi {
-  static baseUrl = 'https://api.imgur.com/3'
-  private static async makeRequest (
-    method: 'delete',
-    url: string,
-    config: IConfig
-  ): Promise<boolean> {
-    try {
-      const response: AxiosResponse = await axios[method](url, config)
-      return response.status === 200
-    } catch (error) {
-      console.error(error)
-      return false
-    }
-  }
+  static #baseUrl = 'https://api.imgur.com/3'
 
   static async delete (configMap: IConfigMap): Promise<boolean> {
     const {
@@ -37,17 +17,22 @@ export default class ImgurApi {
 
     if (username && accessToken) {
       Authorization = `Bearer ${accessToken}`
-      apiUrl = `${ImgurApi.baseUrl}/account/${username}/image/${hash}`
+      apiUrl = `${ImgurApi.#baseUrl}/account/${username}/image/${hash}`
     } else if (clientId) {
       Authorization = `Client-ID ${clientId}`
-      apiUrl = `${ImgurApi.baseUrl}/image/${hash}`
+      apiUrl = `${ImgurApi.#baseUrl}/image/${hash}`
     } else {
       return false
     }
-    const requestConfig: IConfig = {
-      headers: { Authorization },
-      timeout: 30000
+    try {
+      const response: AxiosResponse = await axios.delete(apiUrl, {
+        headers: { Authorization },
+        timeout: 30000
+      })
+      return response.status === 200
+    } catch (error) {
+      console.error(error)
+      return false
     }
-    return ImgurApi.makeRequest('delete', apiUrl, requestConfig)
   }
 }

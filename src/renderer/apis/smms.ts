@@ -6,7 +6,7 @@ interface IConfigMap {
 }
 
 export default class SmmsApi {
-  private static readonly baseUrl = 'https://smms.app/api/v2'
+  static readonly #baseUrl = 'https://smms.app/api/v2'
 
   static async delete (configMap: IConfigMap): Promise<boolean> {
     const { hash, config } = configMap
@@ -19,7 +19,7 @@ export default class SmmsApi {
 
     try {
       const response: AxiosResponse = await axios.get(
-        `${SmmsApi.baseUrl}/delete/${hash}`, {
+        `${SmmsApi.#baseUrl}/delete/${hash}`, {
           headers: {
             Authorization: token
           },

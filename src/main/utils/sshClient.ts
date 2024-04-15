@@ -11,11 +11,11 @@ class SSHClient {
   private static _client: NodeSSH
   private _isConnected = false
 
-  public static get instance (): SSHClient {
+  static get instance (): SSHClient {
     return this._instance || (this._instance = new this())
   }
 
-  public static get client (): NodeSSH {
+  static get client (): NodeSSH {
     return this._client || (this._client = new NodeSSH())
   }
 
@@ -23,7 +23,7 @@ class SSHClient {
     return path.replace(/\\/g, '/')
   }
 
-  public async connect (config: ISftpPlistConfig): Promise<boolean> {
+  async connect (config: ISftpPlistConfig): Promise<boolean> {
     const { username, password, privateKey, passphrase } = config
     const loginInfo: Config = privateKey
       ? { username, privateKeyPath: privateKey, passphrase: passphrase || undefined }
@@ -41,7 +41,7 @@ class SSHClient {
     }
   }
 
-  public async deleteFileSFTP (config: ISftpPlistConfig, remote: string): Promise<boolean> {
+  async deleteFileSFTP (config: ISftpPlistConfig, remote: string): Promise<boolean> {
     try {
       const client = new Client()
       const { username, password, privateKey, passphrase } = config
@@ -162,7 +162,7 @@ class SSHClient {
     return SSHClient.client.isConnected()
   }
 
-  public close (): void {
+  close (): void {
     SSHClient.client.dispose()
     this._isConnected = false
   }

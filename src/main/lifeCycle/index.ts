@@ -135,7 +135,7 @@ autoUpdater.on('error', (err) => {
 })
 
 class LifeCycle {
-  private async beforeReady () {
+  async #beforeReady () {
     protocol.registerSchemesAsPrivileged([{ scheme: 'picgo', privileges: { secure: true, standard: true } }])
     // fix the $PATH in macOS & linux
     fixPath()
@@ -148,7 +148,7 @@ class LifeCycle {
     busEventList.listen()
   }
 
-  private onReady () {
+  #onReady () {
     const readyFunction = async () => {
       createProtocol('picgo')
       windowManager.create(IWindowList.TRAY_WINDOW)
@@ -228,7 +228,7 @@ class LifeCycle {
     app.whenReady().then(readyFunction)
   }
 
-  private onRunning () {
+  #onRunning () {
     app.on('second-instance', (event, commandLine, workingDirectory) => {
       logger.info('detect second instance')
       const result = handleStartUpFiles(commandLine, workingDirectory)
@@ -263,7 +263,7 @@ class LifeCycle {
     }
   }
 
-  private onQuit () {
+  #onQuit () {
     app.on('window-all-closed', () => {
       if (process.platform !== 'darwin') {
         app.quit()
@@ -298,10 +298,10 @@ class LifeCycle {
     if (!gotTheLock) {
       app.quit()
     } else {
-      await this.beforeReady()
-      this.onReady()
-      this.onRunning()
-      this.onQuit()
+      await this.#beforeReady()
+      this.#onReady()
+      this.#onRunning()
+      this.#onQuit()
     }
   }
 }

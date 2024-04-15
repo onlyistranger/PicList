@@ -37,7 +37,7 @@ class GuiApi implements IGuiApi {
     console.log('init guiapi')
   }
 
-  public static getInstance (): GuiApi {
+  static getInstance (): GuiApi {
     if (!GuiApi.instance) {
       GuiApi.instance = new GuiApi()
     }

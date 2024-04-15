@@ -69,7 +69,7 @@ class UpDownTaskQueue {
     this.restore()
   }
 
-  public static getInstance () {
+  static getInstance () {
     if (!UpDownTaskQueue.instance) {
       UpDownTaskQueue.instance = new UpDownTaskQueue()
     }

@@ -5,45 +5,45 @@ import bus from '@/utils/bus'
 import { builtinI18nList } from '#/i18n'
 
 export class I18nManager {
-  private i18n: I18n | null = null
-  private i18nFileList: II18nItem[] = builtinI18nList
+  #i18n: I18n | null = null
+  #i18nFileList: II18nItem[] = builtinI18nList
 
-  private getLanguageList () {
+  #getLanguageList () {
     ipcRenderer.send(GET_LANGUAGE_LIST)
     ipcRenderer.once(GET_LANGUAGE_LIST, (event, list: II18nItem[]) => {
-      this.i18nFileList = list
+      this.#i18nFileList = list
     })
   }
 
-  private getCurrentLanguage () {
+  #getCurrentLanguage () {
     ipcRenderer.send(GET_CURRENT_LANGUAGE)
     ipcRenderer.once(GET_CURRENT_LANGUAGE, (event, lang: string, locales: ILocales) => {
-      this.setLocales(lang, locales)
+      this.#setLocales(lang, locales)
       bus.emit(FORCE_UPDATE)
     })
   }
 
-  private setLocales (lang: string, locales: ILocales) {
+  #setLocales (lang: string, locales: ILocales) {
     const objectAdapter = new ObjectAdapter({
       [lang]: locales
     })
-    this.i18n = new I18n({
+    this.#i18n = new I18n({
       adapter: objectAdapter,
       defaultLanguage: lang
     })
   }
 
   constructor () {
-    this.getCurrentLanguage()
-    this.getLanguageList()
+    this.#getCurrentLanguage()
+    this.#getLanguageList()
     ipcRenderer.on(SET_CURRENT_LANGUAGE, (event, lang: string, locales: ILocales) => {
-      this.setLocales(lang, locales)
+      this.#setLocales(lang, locales)
       bus.emit(FORCE_UPDATE)
     })
   }
 
   T (key: ILocalesKey, args: IStringKeyMap = {}): string {
-    return this.i18n?.translate(key, args) || key
+    return this.#i18n?.translate(key, args) || key
   }
 
   setCurrentLanguage (lang: string) {
@@ -51,7 +51,7 @@ export class I18nManager {
   }
 
   get languageList () {
-    return this.i18nFileList
+    return this.#i18nFileList
   }
 }
 

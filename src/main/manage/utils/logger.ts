@@ -10,49 +10,49 @@ import { enforceNumber, isDev } from '#/utils/common'
 import { configPaths } from '~/universal/utils/configPaths'
 
 export class ManageLogger implements ILogger {
-  private readonly level = {
+  readonly #level = {
     [ILogType.success]: 'green',
     [ILogType.info]: 'blue',
     [ILogType.warn]: 'yellow',
     [ILogType.error]: 'red'
   }
 
-  private readonly ctx: ManageApiType
-  private logLevel!: string
-  private logPath!: string
+  readonly #ctx: ManageApiType
+  #logLevel!: string
+  #logPath!: string
 
   constructor (ctx: ManageApiType) {
-    this.ctx = ctx
+    this.#ctx = ctx
   }
 
-  private handleLog (type: ILogType, ...msg: ILogArgvTypeWithError[]): void {
-    const logHeader = chalk[this.level[type] as ILogColor](
+  #handleLog (type: ILogType, ...msg: ILogArgvTypeWithError[]): void {
+    const logHeader = chalk[this.#level[type] as ILogColor](
       `[PicList ${type.toUpperCase()}]`
     )
     console.log(logHeader, ...msg)
-    this.logLevel = this.ctx.getConfig(configPaths.settings.logLevel)
-    this.logPath =
-      this.ctx.getConfig<Undefinable<string>>(configPaths.settings.logPath) ||
-      path.join(this.ctx.baseDir, './manage.log')
+    this.#logLevel = this.#ctx.getConfig(configPaths.settings.logLevel)
+    this.#logPath =
+      this.#ctx.getConfig<Undefinable<string>>(configPaths.settings.logPath) ||
+      path.join(this.#ctx.baseDir, './manage.log')
     setTimeout(() => {
       try {
-        const result = this.checkLogFileIsLarge(this.logPath)
+        const result = this.#checkLogFileIsLarge(this.#logPath)
         if (result.isLarge) {
           const warningMsg = `Log file is too large (> ${
             result.logFileSizeLimit! / 1024 / 1024 || '10'
           } MB), recreate log file`
           console.log(chalk.yellow('[PicList WARN]:'), warningMsg)
-          this.recreateLogFile(this.logPath)
+          this.#recreateLogFile(this.#logPath)
           msg.unshift(warningMsg)
         }
-        this.handleWriteLog(this.logPath, type, ...msg)
+        this.#handleWriteLog(this.#logPath, type, ...msg)
       } catch (e) {
         console.error('[PicList Error] on checking log file size', e)
       }
     }, 0)
   }
 
-  private checkLogFileIsLarge (logPath: string): {
+  #checkLogFileIsLarge (logPath: string): {
     isLarge: boolean
     logFileSize?: number
     logFileSizeLimit?: number
@@ -61,7 +61,7 @@ export class ManageLogger implements ILogger {
       const logFileSize = fs.statSync(logPath).size
       const logFileSizeLimit =
         enforceNumber(
-          this.ctx.getConfig<Undefinable<number>>(
+          this.#ctx.getConfig<Undefinable<number>>(
             configPaths.settings.logFileSizeLimit
           ) || 10
         ) *
@@ -79,23 +79,23 @@ export class ManageLogger implements ILogger {
     }
   }
 
-  private recreateLogFile (logPath: string): void {
+  #recreateLogFile (logPath: string): void {
     if (fs.existsSync(logPath)) {
       fs.unlinkSync(logPath)
       fs.createFileSync(logPath)
     }
   }
 
-  private handleWriteLog (
+  #handleWriteLog (
     logPath: string,
     type: string,
     ...msg: ILogArgvTypeWithError[]
   ): void {
     try {
-      if (this.checkLogLevel(type, this.logLevel)) {
+      if (this.#checkLogLevel(type, this.#logLevel)) {
         let log = `${dayjs().format('YYYY-MM-DD HH:mm:ss')} [PicList ${type.toUpperCase()}] `
         msg.forEach((item: ILogArgvTypeWithError) => {
-          log += this.formatLogItem(item, type)
+          log += this.#formatLogItem(item, type)
         })
         log += '\n'
         fs.appendFileSync(logPath, log)
@@ -105,7 +105,7 @@ export class ManageLogger implements ILogger {
     }
   }
 
-  private formatLogItem (item: ILogArgvTypeWithError, type: string): string {
+  #formatLogItem (item: ILogArgvTypeWithError, type: string): string {
     let result = ''
     if (item instanceof Error && type === 'error') {
       result += `\n------Error Stack Begin------\n${util.format(item?.stack)}\n-------Error Stack End------- `
@@ -121,7 +121,7 @@ export class ManageLogger implements ILogger {
     return result
   }
 
-  private checkLogLevel (
+  #checkLogLevel (
     type: string,
     level: undefined | string | string[]
   ): boolean {
@@ -135,24 +135,24 @@ export class ManageLogger implements ILogger {
   }
 
   success (...msq: ILogArgvType[]): void {
-    return this.handleLog(ILogType.success, ...msq)
+    return this.#handleLog(ILogType.success, ...msq)
   }
 
   info (...msq: ILogArgvType[]): void {
-    return this.handleLog(ILogType.info, ...msq)
+    return this.#handleLog(ILogType.info, ...msq)
   }
 
   error (...msq: ILogArgvTypeWithError[]): void {
-    return this.handleLog(ILogType.error, ...msq)
+    return this.#handleLog(ILogType.error, ...msq)
   }
 
   warn (...msq: ILogArgvType[]): void {
-    return this.handleLog(ILogType.warn, ...msq)
+    return this.#handleLog(ILogType.warn, ...msq)
   }
 
   debug (...msq: ILogArgvType[]): void {
     if (isDev) {
-      this.handleLog(ILogType.info, ...msq)
+      this.#handleLog(ILogType.info, ...msq)
     }
   }
 }

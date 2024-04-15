@@ -40,8 +40,8 @@ function serveFile (res:http.ServerResponse, filePath: fs.PathLike) {
 }
 
 class WebServer {
-  private server!: http.Server
-  private config!: IStringKeyMap
+  #server!: http.Server
+  #config!: IStringKeyMap
 
   constructor () {
     this.loadConfig()
@@ -49,7 +49,7 @@ class WebServer {
   }
 
   loadConfig (): void {
-    this.config = {
+    this.#config = {
       enableWebServer: picgo.getConfig<boolean>(configPaths.settings.enableWebServer) || false,
       webServerHost: picgo.getConfig<string>(configPaths.settings.webServerHost) || '0.0.0.0',
       webServerPort: picgo.getConfig<number>(configPaths.settings.webServerPort) || 37777,
@@ -58,9 +58,9 @@ class WebServer {
   }
 
   initServer (): void {
-    this.server = http.createServer((req, res) => {
+    this.#server = http.createServer((req, res) => {
       const requestPath = req.url?.split('?')[0]
-      const filePath = path.join(this.config.webServerPath, decodeURIComponent(requestPath || ''))
+      const filePath = path.join(this.#config.webServerPath, decodeURIComponent(requestPath || ''))
 
       try {
         const stats = fs.statSync(filePath)
@@ -77,12 +77,12 @@ class WebServer {
   }
 
   start () {
-    if (this.config.enableWebServer) {
-      this.server
+    if (this.#config.enableWebServer) {
+      this.#server
         .listen(
-          this.config.webServerPort === 36699 ? 37777 : this.config.webServerPort,
-          this.config.webServerHost, () => {
-            logger.info(`Web server is running at http://${this.config.webServerHost}:${this.config.webServerPort}, root path is ${this.config.webServerPath}`)
+          this.#config.webServerPort === 36699 ? 37777 : this.#config.webServerPort,
+          this.#config.webServerHost, () => {
+            logger.info(`Web server is running at http://${this.#config.webServerHost}:${this.#config.webServerPort}, root path is ${this.#config.webServerPath}`)
           })
         .on('error', (err) => {
           logger.error(err)
@@ -93,7 +93,7 @@ class WebServer {
   }
 
   stop () {
-    this.server.close(() => {
+    this.#server.close(() => {
       logger.info('Web server is stopped')
     })
   }

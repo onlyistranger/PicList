@@ -6,7 +6,7 @@ interface IConfigMap {
 }
 
 export default class TcyunApi {
-  private static createCOS (SecretId: string, SecretKey: string): COS {
+  static #createCOS (SecretId: string, SecretKey: string): COS {
     return new COS({
       SecretId,
       SecretKey
@@ -16,7 +16,7 @@ export default class TcyunApi {
   static async delete (configMap: IConfigMap): Promise<boolean> {
     const { fileName, config: { secretId, secretKey, bucket, area, path } } = configMap
     try {
-      const cos = TcyunApi.createCOS(secretId, secretKey)
+      const cos = TcyunApi.#createCOS(secretId, secretKey)
       let key
       if (path === '/' || !path) {
         key = `/${fileName}`

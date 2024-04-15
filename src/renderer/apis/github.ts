@@ -7,13 +7,13 @@ interface IConfigMap {
 }
 
 export default class GithubApi {
-  private static createOctokit (token: string) {
+  static #createOctokit (token: string) {
     return new Octokit({
       auth: token
     })
   }
 
-  private static createKey (path: string | undefined, fileName: string): string {
+  static #createKey (path: string | undefined, fileName: string): string {
     const formatedFileName = fileName.replace(/%2F/g, '/')
     return path && path !== '/'
       ? `${path.replace(/^\/+|\/+$/, '')}/${formatedFileName}`
@@ -23,8 +23,8 @@ export default class GithubApi {
   static async delete (configMap: IConfigMap): Promise<boolean> {
     const { fileName, hash, config: { repo, token, branch, path } } = configMap
     const [owner, repoName] = repo.split('/')
-    const octokit = GithubApi.createOctokit(token)
-    const key = GithubApi.createKey(path, fileName)
+    const octokit = GithubApi.#createOctokit(token)
+    const key = GithubApi.#createKey(path, fileName)
     try {
       const { status } = await octokit.rest.repos.deleteFile({
         owner,

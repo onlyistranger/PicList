@@ -24,12 +24,12 @@ const CONFIG_PATH: string = dbPathChecker()
 export const DB_PATH: string = getGalleryDBPath().dbPath
 
 class ConfigStore {
-  private db: JSONStore
+  #db: JSONStore
   constructor () {
-    this.db = new JSONStore(CONFIG_PATH)
+    this.#db = new JSONStore(CONFIG_PATH)
 
-    if (!this.db.has('picBed')) {
-      this.db.set('picBed', {
+    if (!this.#db.has('picBed')) {
+      this.#db.set('picBed', {
         current: 'smms', // deprecated
         uploader: 'smms',
         smms: {
@@ -38,8 +38,8 @@ class ConfigStore {
       })
     }
 
-    if (!this.db.has(configPaths.settings.shortKey._path)) {
-      this.db.set(configPaths.settings.shortKey['picgo:upload'], {
+    if (!this.#db.has(configPaths.settings.shortKey._path)) {
+      this.#db.set(configPaths.settings.shortKey['picgo:upload'], {
         enable: true,
         key: 'CommandOrControl+Shift+P',
         name: 'upload',
@@ -50,31 +50,31 @@ class ConfigStore {
   }
 
   flush () {
-    this.db = new JSONStore(CONFIG_PATH)
+    this.#db = new JSONStore(CONFIG_PATH)
   }
 
   read () {
-    this.db.read()
-    return this.db
+    this.#db.read()
+    return this.#db
   }
 
   get (key = ''): any {
     if (key === '') {
-      return this.db.read()
+      return this.#db.read()
     }
-    return this.db.get(key)
+    return this.#db.get(key)
   }
 
   set (key: string, value: any): void {
-    return this.db.set(key, value)
+    return this.#db.set(key, value)
   }
 
   has (key: string) {
-    return this.db.has(key)
+    return this.#db.has(key)
   }
 
   unset (key: string, value: any): boolean {
-    return this.db.unset(key, value)
+    return this.#db.unset(key, value)
   }
 
   getConfigPath () {
@@ -88,16 +88,16 @@ export default db
 
 // v2.3.0 add gallery db
 class GalleryDB {
-  private static instance: DBStore
+  static #instance: DBStore
   private constructor () {
     console.log('init gallery db')
   }
 
-  public static getInstance (): DBStore {
-    if (!GalleryDB.instance) {
-      GalleryDB.instance = new DBStore(DB_PATH, 'gallery')
+  static getInstance (): DBStore {
+    if (!GalleryDB.#instance) {
+      GalleryDB.#instance = new DBStore(DB_PATH, 'gallery')
     }
-    return GalleryDB.instance
+    return GalleryDB.#instance
   }
 }
 

@@ -6,17 +6,7 @@ interface IConfigMap {
 }
 
 export default class AliyunApi {
-  private static createClient (config: IConfigMap['config']): OSS {
-    const { accessKeyId, accessKeySecret, bucket, area } = config
-    return new OSS({
-      accessKeyId,
-      accessKeySecret,
-      bucket,
-      region: area
-    })
-  }
-
-  private static getKey (fileName: string, path?: string): string {
+  static #getKey (fileName: string, path?: string): string {
     return path && path !== '/'
       ? `${path.replace(/^\/+|\/+$/, '')}/${fileName}`
       : fileName
@@ -25,8 +15,8 @@ export default class AliyunApi {
   static async delete (configMap: IConfigMap): Promise<boolean> {
     const { fileName, config } = configMap
     try {
-      const client = AliyunApi.createClient(config)
-      const key = AliyunApi.getKey(fileName, config.path)
+      const client = new OSS({ ...config, region: config.area })
+      const key = AliyunApi.#getKey(fileName, config.path)
       const result = await client.delete(key)
       return result.res.status === 204
     } catch (error) {

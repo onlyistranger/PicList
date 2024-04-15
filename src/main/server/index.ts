@@ -41,17 +41,17 @@ const uploadMulter = multer({
 })
 
 class Server {
-  private httpServer: http.Server
-  private config: IServerConfig
+  #httpServer: http.Server
+  #config: IServerConfig
 
   constructor () {
-    this.config = this.getConfigWithDefaults()
-    this.httpServer = http.createServer(this.handleRequest)
+    this.#config = this.getConfigWithDefaults()
+    this.#httpServer = http.createServer(this.#handleRequest)
   }
 
   getConfigWithDefaults () {
     let config = picgo.getConfig<IServerConfig>(configPaths.settings.server)
-    if (!this.isValidConfig(config)) {
+    if (!this.#isValidConfig(config)) {
       config = { port: DEFAULT_PORT, host: DEFAULT_HOST, enable: true }
       picgo.saveConfig({ [configPaths.settings.server]: config })
     }
@@ -59,20 +59,20 @@ class Server {
     return config
   }
 
-  private isValidConfig (config: IObj | undefined) {
+  #isValidConfig (config: IObj | undefined) {
     return config && config.port && config.host && (config.enable !== undefined)
   }
 
-  private handleRequest = (request: http.IncomingMessage, response: http.ServerResponse) => {
+  #handleRequest = (request: http.IncomingMessage, response: http.ServerResponse) => {
     switch (request.method) {
       case 'OPTIONS':
         handleResponse({ response })
         break
       case 'POST':
-        this.handlePostRequest(request, response)
+        this.#handlePostRequest(request, response)
         break
       case 'GET':
-        this.handleGetRequest(request, response)
+        this.#handleGetRequest(request, response)
         break
       default:
         logger.warn(`[PicList Server] don't support [${request.method}] method`)
@@ -81,7 +81,7 @@ class Server {
     }
   }
 
-  private handlePostRequest = (request: http.IncomingMessage, response: http.ServerResponse) => {
+  #handlePostRequest = (request: http.IncomingMessage, response: http.ServerResponse) => {
     const [url, query] = (request.url || '').split('?')
     if (!routers.getHandler(url, 'POST')) {
       logger.warn(`[PicList Server] don't support [${url}] endpoint`)
@@ -160,7 +160,7 @@ class Server {
     }
   }
 
-  private handleGetRequest = (_request: http.IncomingMessage, response: http.ServerResponse) => {
+  #handleGetRequest = (_request: http.IncomingMessage, response: http.ServerResponse) => {
     const [url, query] = (_request.url || '').split('?')
     if (!routers.getHandler(url, 'GET')) {
       logger.info(`[PicList Server] don't support [${url}] endpoint`)
@@ -178,23 +178,23 @@ class Server {
   }
 
   // port as string is a bug
-  private listen = (port: number | string) => {
-    logger.info(`[PicList Server] is listening at ${port} of ${this.config.host}`)
+  #listen = (port: number | string) => {
+    logger.info(`[PicList Server] is listening at ${port} of ${this.#config.host}`)
     if (typeof port === 'string') {
       port = parseInt(port, 10)
     }
-    this.httpServer.listen(port, this.config.host).on('error', async (err: ErrnoException) => {
+    this.#httpServer.listen(port, this.#config.host).on('error', async (err: ErrnoException) => {
       if (err.code === 'EADDRINUSE') {
         try {
           // make sure the system has a PicGo Server instance
-          await axios.post(ensureHTTPLink(`${this.config.host}:${port}/heartbeat`))
+          await axios.post(ensureHTTPLink(`${this.#config.host}:${port}/heartbeat`))
           logger.info(`[PicList Server] server is already running at ${port}`)
           this.shutdown(true)
         } catch (e) {
           logger.warn(`[PicList Server] ${port} is busy, trying with port ${(port as number) + 1}`)
           // fix a bug: not write an increase number to config file
           // to solve the auto number problem
-          this.listen((port as number) + 1)
+          this.#listen((port as number) + 1)
         }
       } else {
         logger.error('[PicList Server]', err)
@@ -203,13 +203,13 @@ class Server {
   }
 
   startup () {
-    if (this.config.enable) {
-      this.listen(this.config.port)
+    if (this.#config.enable) {
+      this.#listen(this.#config.port)
     }
   }
 
   shutdown (hasStarted?: boolean) {
-    this.httpServer.close()
+    this.#httpServer.close()
     if (!hasStarted) {
       logger.info('[PicList Server] shutdown')
     }
@@ -217,7 +217,7 @@ class Server {
 
   restart () {
     this.shutdown()
-    this.config = this.getConfigWithDefaults()
+    this.#config = this.getConfigWithDefaults()
     this.startup()
   }
 }
