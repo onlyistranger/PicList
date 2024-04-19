@@ -23,6 +23,7 @@ interface ILocales {
   FIND_NEW_VERSION: string
   NO_MORE_NOTICE: string
   SHOW_DEVTOOLS: string
+  FEEDBACK: string
   CURRENT_PICBED: string
   START_WATCH_CLIPBOARD: string
   STOP_WATCH_CLIPBOARD: string

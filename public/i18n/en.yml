@@ -22,6 +22,7 @@ CONFIG_THING: Config ${c}
 FIND_NEW_VERSION: Find New Version
 NO_MORE_NOTICE: No More Notice
 SHOW_DEVTOOLS: Show Devtools
+FEEDBACK: Feedback
 CURRENT_PICBED: Current Picbed
 START_WATCH_CLIPBOARD: Start Watch Clipboard
 STOP_WATCH_CLIPBOARD: Stop Watch Clipboard

@@ -2,7 +2,7 @@
 import pkg from 'root/package.json'
 
 // Electron modules
-import { Menu, BrowserWindow, app, dialog } from 'electron'
+import { Menu, BrowserWindow, app, dialog, shell } from 'electron'
 
 // Custom utilities and modules
 import windowManager from 'apis/app/window/windowManager'
@@ -139,6 +139,13 @@ const buildMainPageMenu = (win: BrowserWindow) => {
       label: T('SHOW_DEVTOOLS'),
       click () {
         win?.webContents?.openDevTools({ mode: 'detach' })
+      }
+    },
+    {
+      label: T('FEEDBACK'),
+      click () {
+        const url = 'https://github.com/Kuingsmile/PicList/issues'
+        shell.openExternal(url)
       }
     }
   ]
