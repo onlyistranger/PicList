@@ -21,7 +21,7 @@
           style="width: 200px;"
           :persistent="false"
           teleported
-          @change="handleChangeCustomUrl"
+          @change="handleChangeCustomUrlInput"
         >
           <el-option
             v-for="item in customDomainList"
@@ -35,7 +35,7 @@
           v-model="currentCustomDomain"
           :placeholder="$T('MANAGE_BUCKET_PAGE_CUSTOM_URL_INPUT_PLACEHOLDER')"
           style="width: 200px;"
-          @blur="handleChangeCustomUrl"
+          @blur="handleChangeCustomUrlInput"
         />
         <el-link
           v-else
@@ -2063,23 +2063,14 @@ async function handleClickFile (item: any) {
   }
 }
 
+async function handleChangeCustomUrlInput () {
+  await handleChangeCustomUrl()
+  await forceRefreshFileList()
+}
 // 自定义域名相关
 
 async function handleChangeCustomUrl () {
-  if (currentPicBedName.value === 'github') {
-    isShowLoadingPage.value = true
-    if (isLoadingData.value) {
-      ElNotification({
-        title: $T('MANAGE_BUCKET_CHANGE_CUSTOM_URL_TITLE'),
-        message: $T('MANAGE_BUCKET_CHANGE_CUSTOM_URL_MSG'),
-        type: 'error',
-        duration: 2000
-      })
-    }
-    isShowLoadingPage.value = true
-    await resetParam(true)
-    isShowLoadingPage.value = false
-  } else if (['aliyun', 'tcyun', 'qiniu', 's3plist', 'webdavplist', 'local', 'sftp'].includes(currentPicBedName.value)) {
+  if (['aliyun', 'tcyun', 'qiniu', 's3plist', 'webdavplist', 'local', 'sftp'].includes(currentPicBedName.value)) {
     const currentConfigs = await getConfig<any>('picBed')
     const currentConfig = currentConfigs[configMap.alias]
     const currentTransformedConfig = JSON.parse(currentConfig.transformedConfig ?? '{}')
@@ -2174,7 +2165,7 @@ async function initCustomDomainList () {
         currentCustomDomain.value = `https://${configMap.bucketName}.s3.amazonaws.com`
       }
     }
-    handleChangeCustomUrl()
+    await handleChangeCustomUrl()
   } else if (currentPicBedName.value === 'webdavplist') {
     const currentConfigs = await getConfig<any>('picBed')
     const currentConfig = currentConfigs[configMap.alias]
@@ -2188,17 +2179,20 @@ async function initCustomDomainList () {
       }
       currentCustomDomain.value = endpoint
     }
-    handleChangeCustomUrl()
+    await handleChangeCustomUrl()
   } else if (currentPicBedName.value === 'local' || currentPicBedName.value === 'sftp') {
     const currentConfigs = await getConfig<any>('picBed')
     const currentConfig = currentConfigs[configMap.alias]
     const currentTransformedConfig = JSON.parse(currentConfig.transformedConfig ?? '{}')
     if (currentTransformedConfig[configMap.bucketName] && currentTransformedConfig[configMap.bucketName]?.customUrl) {
       currentCustomDomain.value = currentTransformedConfig[configMap.bucketName].customUrl ?? ''
+      if (manageStore.config.settings.isForceCustomUrlHttps && currentCustomDomain.value.startsWith('http://')) {
+        currentCustomDomain.value = currentCustomDomain.value.replace('http://', 'https://')
+      }
     } else {
       currentCustomDomain.value = ''
     }
-    handleChangeCustomUrl()
+    await handleChangeCustomUrl()
   }
 }
 
@@ -2232,6 +2226,7 @@ async function resetParam (force: boolean = false) {
   fileSortSizeReverse.value = false
   fileSortTimeReverse.value = false
   if (!isAutoRefresh.value && !force && !paging.value) {
+    console.log('use cache')
     const cachedData = await searchExistFileList()
     if (cachedData.length > 0) {
       currentPageFilesInfo.push(...cachedData[0].value.fullList)
@@ -2283,7 +2278,7 @@ watch(route, async (newRoute) => {
     const parsedConfigMap = JSON.parse(queryConfigMap)
     Object.assign(configMap, parsedConfigMap)
     await initCustomDomainList()
-    await resetParam(false)
+    await resetParam(true)
     isShowLoadingPage.value = false
   }
 })
@@ -3683,7 +3678,7 @@ onBeforeMount(async () => {
   await manageStore.refreshConfig()
   isShowLoadingPage.value = true
   await initCustomDomainList()
-  await resetParam(false)
+  await resetParam(true)
   isShowLoadingPage.value = false
   document.addEventListener('keydown', handleDetectShiftKey)
   document.addEventListener('keyup', handleDetectShiftKey)

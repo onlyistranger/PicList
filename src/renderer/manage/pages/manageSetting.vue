@@ -618,7 +618,7 @@ async function initData () {
   form.isShowThumbnail = config.settings.isShowThumbnail ?? false
   form.isShowList = config.settings.isShowList ?? false
   form.isIgnoreCase = config.settings.isIgnoreCase ?? false
-  form.isForceCustomUrlHttps = config.settings.isForceCustomUrlHttps ?? true
+  form.isForceCustomUrlHttps = config.settings.isForceCustomUrlHttps ?? false
   form.isEncodeUrl = config.settings.isEncodeUrl ?? false
   form.isUploadKeepDirStructure = config.settings.isUploadKeepDirStructure ?? true
   form.isDownloadFileKeepDirStructure = config.settings.isDownloadKeepDirStructure ?? false
