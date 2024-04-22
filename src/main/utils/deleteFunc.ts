@@ -134,12 +134,23 @@ export async function removeFileFromS3InMain (configMap: IStringKeyMap, dogeMode
         sessionToken: configMap.config.sessionToken
       }
     }
-    const client = new S3Client(s3Options)
-    const command = new DeleteObjectCommand({
-      Bucket: bucketName,
-      Key: fileKey
-    })
-    const result = await client.send(command)
+    let result: any
+    try {
+      const client = new S3Client(s3Options)
+      const command = new DeleteObjectCommand({
+        Bucket: bucketName,
+        Key: fileKey
+      })
+      result = await client.send(command)
+    } catch (err: any) {
+      s3Options.region = 'us-east-1'
+      const client = new S3Client(s3Options)
+      const command = new DeleteObjectCommand({
+        Bucket: bucketName,
+        Key: fileKey
+      })
+      result = await client.send(command)
+    }
     return result.$metadata.httpStatusCode === 204
   } catch (err: any) {
     console.log(err)

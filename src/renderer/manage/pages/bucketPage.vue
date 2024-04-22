@@ -2832,9 +2832,8 @@ async function getBucketFileListBackStage () {
   isLoadingData.value = true
   const fileTransferStore = useFileTransferStore()
   fileTransferStore.resetFileTransferList()
-  if (currentPicBedName.value === 'webdavplist' ||
-    currentPicBedName.value === 'local' ||
-    currentPicBedName.value === 'sftp') {
+  const picBedNamesArr = ['webdavplist', 'local', 'sftp']
+  if (picBedNamesArr.includes(currentPicBedName.value)) {
     param.baseDir = configMap.baseDir
     param.webPath = configMap.webPath
   }
