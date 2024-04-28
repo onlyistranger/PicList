@@ -1,3 +1,24 @@
+## :tada: 2.8.4 (2024-04-28)
+
+
+### :sparkles: Features
+
+* **custom:** add feedback entry ([2087d9a](https://github.com/Kuingsmile/piclist/commit/2087d9a))
+* **custom:** auto refresh after change custom url ([939c907](https://github.com/Kuingsmile/piclist/commit/939c907)), closes [#191](https://github.com/Kuingsmile/piclist/issues/191)
+* **custom:** change timestamp to milliseconds ([25648ea](https://github.com/Kuingsmile/piclist/commit/25648ea)), closes [#194](https://github.com/Kuingsmile/piclist/issues/194)
+
+
+### :bug: Bug Fixes
+
+* **custom:** fix  aws s3 urlprefix bug ([3681681](https://github.com/Kuingsmile/piclist/commit/3681681))
+
+
+### :pencil: Documentation
+
+* **custom:** prepare for 2.8.4 ([bcb4760](https://github.com/Kuingsmile/piclist/commit/bcb4760))
+
+
+
 ## :tada: 2.8.3 (2024-04-11)
 
 
