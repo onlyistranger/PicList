@@ -46,6 +46,7 @@ router.post('/upload', async ({
   urlparams?: URLSearchParams
 }): Promise<void> => {
   try {
+    const picbed = urlparams?.get('picbed')
     const passedKey = urlparams?.get('key')
     const serverKey = picgo.getConfig<string>(configPaths.settings.serverKey) || ''
     if (serverKey && passedKey !== serverKey) {
@@ -58,17 +59,16 @@ router.post('/upload', async ({
       })
       return
     }
-    const picbed = urlparams?.get('picbed')
     let currentPicBedType = ''
     let currentPicBedConfig = {} as IStringKeyMap
     let currentPicBedConfigId = ''
     let needRestore = false
     if (picbed) {
-      const configName = urlparams?.get('configName') || 'Default'
       const currentPicBed = picgo.getConfig<IStringKeyMap>('picBed') || {} as IStringKeyMap
-      currentPicBedType = currentPicBed?.current
-      currentPicBedConfig = currentPicBed?.[currentPicBedType]
-      currentPicBedConfigId = currentPicBedConfig?._id
+      currentPicBedType = currentPicBed.current || ''
+      currentPicBedConfig = currentPicBed[currentPicBedType] || {} as IStringKeyMap
+      currentPicBedConfigId = currentPicBedConfig._id
+      const configName = urlparams?.get('configName') || currentPicBed[picbed]?._configName
       if (picbed === currentPicBedType && configName === currentPicBedConfig._configName) {
         // do nothing
       } else {
