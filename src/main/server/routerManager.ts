@@ -190,9 +190,9 @@ router.post('/delete', async ({
     return
   }
   try {
+    const aesHelper = new AESHelper()
     const treatList = list.map(item => {
       if (!item.isEncrypted) return item
-      const aesHelper = new AESHelper()
       return JSON.parse(aesHelper.decrypt(item.EncryptedData))
     })
     const result = await deleteChoosedFiles(treatList)
