@@ -46,21 +46,29 @@ export function renameFileNameWithCustomString (oldName: string, customFormat: s
     '{y}': () => year.slice(2),
     '{m}': () => renameFormatHelper(date.getMonth() + 1),
     '{d}': () => renameFormatHelper(date.getDate()),
+    '{h}': () => renameFormatHelper(date.getHours()),
+    '{i}': () => renameFormatHelper(date.getMinutes()),
+    '{s}': () => renameFormatHelper(date.getSeconds()),
+    '{ms}': () => date.getMilliseconds().toString().padStart(3, '0'),
     '{md5}': () => getMd5(fileBaseName),
     '{md5-16}': () => getMd5(fileBaseName).slice(0, 16),
-    '{str-10}': () => randomStringGenerator(10),
-    '{str-20}': () => randomStringGenerator(20),
     '{filename}': () => affixFileName ? path.basename(affixFileName, path.extname(affixFileName)) : path.basename(oldName, path.extname(oldName)),
     '{uuid}': () => uuidv4().replace(/-/g, ''),
-    '{timestamp}': () => Math.floor(Date.now() / 1000).toString()
+    '{timestamp}': () => date.getTime().toString()
   }
-  if (customFormat === undefined || !Object.keys(conversionMap).some(item => customFormat.includes(item))) {
+  if (customFormat === undefined || (!Object.keys(conversionMap).some(item => customFormat.includes(item)) && !customFormat.includes('{str-'))) {
     return oldName
   }
   const ext = path.extname(oldName)
-  return Object.keys(conversionMap).reduce((acc, cur) => {
+  let newName = Object.keys(conversionMap).reduce((acc, cur) => {
     return acc.replace(new RegExp(cur, 'g'), conversionMap[cur]())
   }, customFormat) + ext
+  const strRegex = /{str-(\d+)}/gi
+  newName = newName.replace(strRegex, (_, group1) => {
+    const length = parseInt(group1, 10)
+    return randomStringGenerator(length)
+  })
+  return newName
 }
 
 export function renameFile ({ timestampRename, randomStringRename, customRename, customRenameFormat }: IStringKeyMap, oldName = ''): string {
@@ -218,43 +226,6 @@ export const customRenameFormatTable = [
     descriptionB: '日期(01-31)'
   },
   {
-    placeholder: '{timestamp}',
-    description: '时间戳（秒）',
-    placeholderB: '{uuid}',
-    descriptionB: 'uuid字符串'
-  },
-  {
-    placeholder: '{md5}',
-    description: 'md5',
-    placeholderB: '{md5-16}',
-    descriptionB: 'md5前16位'
-  },
-  {
-    placeholder: '{str-10}',
-    description: '10位随机字符串',
-    placeholderB: '{str-20}',
-    descriptionB: '20位随机字符串'
-  },
-  {
-    placeholder: '{filename}',
-    description: '原文件名'
-  }
-]
-
-export const buildInRenameFormatTable = [
-  {
-    placeholder: '{Y}',
-    description: '年份，4位数',
-    placeholderB: '{y}',
-    descriptionB: '年份，2位数'
-  },
-  {
-    placeholder: '{m}',
-    description: '月份(01-12)',
-    placeholderB: '{d}',
-    descriptionB: '日期(01-31)'
-  },
-  {
     placeholder: '{h}',
     description: '小时(00-23)',
     placeholderB: '{i}',
@@ -263,12 +234,12 @@ export const buildInRenameFormatTable = [
   {
     placeholder: '{s}',
     description: '秒(00-59)',
-    placeholderB: '{localFolder:<number>}',
-    descriptionB: '本地文件夹层级'
+    placeholderB: '{ms}',
+    descriptionB: '毫秒(000-999)'
   },
   {
     placeholder: '{timestamp}',
-    description: '时间戳（秒）',
+    description: '时间戳（毫秒）',
     placeholderB: '{uuid}',
     descriptionB: 'uuid字符串'
   },
@@ -279,13 +250,58 @@ export const buildInRenameFormatTable = [
     descriptionB: 'md5前16位'
   },
   {
-    placeholder: '{str-10}',
+    placeholder: '{str-number}',
     description: '10位随机字符串',
-    placeholderB: '{str-20}',
-    descriptionB: '20位随机字符串'
+    placeholderB: '{filename}',
+    descriptionB: '原文件名'
+  }
+]
+
+export const buildInRenameFormatTable = [
+  {
+    placeholder: '{Y}',
+    description: '年份，4位数',
+    placeholderB: '{timestamp}',
+    descriptionB: '时间戳（毫秒）'
   },
   {
-    placeholder: '{filename}',
-    description: '原文件名'
+    placeholder: '{y}',
+    description: '年份，2位数',
+    placeholderB: '{md5}',
+    descriptionB: 'md5'
+  },
+  {
+    placeholder: '{m}',
+    description: '月份(01-12)',
+    placeholderB: '{md5-16}',
+    descriptionB: 'md5前16位'
+  },
+  {
+    placeholder: '{d}',
+    description: '日期(01-31)',
+    placeholderB: '{localFolder:<number>}',
+    descriptionB: '本地文件夹层级'
+  },
+  {
+    placeholder: '{h}',
+    description: '小时(00-23)',
+    placeholderB: '{uuid}',
+    descriptionB: 'uuid字符串'
+  },
+  {
+    placeholder: '{i}',
+    description: '分钟(00-59)',
+    placeholderB: '{filename}',
+    descriptionB: '原文件名'
+  },
+  {
+    placeholder: '{s}',
+    description: '秒(00-59)',
+    placeholderB: '{str-number}',
+    descriptionB: 'number位随机字符串'
+  },
+  {
+    placeholder: '{ms}',
+    description: '毫秒(000-999)'
   }
 ]
