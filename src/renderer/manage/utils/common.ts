@@ -251,7 +251,7 @@ export const customRenameFormatTable = [
   },
   {
     placeholder: '{str-number}',
-    description: '10位随机字符串',
+    description: 'number位随机字符串',
     placeholderB: '{filename}',
     descriptionB: '原文件名'
   }

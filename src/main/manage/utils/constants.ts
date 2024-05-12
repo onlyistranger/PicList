@@ -3,6 +3,7 @@ const AliyunAreaCodeName : IStringKeyMap = {
   'oss-cn-shanghai': '华东2(上海)',
   'oss-cn-nanjing': '华东5(南京)',
   'oss-cn-fuzhou': '华东6(福州)',
+  'oss-cn-wuhan': '华中1(武汉)',
   'oss-cn-qingdao': '华北1(青岛)',
   'oss-cn-beijing': '华北2(北京)',
   'oss-cn-zhangjiakou': '华北3(张家口)',
