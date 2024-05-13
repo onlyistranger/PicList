@@ -1,3 +1,19 @@
+## :tada: 2.8.5 (2024-05-13)
+
+
+### :sparkles: Features
+
+* **custom:** add support for oss-cn-wuhan ([0153991](https://github.com/Kuingsmile/piclist/commit/0153991))
+* **custom:** optimize aws s3 and buildin rename ([9ca0e4b](https://github.com/Kuingsmile/piclist/commit/9ca0e4b))
+* **custom:** optimize upload api ([e4c4a6f](https://github.com/Kuingsmile/piclist/commit/e4c4a6f))
+
+
+### :pencil: Documentation
+
+* **custom:** prepare for v2.8.5 ([3d3b80f](https://github.com/Kuingsmile/piclist/commit/3d3b80f))
+
+
+
 ## :tada: 2.8.4 (2024-04-28)
 
 
