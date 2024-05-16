@@ -59,25 +59,15 @@ export const showMessageBox = (options: any) => {
 }
 
 export const calcDurationRange = (duration: number) => {
-  if (duration < 1000) {
-    return 500
-  } else if (duration < 1500) {
-    return 1000
-  } else if (duration < 3000) {
-    return 2000
-  } else if (duration < 5000) {
-    return 3000
-  } else if (duration < 7000) {
-    return 5000
-  } else if (duration < 10000) {
-    return 8000
-  } else if (duration < 12000) {
-    return 10000
-  } else if (duration < 20000) {
-    return 15000
-  } else if (duration < 30000) {
-    return 20000
-  }
+  if (duration < 1000) return 500
+  if (duration < 1500) return 1000
+  if (duration < 3000) return 2000
+  if (duration < 5000) return 3000
+  if (duration < 7000) return 5000
+  if (duration < 10000) return 8000
+  if (duration < 12000) return 10000
+  if (duration < 20000) return 15000
+  if (duration < 30000) return 20000
   // max range
   return 100000
 }
@@ -105,22 +95,19 @@ export const ensureFilePath = (filePath: string, prefix = 'file://'): string => 
 export const getClipboardFilePath = (): string => {
   // TODO: linux support
   const img = clipboard.readImage()
-  if (img.isEmpty()) {
-    if (process.platform === 'win32') {
-      const imgPath = clipboard.readBuffer('FileNameW')?.toString('ucs2')?.replace(RegExp(String.fromCharCode(0), 'g'), '')
-      if (imgPath) {
-        return imgPath
-      }
-    }
-  } else {
-    if (process.platform === 'darwin') {
-      let imgPath = clipboard.read('public.file-url') // will get file://xxx/xxx
-      imgPath = ensureFilePath(imgPath)
-      if (imgPath) {
-        return imgPath.replace('file://', '')
-      }
-    }
+  const platform = process.platform
+
+  if (!img.isEmpty() && platform === 'darwin') {
+    let imgPath = clipboard.read('public.file-url') // will get file://xxx/xxx
+    imgPath = ensureFilePath(imgPath)
+    return imgPath ? imgPath.replace('file://', '') : ''
   }
+
+  if (img.isEmpty() && platform === 'win32') {
+    const imgPath = clipboard.readBuffer('FileNameW')?.toString('ucs2')?.replace(RegExp(String.fromCharCode(0), 'g'), '')
+    return imgPath || ''
+  }
+
   return ''
 }
 
@@ -128,66 +115,83 @@ export const handleUrlEncodeWithSetting = (url: string) => db.get(configPaths.se
 
 const c1nApi = 'https://c1n.cn/link/short'
 
-export const generateShortUrl = async (url: string) => {
-  const server = db.get(configPaths.settings.shortUrlServer) || IShortUrlServer.C1N
-  if (server === IShortUrlServer.C1N) {
-    const form = new FormData()
-    form.append('url', url)
-    const c1nToken = db.get(configPaths.settings.c1nToken) || ''
-    if (!c1nToken) {
-      logger.warn('c1n token is not set')
-      return url
+const generateC1NShortUrl = async (url: string) => {
+  const form = new FormData()
+  form.append('url', url)
+  const c1nToken = db.get(configPaths.settings.c1nToken) || ''
+  if (!c1nToken) {
+    logger.warn('c1n token is not set')
+    return url
+  }
+  try {
+    const res = await axios.post(c1nApi, form, {
+      headers: {
+        token: c1nToken
+      }
+    })
+    if (res.status >= 200 && res.status < 300 && res.data?.code === 0) {
+      return res.data.data
+    }
+  } catch (e: any) {
+    logger.error(e)
+  }
+  return url
+}
+
+const generateYOURLSShortUrl = async (url: string) => {
+  let domain = db.get(configPaths.settings.yourlsDomain) || ''
+  const signature = db.get(configPaths.settings.yourlsSignature) || ''
+  if (domain && signature) {
+    if (!/^https?:\/\//.test(domain)) {
+      domain = `http://${domain}`
     }
     try {
-      const res = await axios.post(c1nApi, form, {
-        headers: {
-          token: c1nToken
-        }
+      const res = await axios.get(`${domain}/yourls-api.php?signature=${signature}&action=shorturl&format=json&url=${url}`)
+      if (res.data?.shorturl) {
+        return res.data.shorturl
+      }
+    } catch (e: any) {
+      if (e.response?.data?.message?.indexOf('already exists in database') !== -1) {
+        return e.response.data.shorturl
+      }
+      logger.error(e)
+    }
+  } else {
+    logger.warn('Yourls server or signature is not set')
+  }
+  return url
+}
+
+const generateCFWORKERShortUrl = async (url: string) => {
+  let cfWorkerHost = db.get(configPaths.settings.cfWorkerHost) || ''
+  cfWorkerHost = cfWorkerHost.replace(/\/$/, '')
+  if (cfWorkerHost) {
+    try {
+      const res = await axios.post(cfWorkerHost, {
+        url
       })
-      if (res.status >= 200 && res.status < 300 && res.data?.code === 0) {
-        return res.data.data
+      if (res.data?.status === 200 && res.data?.key?.startsWith('/')) {
+        return `${cfWorkerHost}${res.data.key}`
       }
     } catch (e: any) {
       logger.error(e)
     }
-  } else if (server === IShortUrlServer.YOURLS) {
-    let domain = db.get(configPaths.settings.yourlsDomain) || ''
-    const signature = db.get(configPaths.settings.yourlsSignature) || ''
-    if (domain && signature) {
-      if (!/^https?:\/\//.test(domain)) {
-        domain = `http://${domain}`
-      }
-      try {
-        const res = await axios.get(`${domain}/yourls-api.php?signature=${signature}&action=shorturl&format=json&url=${url}`)
-        if (res.data.shorturl) {
-          return res.data.shorturl
-        }
-      } catch (e: any) {
-        if (e.response.data.message.indexOf('already exists in database') !== -1) {
-          return e.response.data.shorturl
-        }
-        logger.error(e)
-      }
-    } else {
-      logger.warn('Yourls server or signature is not set')
-    }
-  } else if (server === IShortUrlServer.CFWORKER) {
-    let cfWorkerHost = db.get(configPaths.settings.cfWorkerHost) || ''
-    cfWorkerHost = cfWorkerHost.replace(/\/$/, '')
-    if (cfWorkerHost) {
-      try {
-        const res = await axios.post(cfWorkerHost, {
-          url
-        })
-        if (res.data.status === 200 && res.data.key.startsWith('/')) {
-          return `${cfWorkerHost}${res.data.key}`
-        }
-      } catch (e: any) {
-        logger.error(e)
-      }
-    } else {
-      logger.warn('CF Worker host is not set')
-    }
+  } else {
+    logger.warn('CF Worker host is not set')
   }
   return url
+}
+
+export const generateShortUrl = async (url: string) => {
+  const server = db.get(configPaths.settings.shortUrlServer) || IShortUrlServer.C1N
+  switch (server) {
+    case IShortUrlServer.C1N:
+      return generateC1NShortUrl(url)
+    case IShortUrlServer.YOURLS:
+      return generateYOURLSShortUrl(url)
+    case IShortUrlServer.CFWORKER:
+      return generateCFWORKERShortUrl(url)
+    default:
+      return url
+  }
 }
