@@ -11,9 +11,7 @@ interface ISettingForm {
   autoCloseMainWindow: boolean
   logLevel: string[]
   autoCopyUrl: boolean
-  checkBetaUpdate: boolean
   useBuiltinClipboard: boolean
-  language: 'zh-CN' | 'zh-TW' | 'en'
   logFileSizeLimit: number
   deleteCloudFile: boolean
   isCustomMiniIcon: boolean
@@ -24,15 +22,14 @@ interface ISettingForm {
   encodeOutputURL: boolean
   isAutoListenClipboard: boolean
   useShortUrl: boolean
-  c1nToken: string
   shortUrlServer: string
+  c1nToken: string
   yourlsDomain: string
   yourlsSignature: string
   cfWorkerHost: string
   deleteLocalFile: boolean
   serverKey: string
   aesPassword: string
-  manualPageOpen: 'window' | 'browser'
   enableWebServer: boolean
   webServerHost: string
   webServerPort: number
