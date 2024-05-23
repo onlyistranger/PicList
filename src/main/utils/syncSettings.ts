@@ -10,32 +10,12 @@ import { configPaths } from '~/universal/utils/configPaths'
 
 const STORE_PATH = app.getPath('userData')
 
-const configFileNames = [
-  'data.json',
-  'data.bak.json',
-  'manage.json',
-  'manage.bak.json'
-]
+const readFileAsBase64 = (filePath: string) => fs.readFileSync(filePath, { encoding: 'base64' })
 
-function getOctokit (syncConfig: ISyncConfig) {
-  const { token, proxy } = syncConfig
-  return new Octokit({
-    auth: token,
-    request: {
-      agent: proxy
-        ? new HttpsProxyAgent({
-          keepAlive: true,
-          keepAliveMsecs: 1000,
-          rejectUnauthorized: false,
-          proxy: proxy.replace('127.0.0.1', 'localhost'),
-          scheduling: 'lifo'
-        })
-        : undefined
-    }
-  })
-}
+const isHttpResSuccess = (res: any) => res.status >= 200 && res.status < 300
+const uploadOrUpdateMsg = (fileName: string, isUpdate: boolean = true) => isUpdate ? `update ${fileName} from PicList` : `upload ${fileName} from PicList`
 
-function getSyncConfig () {
+const getSyncConfig = () => {
   return db.get(configPaths.settings.sync) || {
     type: 'github',
     username: '',
@@ -46,8 +26,35 @@ function getSyncConfig () {
   }
 }
 
-function syncConfigValidator (syncConfig: ISyncConfig) {
-  const { type, username, repo, branch, token } = syncConfig
+const getProxyagent = (proxy: string | undefined) => {
+  return proxy
+    ? new HttpsProxyAgent({
+      keepAlive: true,
+      keepAliveMsecs: 1000,
+      rejectUnauthorized: false,
+      proxy: proxy.replace('127.0.0.1', 'localhost'),
+      scheduling: 'lifo'
+    })
+    : undefined
+}
+
+function getOctokit (syncConfig: ISyncConfig) {
+  const { token, proxy } = syncConfig
+  return new Octokit({
+    auth: token,
+    request: {
+      agent: getProxyagent(proxy)
+    }
+  })
+}
+
+const isSyncConfigValidate = ({
+  type,
+  username,
+  repo,
+  branch,
+  token
+}: ISyncConfig) => {
   return type && username && repo && branch && token
 }
 
@@ -57,55 +64,46 @@ async function uploadLocalToRemote (syncConfig: ISyncConfig, fileName: string) {
     return false
   }
   const { username, repo, branch, token, type } = syncConfig
-  if (type === 'gitee') {
-    try {
-      const url = `https://gitee.com/api/v5/repos/${username}/${repo}/contents/${fileName}`
-      const res = await axios.post(url, {
-        access_token: token,
-        branch,
-        content: fs.readFileSync(localFilePath, { encoding: 'base64' }),
-        message: `upload ${fileName} from PicList`
-      })
-      return res.status >= 200 && res.status < 300
-    } catch (error: any) {
-      logger.error(error)
-      return false
-    }
-  } else if (type === 'github') {
-    const octokit = getOctokit(syncConfig)
-    try {
-      const res = await octokit.rest.repos.createOrUpdateFileContents({
-        owner: username,
-        repo,
-        path: fileName,
-        message: `upload ${fileName} from PicList`,
-        content: fs.readFileSync(localFilePath, { encoding: 'base64' }),
-        branch
-      })
-      return res.status >= 200 && res.status < 300
-    } catch (error: any) {
-      logger.error(error)
-      return false
-    }
-  } else {
-    const { endpoint = '' } = syncConfig
-    const apiUrl = `${endpoint}/api/v1/repos/${username}/${repo}/contents/${fileName}`
-    try {
-      const headers = {
-        Authorization: `token ${token}`
+  const defaultConfig = {
+    content: readFileAsBase64(localFilePath),
+    message: uploadOrUpdateMsg(fileName, false),
+    branch
+  }
+  try {
+    switch (type) {
+      case 'gitee': {
+        const url = `https://gitee.com/api/v5/repos/${username}/${repo}/contents/${fileName}`
+        const res = await axios.post(url, {
+          ...defaultConfig,
+          access_token: token
+        })
+        return isHttpResSuccess(res)
       }
-      const res = await axios.post(apiUrl, {
-        message: `upload ${fileName} from PicList`,
-        content: fs.readFileSync(localFilePath, { encoding: 'base64' }),
-        branch
-      }, {
-        headers
-      })
-      return res.status >= 200 && res.status < 300
-    } catch (error: any) {
-      logger.error(error)
-      return false
+      case 'github': {
+        const octokit = getOctokit(syncConfig)
+        const res = await octokit.rest.repos.createOrUpdateFileContents({
+          ...defaultConfig,
+          owner: username,
+          repo,
+          path: fileName
+        })
+        return isHttpResSuccess(res)
+      }
+      case 'gitea': {
+        const { endpoint = '' } = syncConfig
+        const apiUrl = `${endpoint}/api/v1/repos/${username}/${repo}/contents/${fileName}`
+        const headers = {
+          Authorization: `token ${token}`
+        }
+        const res = await axios.post(apiUrl, defaultConfig, { headers })
+        return isHttpResSuccess(res)
+      }
+      default:
+        return false
     }
+  } catch (error: any) {
+    logger.error(error)
+    return false
   }
 }
 
@@ -115,231 +113,183 @@ async function updateLocalToRemote (syncConfig: ISyncConfig, fileName: string) {
     return false
   }
   const { username, repo, branch, token, type } = syncConfig
-  if (type === 'gitee') {
-    const url = `https://gitee.com/api/v5/repos/${username}/${repo}/contents/${fileName}`
-    const shaRes = await axios.get(url, {
-      params: {
-        access_token: token,
-        ref: branch
-      }
-    })
-    if (shaRes.status < 200 || shaRes.status > 300) {
-      return false
-    }
-    const sha = shaRes.data.sha
-    const res = await axios.put(url, {
-      owner: username,
-      repo,
-      path: fileName,
-      message: `update ${fileName} from PicList`,
-      content: fs.readFileSync(localFilePath, { encoding: 'base64' }),
-      branch,
-      sha,
-      access_token: token
-    })
-    if (res.status >= 200 && res.status < 300) {
-      return true
-    }
-    return false
-  } else if (type === 'github') {
-    const octokit = getOctokit(syncConfig)
-    const shaRes = await octokit.rest.repos.getContent({
-      owner: username,
-      repo,
-      path: fileName,
-      ref: branch
-    })
-    if (shaRes.status !== 200) {
-      throw new Error('get sha failed')
-    }
-    const data = shaRes.data as any
-    const sha = data.sha
-    const res = await octokit.rest.repos.createOrUpdateFileContents({
-      owner: username,
-      repo,
-      path: fileName,
-      message: `update ${fileName} from PicList`,
-      content: fs.readFileSync(localFilePath, { encoding: 'base64' }),
-      branch,
-      sha
-    })
-    return res.status === 200
-  } else {
-    const { endpoint = '' } = syncConfig
-    const apiUrl = `${endpoint}/api/v1/repos/${username}/${repo}/contents/${fileName}`
-    const headers = {
-      Authorization: `token ${token}`
-    }
-    const shaRes = await axios.get(apiUrl, {
-      headers
-    })
-    if (shaRes.status < 200 || shaRes.status > 300) {
-      throw new Error('get sha failed')
-    }
-    const data = shaRes.data as any
-    const sha = data.sha
-    const res = await axios.put(apiUrl, {
-      message: `update ${fileName} from PicList`,
-      content: fs.readFileSync(localFilePath, { encoding: 'base64' }),
-      branch,
-      sha
-    }, {
-      headers
-    })
-    return res.status >= 200 && res.status < 300
+  const defaultConfig = {
+    branch,
+    message: uploadOrUpdateMsg(fileName),
+    content: readFileAsBase64(localFilePath)
   }
-}
-
-async function downloadRemoteToLocal (syncConfig: ISyncConfig, fileName: string) {
-  const localFilePath = path.join(STORE_PATH, fileName)
-  const { username, repo, branch, token, proxy, type } = syncConfig
-  if (type === 'gitee') {
-    try {
+  switch (type) {
+    case 'gitee': {
       const url = `https://gitee.com/api/v5/repos/${username}/${repo}/contents/${fileName}`
-      const res = await axios.get(url, {
+      const shaRes = await axios.get(url, {
         params: {
           access_token: token,
           ref: branch
         }
       })
-      if (res.status >= 200 && res.status < 300) {
-        const content = res.data.content
-        await fs.writeFile(localFilePath, Buffer.from(content, 'base64'))
-        return true
+      if (!isHttpResSuccess(shaRes)) {
+        return false
       }
-      return false
-    } catch (error: any) {
-      logger.error(error)
-      return false
+      const sha = shaRes.data.sha
+      const res = await axios.put(url, {
+        ...defaultConfig,
+        owner: username,
+        repo,
+        path: fileName,
+        sha,
+        access_token: token
+      })
+      return isHttpResSuccess(res)
     }
-  } else if (type === 'github') {
-    const octokit = getOctokit(syncConfig)
-    try {
-      const res = await octokit.rest.repos.getContent({
+    case 'github': {
+      const octokit = getOctokit(syncConfig)
+      const shaRes = await octokit.rest.repos.getContent({
         owner: username,
         repo,
         path: fileName,
         ref: branch
       })
-      if (res.status === 200) {
-        const data = res.data as any
-        const downloadUrl = data.download_url
-        const downloadRes = await axios.get(downloadUrl, {
-          httpsAgent: proxy
-            ? new HttpsProxyAgent({
-              keepAlive: true,
-              keepAliveMsecs: 1000,
-              rejectUnauthorized: false,
-              proxy: proxy.replace('127.0.0.1', 'localhost'),
-              scheduling: 'lifo'
-            })
-            : undefined
-        })
-        if (downloadRes.status >= 200 && downloadRes.status < 300) {
-          await fs.writeFile(localFilePath, JSON.stringify(downloadRes.data, null, 2))
-          return true
-        }
+      if (shaRes.status !== 200) {
+        throw new Error('get sha failed')
       }
-      return false
-    } catch (error: any) {
-      logger.error(error)
-      return false
+      const data = shaRes.data as any
+      const sha = data.sha
+      const res = await octokit.rest.repos.createOrUpdateFileContents({
+        ...defaultConfig,
+        owner: username,
+        repo,
+        path: fileName,
+        sha
+      })
+      return res.status === 200
     }
-  } else {
-    const { endpoint = '' } = syncConfig
-    const apiUrl = `${endpoint}/api/v1/repos/${username}/${repo}/contents/${fileName}`
-    try {
+    case 'gitea': {
+      const { endpoint = '' } = syncConfig
+      const apiUrl = `${endpoint}/api/v1/repos/${username}/${repo}/contents/${fileName}`
       const headers = {
         Authorization: `token ${token}`
       }
-      const res = await axios.get(apiUrl, {
-        headers,
-        params: {
-          ref: branch
-        }
+      const shaRes = await axios.get(apiUrl, {
+        headers
       })
-      if (res.status >= 200 && res.status < 300) {
-        const content = res.data.content
-        await fs.writeFile(localFilePath, Buffer.from(content, 'base64'))
-        return true
+      if (!isHttpResSuccess(shaRes)) {
+        throw new Error('get sha failed')
       }
+      const data = shaRes.data as any
+      const sha = data.sha
+      const res = await axios.put(apiUrl, {
+        ...defaultConfig,
+        sha
+      }, {
+        headers
+      })
+      return isHttpResSuccess(res)
+    }
+    default:
       return false
+  }
+}
+
+async function uploadFile (fileName: string[]): Promise<number> {
+  const syncConfig = getSyncConfig()
+  if (!isSyncConfigValidate(syncConfig)) {
+    logger.error('sync config is invalid')
+    return 0
+  }
+  const uploadFunc = async (file: string): Promise<number> => {
+    let result = false
+    try {
+      result = await updateLocalToRemote(syncConfig, file)
     } catch (error: any) {
-      logger.error(error)
-      return false
+      result = await uploadLocalToRemote(syncConfig, file)
     }
-  }
-}
-
-async function uploadFile (fileName: string, all = false) {
-  const syncConfig = getSyncConfig()
-  if (!syncConfigValidator(syncConfig)) {
-    logger.error('sync config is invalid')
-    return 0
-  }
-  let successCount = 0
-  if (all) {
-    for (const file of configFileNames) {
-      const result = await uploadFunc(syncConfig, file)
-      if (result) {
-        successCount++
-      }
-    }
-    logger.info(`upload all files at ${new Date().toLocaleString()}`)
-    return successCount
-  } else {
-    const ressult = await uploadFunc(syncConfig, fileName)
-    return ressult ? 1 : 0
-  }
-}
-
-async function uploadFunc (syncConfig: ISyncConfig, fileName: string) {
-  let result = false
-  try {
-    result = await updateLocalToRemote(syncConfig, fileName)
-  } catch (error: any) {
-    result = await uploadLocalToRemote(syncConfig, fileName)
-  }
-  if (!result) {
-    logger.error(`upload ${fileName} failed`)
-    return false
-  } else {
-    logger.info(`upload ${fileName} success`)
-    return true
-  }
-}
-
-async function downloadFile (fileName: string, all = false) {
-  const syncConfig = getSyncConfig()
-  if (!syncConfigValidator(syncConfig)) {
-    logger.error('sync config is invalid')
-    return 0
-  }
-  if (all) {
-    let successCount = 0
-    for (const file of configFileNames) {
-      const result = await downloadFunc(syncConfig, file)
-      if (result) {
-        successCount++
-      }
-    }
-    logger.info(`download all files at ${new Date().toLocaleString()}`)
-    return successCount
-  } else {
-    const result = await downloadFunc(syncConfig, fileName)
+    logger.info(`upload ${file} ${result ? 'success' : 'failed'}`)
     return result ? 1 : 0
   }
+
+  let count = 0
+  for (const file of fileName) {
+    count += await uploadFunc(file)
+  }
+
+  return count
 }
 
-async function downloadFunc (syncConfig: ISyncConfig, fileName: string) {
-  const result = await downloadRemoteToLocal(syncConfig, fileName)
-  if (!result) {
-    logger.error(`download ${fileName} failed`)
-    return false
-  } else {
-    logger.info(`download ${fileName} success`)
+async function downloadAndWriteFile (url: string, localFilePath:string, config: any, isWriteJson = false) {
+  const res = await axios.get(url, config)
+  if (isHttpResSuccess(res)) {
+    await fs.writeFile(localFilePath, isWriteJson ? JSON.stringify(res.data, null, 2) : Buffer.from(res.data.content, 'base64'))
     return true
   }
+  return false
+}
+
+async function downloadRemoteToLocal (syncConfig: ISyncConfig, fileName: string) {
+  const localFilePath = path.join(STORE_PATH, fileName)
+  const { username, repo, branch, token, proxy, type } = syncConfig
+  try {
+    switch (type) {
+      case 'gitee': {
+        const url = `https://gitee.com/api/v5/repos/${username}/${repo}/contents/${fileName}`
+        return downloadAndWriteFile(url, localFilePath, {
+          params: {
+            access_token: token,
+            ref: branch
+          }
+        })
+      }
+      case 'github': {
+        const octokit = getOctokit(syncConfig)
+        const res = await octokit.rest.repos.getContent({
+          owner: username,
+          repo,
+          path: fileName,
+          ref: branch
+        })
+        if (res.status === 200) {
+          const data = res.data as any
+          const downloadUrl = data.download_url
+          return downloadAndWriteFile(downloadUrl, localFilePath, {
+            httpsAgent: getProxyagent(proxy)
+          }, true)
+        }
+        return false
+      }
+      case 'gitea': {
+        const { endpoint = '' } = syncConfig
+        const apiUrl = `${endpoint}/api/v1/repos/${username}/${repo}/contents/${fileName}`
+        return downloadAndWriteFile(apiUrl, localFilePath, {
+          headers: {
+            Authorization: `token ${token}`
+          },
+          params: {
+            ref: branch
+          }
+        })
+      }
+      default:
+        return false
+    }
+  } catch (error: any) {
+    logger.error(error)
+    return false
+  }
+}
+
+async function downloadFile (fileName: string[]): Promise<number> {
+  const syncConfig = getSyncConfig()
+  if (!isSyncConfigValidate(syncConfig)) {
+    logger.error('sync config is invalid')
+    return 0
+  }
+
+  const downloadFunc = async (file: string): Promise<number> => {
+    const result = await downloadRemoteToLocal(syncConfig, file)
+    logger.info(`download ${file} ${result ? 'success' : 'failed'}`)
+    return result ? 1 : 0
+  }
+
+  return (await Promise.all(fileName.map(downloadFunc))).reduce((a, b) => a + b, 0)
 }
 
 export {

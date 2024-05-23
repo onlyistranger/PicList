@@ -93,6 +93,8 @@ import webServer from '../server/webServer'
 import { configPaths } from '~/universal/utils/configPaths'
 
 const STORE_PATH = app.getPath('userData')
+const commonConfigList = ['data.json', 'data.bak.json']
+const manageConfigList = ['manage.json', 'manage.bak.json']
 
 export default {
   listen () {
@@ -251,43 +253,27 @@ export default {
     })
 
     ipcMain.handle('uploadCommonConfig', async () => {
-      const dataResult = await uploadFile('data.json')
-      const bakResult = await uploadFile('data.bak.json')
-      return dataResult + bakResult
+      return await uploadFile(commonConfigList)
     })
 
     ipcMain.handle('downloadCommonConfig', async () => {
-      const dataResult = await downloadFile('data.json')
-      const bakResult = await downloadFile('data.bak.json')
-      return dataResult + bakResult
+      return await downloadFile(commonConfigList)
     })
 
     ipcMain.handle('uploadManageConfig', async () => {
-      const manageResult = await uploadFile('manage.json')
-      const bakResult = await uploadFile('manage.bak.json')
-      return manageResult + bakResult
+      return await uploadFile(manageConfigList)
     })
 
     ipcMain.handle('downloadManageConfig', async () => {
-      const manageResult = await downloadFile('manage.json')
-      const bakResult = await downloadFile('manage.bak.json')
-      return manageResult + bakResult
+      return await downloadFile(manageConfigList)
     })
 
     ipcMain.handle('uploadAllConfig', async () => {
-      const dataResult = await uploadFile('data.json')
-      const bakResult = await uploadFile('data.bak.json')
-      const manageResult = await uploadFile('manage.json')
-      const manageBakResult = await uploadFile('manage.bak.json')
-      return dataResult + bakResult + manageResult + manageBakResult
+      return await uploadFile([...commonConfigList, ...manageConfigList])
     })
 
     ipcMain.handle('downloadAllConfig', async () => {
-      const dataResult = await downloadFile('data.json')
-      const bakResult = await downloadFile('data.bak.json')
-      const manageResult = await downloadFile('manage.json')
-      const manageBakResult = await downloadFile('manage.bak.json')
-      return dataResult + bakResult + manageResult + manageBakResult
+      return await downloadFile([...commonConfigList, ...manageConfigList])
     })
 
     ipcMain.on('toggleMainWindowAlwaysOnTop', () => {
