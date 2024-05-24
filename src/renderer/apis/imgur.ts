@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import axios, { AxiosResponse } from 'axios'
 
 interface IConfigMap {
@@ -22,6 +23,7 @@ export default class ImgurApi {
       Authorization = `Client-ID ${clientId}`
       apiUrl = `${ImgurApi.#baseUrl}/image/${hash}`
     } else {
+      deleteLog(hash, 'Imgur', false, 'No credentials found')
       return false
     }
     try {
@@ -29,9 +31,14 @@ export default class ImgurApi {
         headers: { Authorization },
         timeout: 30000
       })
-      return response.status === 200
-    } catch (error) {
-      console.error(error)
+      if (response.status === 200) {
+        deleteLog(hash, 'Imgur')
+        return true
+      }
+      deleteLog(hash, 'Imgur', false)
+      return false
+    } catch (error: any) {
+      deleteFailedLog(hash, 'Imgur', error)
       return false
     }
   }

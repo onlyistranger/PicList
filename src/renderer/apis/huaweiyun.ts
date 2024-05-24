@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { getRawData } from '~/renderer/utils/common'
+import { deleteFailedLog, getRawData } from '~/renderer/utils/common'
 import { removeFileFromHuaweiInMain } from '~/main/utils/deleteFunc'
 
 export default class HuaweicloudApi {
@@ -10,8 +10,8 @@ export default class HuaweicloudApi {
           getRawData(configMap)
         )
         : await removeFileFromHuaweiInMain(getRawData(configMap))
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      deleteFailedLog(configMap.fileName, 'HuaweiCloud', error)
       return false
     }
   }

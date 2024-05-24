@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import axios, { AxiosResponse } from 'axios'
 
 export default class PiclistApi {
@@ -5,7 +6,7 @@ export default class PiclistApi {
     const { config, fullResult } = configMap
     const { host, port } = config
     if (!host) {
-      console.error('PiclistApi.delete: invalid params')
+      deleteLog(fullResult, 'Piclist', false, 'PiclistApi.delete: invalid params')
       return false
     }
 
@@ -18,9 +19,14 @@ export default class PiclistApi {
           list: [fullResult]
         }
       )
-      return response.status === 200 && response.data?.success
-    } catch (error) {
-      console.error(error)
+      if (response.status === 200 && response.data?.success) {
+        deleteLog(fullResult, 'Piclist')
+        return true
+      }
+      deleteLog(fullResult, 'Piclist', false)
+      return false
+    } catch (error: any) {
+      deleteFailedLog(fullResult, 'Piclist', error)
       return false
     }
   }

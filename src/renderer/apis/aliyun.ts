@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import OSS from 'ali-oss'
 
 interface IConfigMap {
@@ -18,9 +19,14 @@ export default class AliyunApi {
       const client = new OSS({ ...config, region: config.area })
       const key = AliyunApi.#getKey(fileName, config.path)
       const result = await client.delete(key)
-      return result.res.status === 204
-    } catch (error) {
-      console.error(error)
+      if (result.res.status === 204) {
+        deleteLog(fileName, 'Aliyun')
+        return true
+      }
+      deleteLog(fileName, 'Aliyun', false)
+      return false
+    } catch (error: any) {
+      deleteFailedLog(fileName, 'Aliyun', error)
       return false
     }
   }

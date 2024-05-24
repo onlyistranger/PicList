@@ -140,7 +140,7 @@ async function deleteSFTPFile (config: ISftpPlistConfig, fileName: string) {
     client.close()
     return deleteResult
   } catch (err: any) {
-    console.error(err)
+    picgo.log.error(err)
     return false
   }
 }

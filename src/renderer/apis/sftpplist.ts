@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { getRawData } from '~/renderer/utils/common'
+import { deleteFailedLog, getRawData } from '~/renderer/utils/common'
 
 export default class SftpPlistApi {
   static async delete (configMap: IStringKeyMap): Promise<boolean> {
@@ -10,8 +10,8 @@ export default class SftpPlistApi {
         fileName
       )
       return deleteResult
-    } catch (error) {
-      console.error(error)
+    } catch (error: any) {
+      deleteFailedLog(fileName, 'SFTP', error)
       return false
     }
   }

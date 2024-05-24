@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import axios, { AxiosResponse } from 'axios'
 
 interface IConfigMap {
@@ -11,7 +12,7 @@ export default class SmmsApi {
   static async delete (configMap: IConfigMap): Promise<boolean> {
     const { hash, config } = configMap
     if (!hash || !config || !config.token) {
-      console.error('SmmsApi.delete: invalid params')
+      deleteLog(hash, 'Smms', false, 'SmmsApi.delete: invalid params')
       return false
     }
 
@@ -29,9 +30,14 @@ export default class SmmsApi {
           },
           timeout: 30000
         })
-      return response.status === 200
-    } catch (error) {
-      console.error(error)
+      if (response.status === 200) {
+        deleteLog(hash, 'Smms')
+        return true
+      }
+      deleteLog(hash, 'Smms', false)
+      return false
+    } catch (error: any) {
+      deleteFailedLog(hash, 'Smms', error)
       return false
     }
   }

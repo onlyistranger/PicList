@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { getRawData } from '~/renderer/utils/common'
+import { deleteFailedLog, getRawData } from '~/renderer/utils/common'
 import { removeFileFromS3InMain } from '~/main/utils/deleteFunc'
 
 export default class AwsS3Api {
@@ -10,8 +10,8 @@ export default class AwsS3Api {
           getRawData(configMap)
         )
         : await removeFileFromS3InMain(getRawData(configMap))
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      deleteFailedLog(configMap.fileName, 'AWS S3', error)
       return false
     }
   }

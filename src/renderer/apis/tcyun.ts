@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import COS from 'cos-nodejs-sdk-v5'
 
 interface IConfigMap {
@@ -28,9 +29,14 @@ export default class TcyunApi {
         Region: area,
         Key: key
       })
-      return result.statusCode === 204
-    } catch (error) {
-      console.error(error)
+      if (result.statusCode === 204) {
+        deleteLog(fileName, 'Tcyun')
+        return true
+      }
+      deleteLog(fileName, 'Tcyun', false)
+      return false
+    } catch (error: any) {
+      deleteFailedLog(fileName, 'Tcyun', error)
       return false
     }
   }

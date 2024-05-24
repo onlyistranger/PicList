@@ -1,6 +1,7 @@
 import { isReactive, isRef, toRaw, unref } from 'vue'
 import { ipcRenderer } from 'electron'
 import { OPEN_URL } from '~/universal/events/constants'
+import { ILogType } from '~/universal/types/enum'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 export const handleTalkingDataEvent = (data: ITalkingDataOptions) => {
@@ -36,4 +37,13 @@ function sendToMain (channel: string, ...args: any[]) {
 
 export const openURL = (url: string) => {
   sendToMain(OPEN_URL, url)
+}
+
+export const deleteLog = (fileName?: string, type?: string, isSuccess = true, msg?: string) => {
+  ipcRenderer.send('logDeleteMsg', msg || `Delete ${fileName} on ${type} success`, isSuccess ? ILogType.success : ILogType.error)
+}
+
+export const deleteFailedLog = (fileName: string, type: string, error: any) => {
+  deleteLog(fileName, type, false)
+  ipcRenderer.send('logDeleteMsg', error, ILogType.error)
 }

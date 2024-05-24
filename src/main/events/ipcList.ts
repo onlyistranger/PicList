@@ -14,7 +14,7 @@ import {
 import windowManager from 'apis/app/window/windowManager'
 
 // 枚举类型声明
-import { IPasteStyle, IWindowList } from '#/types/enum'
+import { ILogType, IPasteStyle, IWindowList } from '#/types/enum'
 
 // 上传器
 import uploader from 'apis/app/uploader'
@@ -91,6 +91,7 @@ import { ISftpPlistConfig } from 'piclist'
 import { removeFileFromS3InMain, removeFileFromDogeInMain, removeFileFromHuaweiInMain } from '~/main/utils/deleteFunc'
 import webServer from '../server/webServer'
 import { configPaths } from '~/universal/utils/configPaths'
+import logger from '../apis/core/picgo/logger'
 
 const STORE_PATH = app.getPath('userData')
 const commonConfigList = ['data.json', 'data.bak.json']
@@ -172,6 +173,11 @@ export default {
     })
 
     // Gallery image cloud delete IPC
+
+    ipcMain.on('logDeleteMsg', async (evt: IpcMainEvent, msg: string, logLevel: ILogType) => {
+      logger[logLevel](msg)
+    })
+
     ipcMain.handle('delete-sftp-file', async (_evt: IpcMainInvokeEvent, config: ISftpPlistConfig, fileName: string) => {
       try {
         const client = SSHClient.instance
@@ -182,7 +188,7 @@ export default {
         client.close()
         return deleteResult
       } catch (err: any) {
-        console.error(err)
+        logger.error(err)
         return false
       }
     })

@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import Upyun from 'upyun'
 
 interface IConfigMap {
@@ -17,9 +18,15 @@ export default class UpyunApi {
       } else {
         key = `${path.replace(/^\/+|\/+$/, '')}/${fileName}`
       }
-      return await client.deleteFile(key)
-    } catch (error) {
-      console.log(error)
+      const result = await client.deleteFile(key)
+      if (result) {
+        deleteLog(fileName, 'Upyun')
+        return true
+      }
+      deleteLog(fileName, 'Upyun', false)
+      return false
+    } catch (error: any) {
+      deleteFailedLog(fileName, 'Upyun', error)
       return false
     }
   }

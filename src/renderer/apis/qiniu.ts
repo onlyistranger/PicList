@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import Qiniu from 'qiniu'
 
 interface IConfigMap {
@@ -26,9 +27,14 @@ export default class QiniuApi {
           }
         })
       }) as any
-      return res?.respInfo?.statusCode === 200
-    } catch (error) {
-      console.error(error)
+      if (res?.respInfo?.statusCode === 200) {
+        deleteLog(fileName, 'Qiniu')
+        return true
+      }
+      deleteLog(fileName, 'Qiniu', false)
+      return false
+    } catch (error: any) {
+      deleteFailedLog(fileName, 'Qiniu', error)
       return false
     }
   }

@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import axios, { AxiosResponse } from 'axios'
 import https from 'https'
 
@@ -5,13 +6,13 @@ export default class LskyplistApi {
   static async delete (configMap: IStringKeyMap): Promise<boolean> {
     const { hash, config } = configMap
     if (!hash || !config || !config.token) {
-      console.error('LskyplistApi.delete: invalid params')
+      deleteLog(hash, 'Lskyplist', false, 'LskyplistApi.delete: invalid params')
       return false
     }
 
     const { host, token, version } = config
     if (version !== 'V2') {
-      console.error('LskyplistApi.delete: invalid version')
+      deleteLog(hash, 'Lskyplist', false, 'LskyplistApi.delete: invalid version')
       return false
     }
 
@@ -30,9 +31,14 @@ export default class LskyplistApi {
           timeout: 30000,
           httpsAgent: requestAgent
         })
-      return response.status === 200 && response.data.status === true
-    } catch (error) {
-      console.error(error)
+      if (response.status === 200 && response.data.status === true) {
+        deleteLog(hash, 'Lskyplist')
+        return true
+      }
+      deleteLog(hash, 'Lskyplist', false)
+      return false
+    } catch (error: any) {
+      deleteFailedLog(hash, 'Lskyplist', error)
       return false
     }
   }

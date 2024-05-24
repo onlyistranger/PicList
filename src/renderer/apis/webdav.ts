@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import { AuthType, WebDAVClientOptions, createClient } from 'webdav'
 import { formatEndpoint } from '~/main/manage/utils/common'
 
@@ -29,9 +30,10 @@ export default class WebdavApi {
     }
     try {
       await ctx.deleteFile(key)
+      deleteLog(fileName, 'WebDAV')
       return true
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      deleteFailedLog(fileName, 'WebDAV', error)
       return false
     }
   }

@@ -1,3 +1,4 @@
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 import { Octokit } from '@octokit/rest'
 
 interface IConfigMap {
@@ -34,9 +35,14 @@ export default class GithubApi {
         sha: hash,
         branch
       })
-      return status === 200
-    } catch (error) {
-      console.error(error)
+      if (status === 200) {
+        deleteLog(fileName, 'GitHub')
+        return true
+      }
+      deleteLog(fileName, 'GitHub', false)
+      return false
+    } catch (error: any) {
+      deleteFailedLog(fileName, 'GitHub', error)
       return false
     }
   }
