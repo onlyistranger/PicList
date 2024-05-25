@@ -31,7 +31,7 @@ export class ManageApi extends EventEmitter implements ManageApiType {
 
   constructor (currentPicBed: string = '') {
     super()
-    this.currentPicBed = currentPicBed || (this.getConfig('currentPicBed') ?? 'placeholder')
+    this.currentPicBed = currentPicBed || 'placeholder'
     this.configPath = managePathChecker()
     this.initConfigPath()
     this.logger = new ManageLogger(this)

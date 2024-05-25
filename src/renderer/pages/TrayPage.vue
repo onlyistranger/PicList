@@ -192,14 +192,14 @@ function uploadClipboardFiles () {
 onBeforeMount(() => {
   disableDragFile()
   getData()
-  ipcRenderer.on('dragFiles', async (event: Event, _files: string[]) => {
+  ipcRenderer.on('dragFiles', async (_: Event, _files: string[]) => {
     for (let i = 0; i < _files.length; i++) {
       const item = _files[i]
       await $$db.insert(item)
     }
     files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 })).data
   })
-  ipcRenderer.on('clipboardFiles', (event: Event, files: ImgInfo[]) => {
+  ipcRenderer.on('clipboardFiles', (_: Event, files: ImgInfo[]) => {
     clipboardFiles.value = files
   })
   ipcRenderer.on('uploadFiles', async () => {
@@ -214,7 +214,7 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
   ipcRenderer.removeAllListeners('dragFiles')
   ipcRenderer.removeAllListeners('clipboardFiles')
-  ipcRenderer.removeAllListeners('uploadClipboardFiles')
+  ipcRenderer.removeAllListeners('uploadFiles')
   ipcRenderer.removeAllListeners('updateFiles')
 })
 </script>

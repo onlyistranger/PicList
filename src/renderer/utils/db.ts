@@ -57,7 +57,7 @@ export class GalleryDB implements IGalleryDB {
   #msgHandler<T> (method: string, ...args: any[]): Promise<T> {
     return new Promise((resolve) => {
       const callbackId = uuid()
-      const callback = (event: IpcRendererEvent, data: T, returnCallbackId: string) => {
+      const callback = (_: IpcRendererEvent, data: T, returnCallbackId: string) => {
         if (returnCallbackId === callbackId) {
           resolve(data)
           ipcRenderer.removeListener(method, callback)
