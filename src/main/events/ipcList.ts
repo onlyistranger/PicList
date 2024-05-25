@@ -155,7 +155,7 @@ export default {
       }
     })
 
-    ipcMain.on('bindOrUnbindShortKey', (evt: IpcMainEvent, item: IShortKeyConfig, from: string) => {
+    ipcMain.on('bindOrUnbindShortKey', (_: IpcMainEvent, item: IShortKeyConfig, from: string) => {
       const result = shortKeyHandler.bindOrUnbindShortKey(item, from)
       if (result) {
         const notification = new Notification({
@@ -174,11 +174,11 @@ export default {
 
     // Gallery image cloud delete IPC
 
-    ipcMain.on('logDeleteMsg', async (evt: IpcMainEvent, msg: string, logLevel: ILogType) => {
+    ipcMain.on('logDeleteMsg', async (_: IpcMainEvent, msg: string, logLevel: ILogType) => {
       logger[logLevel](msg)
     })
 
-    ipcMain.handle('delete-sftp-file', async (_evt: IpcMainInvokeEvent, config: ISftpPlistConfig, fileName: string) => {
+    ipcMain.handle('delete-sftp-file', async (_: IpcMainInvokeEvent, config: ISftpPlistConfig, fileName: string) => {
       try {
         const client = SSHClient.instance
         await client.connect(config)
@@ -193,17 +193,17 @@ export default {
       }
     })
 
-    ipcMain.handle('delete-aws-s3-file', async (_evt: IpcMainInvokeEvent, configMap: IStringKeyMap) => {
+    ipcMain.handle('delete-aws-s3-file', async (_: IpcMainInvokeEvent, configMap: IStringKeyMap) => {
       const result = await removeFileFromS3InMain(configMap)
       return result
     })
 
-    ipcMain.handle('delete-doge-file', async (_evt: IpcMainInvokeEvent, configMap: IStringKeyMap) => {
+    ipcMain.handle('delete-doge-file', async (_: IpcMainInvokeEvent, configMap: IStringKeyMap) => {
       const result = await removeFileFromDogeInMain(configMap)
       return result
     })
 
-    ipcMain.handle('delete-huaweicloud-file', async (_evt: IpcMainInvokeEvent, configMap: IStringKeyMap) => {
+    ipcMain.handle('delete-huaweicloud-file', async (_: IpcMainInvokeEvent, configMap: IStringKeyMap) => {
       const result = await removeFileFromHuaweiInMain(configMap)
       return result
     })
@@ -212,27 +212,23 @@ export default {
 
     ipcMain.handle('migrateFromPicGo', async () => {
       const picGoConfigPath = STORE_PATH.replace('piclist', 'picgo')
-      const fileToMigration = [
+      const files = [
         'data.json',
         'data.bak.json',
         'picgo.db',
         'picgo.bak.db'
       ]
-      const targetFileNames = [
-        'data.json',
-        'data.bak.json',
-        'piclist.db',
-        'piclist.bak.db'
-      ]
       try {
-        for (let i = 0; i < fileToMigration.length; i++) {
-          if (fs.existsSync(path.join(picGoConfigPath, fileToMigration[i]))) {
-            fs.removeSync(path.join(STORE_PATH, targetFileNames[i]))
-            fs.copyFileSync(path.join(picGoConfigPath, fileToMigration[i]), path.join(STORE_PATH, targetFileNames[i]))
-          }
+        await Promise.all(files.map(async file => {
+          const sourcePath = path.join(picGoConfigPath, file)
+          const targetPath = path.join(STORE_PATH, file.replace('picgo', 'piclist'))
+          await fs.remove(targetPath)
+          await fs.copy(sourcePath, targetPath, { overwrite: true })
         }
+        ))
         return true
-      } catch (e) {
+      } catch (err: any) {
+        logger.error(err)
         return false
       }
     })
@@ -247,13 +243,13 @@ export default {
       notification.show()
     })
 
-    ipcMain.on('autoStart', (evt: IpcMainEvent, val: boolean) => {
+    ipcMain.on('autoStart', (_: IpcMainEvent, val: boolean) => {
       app.setLoginItemSettings({
         openAtLogin: val
       })
     })
 
-    ipcMain.handle('getShortUrl', async (evt: IpcMainInvokeEvent, url: string) => {
+    ipcMain.handle('getShortUrl', async (_: IpcMainInvokeEvent, url: string) => {
       const shortUrl = await generateShortUrl(url)
       return shortUrl
     })
@@ -347,7 +343,7 @@ export default {
       evt.returnValue = picBeds
     })
 
-    ipcMain.on(TOGGLE_SHORTKEY_MODIFIED_MODE, (evt: IpcMainEvent, val: boolean) => {
+    ipcMain.on(TOGGLE_SHORTKEY_MODIFIED_MODE, (_: IpcMainEvent, val: boolean) => {
       bus.emit(TOGGLE_SHORTKEY_MODIFIED_MODE, val)
     })
 
@@ -385,7 +381,7 @@ export default {
         window
       })
     })
-    ipcMain.on(SHOW_PLUGIN_PAGE_MENU, (evt: IpcMainEvent, plugin: IPicGoPlugin) => {
+    ipcMain.on(SHOW_PLUGIN_PAGE_MENU, (_: IpcMainEvent, plugin: IPicGoPlugin) => {
       const window = windowManager.get(IWindowList.SETTING_WINDOW)!
       const menu = buildPluginPageMenu(plugin)
       menu.popup({
@@ -404,22 +400,22 @@ export default {
         window?.close()
       }
     })
-    ipcMain.on(OPEN_USER_STORE_FILE, (evt: IpcMainEvent, filePath: string) => {
+    ipcMain.on(OPEN_USER_STORE_FILE, (_: IpcMainEvent, filePath: string) => {
       const abFilePath = path.join(STORE_PATH, filePath)
       shell.openPath(abFilePath)
     })
-    ipcMain.on(OPEN_URL, (evt: IpcMainEvent, url: string) => {
+    ipcMain.on(OPEN_URL, (_: IpcMainEvent, url: string) => {
       shell.openExternal(url)
     })
     ipcMain.on(RELOAD_APP, () => {
       app.relaunch()
       app.exit(0)
     })
-    ipcMain.on(SET_MINI_WINDOW_POS, (evt: IpcMainEvent, pos: IMiniWindowPos) => {
+    ipcMain.on(SET_MINI_WINDOW_POS, (_: IpcMainEvent, pos: IMiniWindowPos) => {
       const window = BrowserWindow.getFocusedWindow()
       window?.setBounds(pos)
     })
-    ipcMain.on(HIDE_DOCK, (_evt: IpcMainEvent, val: boolean) => {
+    ipcMain.on(HIDE_DOCK, (_: IpcMainEvent, val: boolean) => {
       if (val) {
         app.dock.hide()
       } else {

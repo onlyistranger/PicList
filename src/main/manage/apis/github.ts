@@ -154,7 +154,7 @@ class GithubApi {
     const { bucketName: repo, customUrl: branch, prefix, cancelToken, cdnUrl } = configMap
     const slicedPrefix = prefix.replace(/(^\/+|\/+$)/g, '')
     const cancelTask = [false]
-    ipcMain.on(cancelDownloadLoadingFileList, (_evt: IpcMainEvent, token: string) => {
+    ipcMain.on(cancelDownloadLoadingFileList, (_: IpcMainEvent, token: string) => {
       if (token === cancelToken) {
         cancelTask[0] = true
         ipcMain.removeAllListeners(cancelDownloadLoadingFileList)
@@ -205,7 +205,7 @@ class GithubApi {
     const { bucketName: repo, customUrl: branch, prefix, cancelToken, cdnUrl } = configMap
     const slicedPrefix = prefix.replace(/(^\/+|\/+$)/g, '')
     const cancelTask = [false]
-    ipcMain.on('cancelLoadingFileList', (_evt: IpcMainEvent, token: string) => {
+    ipcMain.on('cancelLoadingFileList', (_: IpcMainEvent, token: string) => {
       if (token === cancelToken) {
         cancelTask[0] = true
         ipcMain.removeAllListeners('cancelLoadingFileList')

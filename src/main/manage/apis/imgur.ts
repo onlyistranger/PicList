@@ -99,7 +99,7 @@ class ImgurApi {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
     const { bucketConfig: { Location: albumHash }, cancelToken } = configMap
     const cancelTask = [false]
-    ipcMain.on('cancelLoadingFileList', (_evt: IpcMainEvent, token: string) => {
+    ipcMain.on('cancelLoadingFileList', (_: IpcMainEvent, token: string) => {
       if (token === cancelToken) {
         cancelTask[0] = true
         ipcMain.removeAllListeners('cancelLoadingFileList')

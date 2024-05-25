@@ -11,58 +11,58 @@ export const manageIpcList = {
   listen () {
     manageCoreIPC.listen()
 
-    ipcMain.handle('getBucketList', async (_evt: IpcMainInvokeEvent, currentPicBed: string) => {
+    ipcMain.handle('getBucketList', async (_: IpcMainInvokeEvent, currentPicBed: string) => {
       const manage = new ManageApi(currentPicBed)
       return manage.getBucketList()
     })
 
-    ipcMain.handle('createBucket', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.handle('createBucket', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.createBucket(param)
     })
 
-    ipcMain.handle('getBucketFileList', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.handle('getBucketFileList', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.getBucketFileList(param)
     })
 
-    ipcMain.handle('getBucketDomain', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.handle('getBucketDomain', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       const result = await manage.getBucketDomain(param)
       return result
     })
 
-    ipcMain.handle('setBucketAclPolicy', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.handle('setBucketAclPolicy', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.setBucketAclPolicy(param)
     })
 
-    ipcMain.handle('renameBucketFile', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.handle('renameBucketFile', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.renameBucketFile(param)
     })
 
-    ipcMain.handle('deleteBucketFile', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.handle('deleteBucketFile', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.deleteBucketFile(param)
     })
 
-    ipcMain.handle('deleteBucketFolder', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.handle('deleteBucketFolder', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.deleteBucketFolder(param)
     })
 
-    ipcMain.on('getBucketListBackstage', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.on('getBucketListBackstage', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.getBucketListBackstage(param)
     })
 
-    ipcMain.on('getBucketListRecursively', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.on('getBucketListRecursively', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.getBucketListRecursively(param)
     })
 
-    ipcMain.handle('convertPathToBase64', async (_evt: IpcMainInvokeEvent, filePath: string) => {
+    ipcMain.handle('convertPathToBase64', async (_: IpcMainInvokeEvent, filePath: string) => {
       const res = fs.readFileSync(filePath, 'base64')
       return res
     })
@@ -78,7 +78,7 @@ export const manageIpcList = {
       }
     })
 
-    ipcMain.handle('getPreSignedUrl', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.handle('getPreSignedUrl', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.getPreSignedUrl(param)
     })
@@ -91,17 +91,17 @@ export const manageIpcList = {
       return UpDownTaskQueue.getInstance().getAllDownloadTask()
     })
 
-    ipcMain.on('uploadBucketFile', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.on('uploadBucketFile', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.uploadBucketFile(param)
     })
 
-    ipcMain.on('downloadBucketFile', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.on('downloadBucketFile', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.downloadBucketFile(param)
     })
 
-    ipcMain.handle('createBucketFolder', async (_evt: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+    ipcMain.handle('createBucketFolder', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
       const manage = new ManageApi(currentPicBed)
       return manage.createBucketFolder(param)
     })
@@ -133,7 +133,7 @@ export const manageIpcList = {
       return app.getPath('downloads')
     })
 
-    ipcMain.on('OpenDownloadedFolder', async (_evt: IpcMainInvokeEvent, path: string | undefined) => {
+    ipcMain.on('OpenDownloadedFolder', async (_: IpcMainInvokeEvent, path: string | undefined) => {
       if (path) {
         shell.showItemInFolder(path)
       } else {
@@ -141,11 +141,11 @@ export const manageIpcList = {
       }
     })
 
-    ipcMain.on('OpenLocalFile', async (_evt: IpcMainInvokeEvent, fullPath: string) => {
+    ipcMain.on('OpenLocalFile', async (_: IpcMainInvokeEvent, fullPath: string) => {
       fs.existsSync(fullPath) ? shell.showItemInFolder(fullPath) : shell.openPath(path.dirname(fullPath))
     })
 
-    ipcMain.handle('downloadFileFromUrl', async (_evt: IpcMainInvokeEvent, urls: string[]) => {
+    ipcMain.handle('downloadFileFromUrl', async (_: IpcMainInvokeEvent, urls: string[]) => {
       const res = await downloadFileFromUrl(urls)
       return res
     })

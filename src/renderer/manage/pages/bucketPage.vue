@@ -2462,7 +2462,7 @@ async function handleFolderBatchDownload (item: any) {
     const downloadFileTransferStore = useDownloadFileTransferStore()
     downloadFileTransferStore.resetDownloadFileTransferList()
     ipcRenderer.send('getBucketListRecursively', configMap.alias, paramGet)
-    ipcRenderer.on(refreshDownloadFileTransferList, (evt: IpcRendererEvent, data) => {
+    ipcRenderer.on(refreshDownloadFileTransferList, (_: IpcRendererEvent, data) => {
       downloadFileTransferStore.refreshDownloadFileTransferList(data)
     })
     downloadInterval = setInterval(() => {
@@ -2838,7 +2838,7 @@ async function getBucketFileListBackStage () {
     param.webPath = configMap.webPath
   }
   ipcRenderer.send('getBucketListBackstage', configMap.alias, param)
-  ipcRenderer.on('refreshFileTransferList', (evt: IpcRendererEvent, data) => {
+  ipcRenderer.on('refreshFileTransferList', (_: IpcRendererEvent, data) => {
     fileTransferStore.refreshFileTransferList(data)
   })
   fileTransferInterval = setInterval(() => {

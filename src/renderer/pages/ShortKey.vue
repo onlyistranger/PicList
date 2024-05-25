@@ -190,7 +190,7 @@ async function confirmKeyBinding () {
   const config = Object.assign({}, list.value[currentIndex.value])
   config.key = shortKey.value
   sendToMain('updateShortKey', config, oldKey, config.from)
-  ipcRenderer.once('updateShortKeyResponse', (evt: IpcRendererEvent, result) => {
+  ipcRenderer.once('updateShortKeyResponse', (_: IpcRendererEvent, result) => {
     if (result) {
       keyBindingVisible.value = false
       list.value[currentIndex.value].key = shortKey.value

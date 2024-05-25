@@ -2481,7 +2481,7 @@ function handleMiniWindowOntop (val: ICheckBoxValueType) {
   $message.info($T('TIPS_NEED_RELOAD'))
 }
 
-async function handleMiniIconPath (evt: Event) {
+async function handleMiniIconPath (_: Event) {
   const result = await invokeToMain('openFileSelectDialog')
   if (result && result[0]) {
     form.customMiniIcon = result[0]

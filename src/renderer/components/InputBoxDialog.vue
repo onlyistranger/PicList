@@ -49,7 +49,7 @@ onBeforeMount(() => {
   $bus.on(SHOW_INPUT_BOX, initInputBoxValue)
 })
 
-function ipcEventHandler (evt: IpcRendererEvent, options: IShowInputBoxOption) {
+function ipcEventHandler (_: IpcRendererEvent, options: IShowInputBoxOption) {
   initInputBoxValue(options)
 }
 

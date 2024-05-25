@@ -337,7 +337,7 @@ onBeforeMount(async () => {
   ipcRenderer.on('hideLoading', () => {
     loading.value = false
   })
-  ipcRenderer.on(PICGO_HANDLE_PLUGIN_DONE, (evt: IpcRendererEvent, fullName: string) => {
+  ipcRenderer.on(PICGO_HANDLE_PLUGIN_DONE, (_: IpcRendererEvent, fullName: string) => {
     pluginList.value.forEach(item => {
       if (item.fullName === fullName || (item.name === fullName)) {
         item.ing = false
@@ -345,7 +345,7 @@ onBeforeMount(async () => {
     })
     loading.value = false
   })
-  ipcRenderer.on('pluginList', (evt: IpcRendererEvent, list: IPicGoPlugin[]) => {
+  ipcRenderer.on('pluginList', (_: IpcRendererEvent, list: IPicGoPlugin[]) => {
     pluginList.value = list
     pluginNameList.value = list.map(item => item.fullName)
     for (const item of pluginList.value) {
@@ -353,7 +353,7 @@ onBeforeMount(async () => {
     }
     loading.value = false
   })
-  ipcRenderer.on('installPlugin', (evt: IpcRendererEvent, { success, body }: {
+  ipcRenderer.on('installPlugin', (_: IpcRendererEvent, { success, body }: {
     success: boolean,
     body: string
   }) => {
@@ -365,7 +365,7 @@ onBeforeMount(async () => {
       }
     })
   })
-  ipcRenderer.on('updateSuccess', (evt: IpcRendererEvent, plugin: string) => {
+  ipcRenderer.on('updateSuccess', (_: IpcRendererEvent, plugin: string) => {
     loading.value = false
     pluginList.value.forEach(item => {
       if (item.fullName === plugin) {
@@ -377,7 +377,7 @@ onBeforeMount(async () => {
     handleReload()
     getPluginList()
   })
-  ipcRenderer.on('uninstallSuccess', (evt: IpcRendererEvent, plugin: string) => {
+  ipcRenderer.on('uninstallSuccess', (_: IpcRendererEvent, plugin: string) => {
     loading.value = false
     pluginList.value = pluginList.value.filter(item => {
       if (item.fullName === plugin) { // restore Uploader & Transformer after uninstalling
@@ -393,13 +393,13 @@ onBeforeMount(async () => {
     })
     pluginNameList.value = pluginNameList.value.filter(item => item !== plugin)
   })
-  ipcRenderer.on(PICGO_CONFIG_PLUGIN, (evt: IpcRendererEvent, _currentType: 'plugin' | 'transformer' | 'uploader', _configName: string, _config: any) => {
+  ipcRenderer.on(PICGO_CONFIG_PLUGIN, (_: IpcRendererEvent, _currentType: 'plugin' | 'transformer' | 'uploader', _configName: string, _config: any) => {
     currentType.value = _currentType
     configName.value = _configName
     config.value = _config
     dialogVisible.value = true
   })
-  ipcRenderer.on(PICGO_HANDLE_PLUGIN_ING, (evt: IpcRendererEvent, fullName: string) => {
+  ipcRenderer.on(PICGO_HANDLE_PLUGIN_ING, (_: IpcRendererEvent, fullName: string) => {
     pluginList.value.forEach(item => {
       if (item.fullName === fullName || (item.name === fullName)) {
         item.ing = true
@@ -407,7 +407,7 @@ onBeforeMount(async () => {
     })
     loading.value = true
   })
-  ipcRenderer.on(PICGO_TOGGLE_PLUGIN, (evt: IpcRendererEvent, fullName: string, enabled: boolean) => {
+  ipcRenderer.on(PICGO_TOGGLE_PLUGIN, (_: IpcRendererEvent, fullName: string, enabled: boolean) => {
     const plugin = pluginList.value.find(item => item.fullName === fullName)
     if (plugin) {
       plugin.enabled = enabled
