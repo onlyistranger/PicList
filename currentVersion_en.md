@@ -1,14 +1,19 @@
 ### ✨ Features
 
-- Now when the `upload` interface only passes the `picbed` parameter, the default configuration of the corresponding image bed is used instead of the `Default` configuration
-- Optimized the processing logic of the backup domain name of the smms image bed
-- The built-in aws S3 image bed now uses a drop-down box when setting permissions, and `disableBucketPrefixToURL` is now modified to a boolean type
-- Advanced renaming now supports the `{str-number}` format, where number is any number, and adds support for `{ms}` (milliseconds)
-- In the management function, the upload custom renaming adds support for `{h}` (hour), `{i}` (minute), `{s}` (second), and `{timestamp}` is modified to milliseconds, and adds support for `{str-number}`
-- In the management function, the Alibaba Cloud image bed adds support for creating `oss-cn-wuhan (South China 1-Wuhan)` regional storage buckets
-- Optimized the layout of the placeholder description page for renaming
-- The Docker version of PicList-core now changes the time zone to East Eight District
+- Now when deleting cloud images from the album, the log is recorded in the log file instead of being printed to the console
+- Now when opening the manual and the image bed manual in the software window, the language will be automatically set according to the software language
+- Now the custom mini window icon and keep top will take effect immediately after setting, no need to restart the software
+- Optimized the download speed of synchronizing configuration
+- Optimized the performance of listening to the clipboard function
 
 ### 🐛 Bug Fixes
 
-- Fixed the description of the timestamp in advanced renaming, changed from seconds to milliseconds
+- Fixed the problem that the default value displayed in the drop-down selection when entering the page for the first time is the background value rather than the label
+- Fixed the problem that the tray page listener was not correctly removed
+
+### 📦Chore
+
+- Optimized the loading speed of [official website](https://piclist.cn), added the description of `configuration file structure`
+- Mac packaging platform migrated to `macos-12`
+- Removed the code related to the deprecated configuration items
+- Removed the `currentPicBedConfig` configuration item that is not used in the management configuration
