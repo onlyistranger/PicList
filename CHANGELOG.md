@@ -1,3 +1,37 @@
+## :tada: 2.8.6 (2024-05-26)
+
+
+### :sparkles: Features
+
+* **custom:** add ipc event handlers for mini window icon and set on top ([892a147](https://github.com/Kuingsmile/piclist/commit/892a147))
+* **custom:** improve speed of download config files ([e16737e](https://github.com/Kuingsmile/piclist/commit/e16737e))
+* **custom:** update manual source URL based on language configuration ([3587bc5](https://github.com/Kuingsmile/piclist/commit/3587bc5))
+* **custom:** update manual url for en language ([e6ee325](https://github.com/Kuingsmile/piclist/commit/e6ee325))
+* **custom:** write delete msg to log file ([16d6a19](https://github.com/Kuingsmile/piclist/commit/16d6a19))
+
+
+### :bug: Bug Fixes
+
+* **custom:** fix el-select option display problem ([4f95014](https://github.com/Kuingsmile/piclist/commit/4f95014))
+* **custom:** remove listener before unmount ([8b21e84](https://github.com/Kuingsmile/piclist/commit/8b21e84))
+
+
+### :pencil: Documentation
+
+* **custom:** prepare for 2.8.6 ([4887090](https://github.com/Kuingsmile/piclist/commit/4887090))
+
+
+### :zap: Performance Improvements
+
+* **custom:** improve the performance of clipboard watching ([4a0a882](https://github.com/Kuingsmile/piclist/commit/4a0a882))
+
+
+### :package: Chore
+
+* **custom:** update to macos-12 for action ([5eb3c9d](https://github.com/Kuingsmile/piclist/commit/5eb3c9d))
+
+
+
 ## :tada: 2.8.5 (2024-05-13)
 
 
