@@ -4,7 +4,7 @@ This FAQ has been modified from PicGo's FAQ, and thanks to the author Molunerfin
 
 ## Common Questions
 
-> Please refer to [user manual](https://piclist.cn) for general configuration issues.
+> Please refer to [user manual](https://piclist.cn/en) for general configuration issues.
 
 ## 1. What is the relationship between PicList and PicGo?
 

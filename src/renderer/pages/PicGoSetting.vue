@@ -1735,7 +1735,7 @@ import pkg from 'root/package.json'
 
 // 事件常量
 import { PICGO_OPEN_FILE, PICGO_OPEN_DIRECTORY, OPEN_URL, GET_PICBEDS, HIDE_DOCK } from '#/events/constants'
-import { IRPCActionType, ISartMode } from '~/universal/types/enum'
+import { II18nLanguage, IRPCActionType, ISartMode } from '~/universal/types/enum'
 
 // Electron 相关
 import {
@@ -2704,8 +2704,10 @@ function handleManualPageOpenChange (val: string) {
   })
 }
 
-function goConfigPage () {
-  sendToMain(OPEN_URL, 'https://piclist.cn/configure.html')
+async function goConfigPage () {
+  const lang = await getConfig(configPaths.settings.language) || II18nLanguage.ZH_CN
+  const url = lang === II18nLanguage.ZH_CN ? 'https://piclist.cn/configure.html' : 'https://piclist.cn/en/configure.html'
+  sendToMain(OPEN_URL, url)
 }
 
 function goShortCutPage () {

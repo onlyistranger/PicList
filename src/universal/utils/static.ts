@@ -23,4 +23,45 @@ export const picBedsCanbeDeleted = [
   'webdavplist'
 ]
 
+export const picBedManualUrlList: IStringKeyMap = {
+  zh_cn: {
+    aliyun: 'https://piclist.cn/configure.html#%E9%98%BF%E9%87%8C%E4%BA%91oss',
+    'aws-s3': 'https://piclist.cn/configure.html#%E5%86%85%E7%BD%AEaws-s3',
+    'aws-s3-plist': 'https://piclist.cn/configure.html#%E5%86%85%E7%BD%AEaws-s3',
+    github: 'https://piclist.cn/configure.html#github%E5%9B%BE%E5%BA%8A',
+    githubPlus: 'https://piclist.cn/configure.html#github%E5%9B%BE%E5%BA%8A',
+    imgur: 'https://piclist.cn/configure.html#imgur',
+    lankong: 'https://github.com/hellodk34/picgo-plugin-lankong',
+    local: 'https://piclist.cn/configure.html#%E6%9C%AC%E5%9C%B0%E5%9B%BE%E5%BA%8A',
+    lskyplist: 'https://piclist.cn/configure.html#%E5%85%B0%E7%A9%BA%E5%9B%BE%E5%BA%8A',
+    tcyun: 'https://piclist.cn/configure.html#%E8%85%BE%E8%AE%AF%E4%BA%91cos',
+    piclist: 'https://piclist.cn/configure.html#piclist',
+    qiniu: 'https://piclist.cn/configure.html#%E4%B8%83%E7%89%9B%E4%BA%91',
+    sftpplist: 'https://piclist.cn/configure.html#%E5%86%85%E7%BD%AEsftp',
+    smms: 'https://piclist.cn/configure.html#sm-ms',
+    telegraphplist: 'https://piclist.cn/configure.html#telegra-ph',
+    upyun: 'https://piclist.cn/configure.html#%E5%8F%88%E6%8B%8D%E4%BA%91',
+    webdavplist: 'https://piclist.cn/configure.html#webdav'
+  },
+  en: {
+    aliyun: 'https://piclist.cn/en/configure.html#alibaba-cloud',
+    'aws-s3': 'https://piclist.cn/en/configure.html#built-in-aws-s3',
+    'aws-s3-plist': 'https://piclist.cn/en/configure.html#built-in-aws-s3',
+    github: 'https://piclist.cn/en/configure.html#github',
+    githubPlus: 'https://piclist.cn/en/configure.html#github',
+    imgur: 'https://piclist.cn/en/configure.html#imgur',
+    lankong: 'https://github.com/hellodk34/picgo-plugin-lankong',
+    local: 'https://piclist.cn/en/configure.html#local-image-hosting',
+    lskyplist: 'https://piclist.cn/en/configure.html#lsky-pro',
+    tcyun: 'https://piclist.cn/en/configure.html#tencent-cloud-cos',
+    piclist: 'https://piclist.cn/en/configure.html#piclist',
+    qiniu: 'https://piclist.cn/en/configure.html#qiniu-cloud',
+    sftpplist: 'https://piclist.cn/en/configure.html#built-in-sftp',
+    smms: 'https://piclist.cn/en/configure.html#sm-ms',
+    telegraphplist: 'https://piclist.cn/en/configure.html#telegra-ph',
+    upyun: 'https://piclist.cn/en/configure.html#upyun',
+    webdavplist: 'https://piclist.cn/en/configure.html#webdav'
+  }
+}
+
 export const DEFAULT_AES_PASSWORD = 'aesPassword'
