@@ -325,6 +325,16 @@ export default {
       settingWindow.hide()
     })
 
+    ipcMain.on('updateMiniIcon', (_: IpcMainEvent, iconPath: string) => {
+      const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
+      miniWindow.webContents.send('updateMiniIcon', iconPath)
+    })
+
+    ipcMain.on('miniWindowOntop', (_: IpcMainEvent, val: boolean) => {
+      const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
+      miniWindow.setAlwaysOnTop(val)
+    })
+
     ipcMain.on('refreshSettingWindow', () => {
       const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)!
       settingWindow.webContents.reloadIgnoringCache()

@@ -2478,7 +2478,7 @@ function handleAutoCloseMiniWindowChange (val: ICheckBoxValueType) {
 
 function handleMiniWindowOntop (val: ICheckBoxValueType) {
   saveConfig(configPaths.settings.miniWindowOntop, val)
-  $message.info($T('TIPS_NEED_RELOAD'))
+  ipcRenderer.send('miniWindowOntop', val)
 }
 
 async function handleMiniIconPath (_: Event) {
@@ -2486,13 +2486,12 @@ async function handleMiniIconPath (_: Event) {
   if (result && result[0]) {
     form.customMiniIcon = result[0]
     saveConfig(configPaths.settings.customMiniIcon, form.customMiniIcon)
-    $message.info($T('TIPS_NEED_RELOAD'))
+    ipcRenderer.send('updateMiniIcon', form.customMiniIcon)
   }
 }
 
 function handleIsCustomMiniIcon (val: ICheckBoxValueType) {
   saveConfig(configPaths.settings.isCustomMiniIcon, val)
-  $message.info($T('TIPS_NEED_RELOAD'))
 }
 
 function handleAutoCopyUrl (val: ICheckBoxValueType) {

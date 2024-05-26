@@ -88,7 +88,7 @@ async function initLogoPath () {
 onBeforeMount(async () => {
   os.value = process.platform
   await initLogoPath()
-  ipcRenderer.on('uploadProgress', (event: IpcRendererEvent, _progress: number) => {
+  ipcRenderer.on('uploadProgress', (_: IpcRendererEvent, _progress: number) => {
     if (_progress !== -1) {
       showProgress.value = true
       progress.value = _progress
@@ -96,6 +96,9 @@ onBeforeMount(async () => {
       progress.value = 100
       showError.value = true
     }
+  })
+  ipcRenderer.on('updateMiniIcon', async () => {
+    await initLogoPath()
   })
   window.addEventListener('mousedown', handleMouseDown, false)
   window.addEventListener('mousemove', handleMouseMove, false)
@@ -215,6 +218,7 @@ function openContextMenu () {
 
 onBeforeUnmount(() => {
   ipcRenderer.removeAllListeners('uploadProgress')
+  ipcRenderer.removeAllListeners('updateMiniIcon')
   window.removeEventListener('mousedown', handleMouseDown, false)
   window.removeEventListener('mousemove', handleMouseMove, false)
   window.removeEventListener('mouseup', handleMouseUp, false)
