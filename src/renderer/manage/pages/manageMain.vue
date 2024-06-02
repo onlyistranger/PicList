@@ -355,7 +355,7 @@ const urlMap : IStringKeyMap = {
   webdavplist: 'https://baike.baidu.com/item/WebDAV/4610909'
 }
 
-const showNewIconList = ['aliyun', 'qiniu', 'tcyun']
+const showNewIconList = ['aliyun', 'qiniu', 'tcyun', 's3plist']
 
 const bucketT = $T('MANAGE_MAIN_PAGE_BUCKET')
 const galleryT = $T('MANAGE_MAIN_PAGE_GALLERY')
@@ -415,6 +415,7 @@ function createNewBucket (picBedName: string) {
   if (currentPicBedName.value === 'tcyun') {
     resultMap.BucketName = `${resultMap.BucketName}-${currentPagePicBedConfig.appId}`
   }
+  resultMap.endpoint = currentPagePicBedConfig.endpoint
   invokeToMain('createBucket', currentAlias, resultMap).then((result: any) => {
     if (result) {
       ElNotification({

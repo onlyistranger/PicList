@@ -230,6 +230,7 @@ export class ManageApi extends EventEmitter implements ManageApiType {
       case 'tcyun':
       case 'aliyun':
       case 'qiniu':
+      case 's3plist':
         try {
           client = this.createClient() as any
           return await client.createBucket(param!)

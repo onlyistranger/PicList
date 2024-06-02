@@ -108,13 +108,8 @@ class TcyunApi {
    * acl: private | publicRead | publicReadWrite
   */
   async createBucket (configMap: IStringKeyMap): Promise < boolean > {
-    const aclTransMap: IStringKeyMap = {
-      private: 'private',
-      publicRead: 'public-read',
-      publicReadWrite: 'public-read-write'
-    }
     const res = await this.ctx.putBucket({
-      ACL: aclTransMap[configMap.acl],
+      ACL: configMap.acl,
       Bucket: configMap.BucketName,
       Region: configMap.region
     })

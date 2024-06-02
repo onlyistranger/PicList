@@ -50,8 +50,8 @@ export const newBucketConfig:IStringKeyMap = {
         default: 'private',
         options: {
           private: $T('MANAGE_NEW_BUCKET_TCYUN_ACL_PRIVATE'),
-          publicRead: $T('MANAGE_NEW_BUCKET_TCYUN_ACL_PUBLIC_R'),
-          publicReadWrite: $T('MANAGE_NEW_BUCKET_TCYUN_ACL_PUBLIC_RW')
+          'public-read': $T('MANAGE_NEW_BUCKET_TCYUN_ACL_PUBLIC_R'),
+          'public-read-write': $T('MANAGE_NEW_BUCKET_TCYUN_ACL_PUBLIC_RW')
         }
       }
     },
@@ -162,67 +162,46 @@ export const newBucketConfig:IStringKeyMap = {
     },
     options: ['BucketName', 'region', 'acl']
   },
-  upyun: {
-    name: $T('MANAGE_NEW_BUCKET_UPYUN_NAME'),
-    icon: 'upyun',
+  s3plist: {
+    name: $T('MANAGE_NEW_BUCKET_S3PLIST_NAME'),
+    icon: 's3plist',
     configOptions: {
       BucketName: {
         required: true,
-        description: $T('MANAGE_NEW_BUCKET_UPYUN_BUCKETNAME_DESC'),
-        placeholder: $T('MANAGE_NEW_BUCKET_UPYUN_BUCKETNAME_PLACEHOLDER'),
+        description: $T('MANAGE_NEW_BUCKET_S3PLIST_BUCKETNAME_DESC'),
+        placeholder: $T('MANAGE_NEW_BUCKET_S3PLIST_BUCKETNAME_PLACEHOLDER'),
         paraType: 'string',
         component: 'input',
         default: 'piclist',
         rule: [
           {
             required: true,
-            message: $T('MANAGE_NEW_BUCKET_UPYUN_BUCKETNAME_RULE_MSG_A'),
-            trigger: 'blur'
-          },
-          {
-            validator: (rule: any, value: any, callback: any) => {
-              const reg = /^[a-z][a-z0-9-]{4,19}$/
-              if (value.length > 23 || value.length < 5) {
-                callback(new Error($T('MANAGE_NEW_BUCKET_UPYUN_BUCKETNAME_RULE_MSG_B')))
-              } else if (!reg.test(value)) {
-                callback(new Error($T('MANAGE_NEW_BUCKET_UPYUN_BUCKETNAME_RULE_MSG_C')))
-              } else {
-                callback()
-              }
-            },
-            trigger: 'change'
-          }
-        ]
-      },
-      operator: {
-        required: true,
-        description: $T('MANAGE_NEW_BUCKET_UPYUN_OPERATORNAME_DESC'),
-        placeholder: $T('MANAGE_NEW_BUCKET_UPYUN_OPERATORNAME_PLACEHOLDER'),
-        paraType: 'string',
-        component: 'input',
-        rule: [
-          {
-            required: true,
-            message: $T('MANAGE_NEW_BUCKET_UPYUN_OPERATORNAME_RULE_MSG_A'),
+            message: $T('MANAGE_NEW_BUCKET_S3PLIST_BUCKETNAME_RULE_MSG_A'),
             trigger: 'blur'
           }
         ]
       },
-      password: {
+      region: {
         required: true,
-        description: $T('MANAGE_NEW_BUCKET_UPYUN_PASSWORD_DESC'),
-        placeholder: $T('MANAGE_NEW_BUCKET_UPYUN_PASSWORD_PLACEHOLDER'),
+        description: $T('MANAGE_NEW_BUCKET_S3PLIST_REGION'),
         paraType: 'string',
         component: 'input',
-        rule: [
-          {
-            required: true,
-            message: $T('MANAGE_NEW_BUCKET_UPYUN_PASSWORD_RULE_MSG_A'),
-            trigger: 'blur'
-          }
-        ]
+        default: 'us-east-1'
+      },
+      acl: {
+        required: true,
+        description: $T('MANAGE_NEW_BUCKET_S3PLIST_ACL_DESC'),
+        paraType: 'string',
+        component: 'select',
+        default: 'private',
+        options: {
+          private: $T('MANAGE_NEW_BUCKET_S3PLIST_ACL_PRIVATE'),
+          'public-read': $T('MANAGE_NEW_BUCKET_S3PLIST_ACL_PUBLIC_R'),
+          'public-read-write': $T('MANAGE_NEW_BUCKET_S3PLIST_ACL_PUBLIC_RW'),
+          'authenticated-read': $T('MANAGE_NEW_BUCKET_S3PLIST_ACL_AUTHENTICATED_READ')
+        }
       }
     },
-    options: ['BucketName', 'operator', 'password']
+    options: ['BucketName', 'region', 'acl']
   }
 }

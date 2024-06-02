@@ -12,7 +12,10 @@ import {
   DeleteObjectCommand,
   DeleteObjectsCommand,
   PutObjectCommand,
-  S3ClientConfig
+  S3ClientConfig,
+  CreateBucketCommand,
+  PutPublicAccessBlockCommand,
+  PutBucketAclCommand
 } from '@aws-sdk/client-s3'
 
 // AWS S3 上传和进度
@@ -169,6 +172,89 @@ class S3plistApi {
       match: false,
       isImage: isImage(fileName || '')
     }
+  }
+
+  async putPublicAccess (bucketName: string, client: S3Client) {
+    const input = {
+      Bucket: bucketName,
+      PublicAccessBlockConfiguration: {
+        BlockPublicAcls: false,
+        IgnorePublicAcls: false,
+        BlockPublicPolicy: false,
+        RestrictPublicBuckets: false
+      }
+    }
+    const command = new PutPublicAccessBlockCommand(input)
+    const data = await client.send(command)
+    if (data.$metadata.httpStatusCode !== 200) {
+      this.logParam(data, 'putPublicAccess')
+      throw new Error('manage.setting.putPublicAccessError')
+    }
+  }
+
+  /**
+   * 新建存储桶
+   * @param {Object} configMap
+    * configMap = {
+    * BucketName: string,
+    * region: string,
+    * acl: string
+    * }
+   */
+  async createBucket (configMap: IStringKeyMap): Promise<boolean> {
+    const { BucketName, region, acl, endpoint } = configMap
+    try {
+      await this.getDogeCloudToken()
+      const options = Object.assign({}, this.baseOptions) as S3ClientConfig
+      options.region = String(region) || 'us-east-1'
+      const client = new S3Client(options)
+      const command = new ListBucketsCommand({})
+      const data = await client.send(command)
+      if (data.$metadata.httpStatusCode === 200) {
+        const bucketList = data.Buckets?.map((item) => item.Name)
+        if (bucketList?.includes(BucketName)) {
+          return true
+        }
+      }
+      if (endpoint === '' || endpoint.includes('amazonaws')) {
+        const createCommand = new CreateBucketCommand({
+          Bucket: BucketName,
+          ObjectOwnership: 'BucketOwnerPreferred'
+        })
+        const createData = await client.send(createCommand)
+        if (createData.$metadata.httpStatusCode === 200) {
+          if (acl !== 'private') {
+            await this.putPublicAccess(BucketName, client)
+            const putACLCommand = new PutBucketAclCommand({
+              Bucket: BucketName,
+              ACL: acl
+            })
+            const putACLData = await client.send(putACLCommand)
+            if (putACLData.$metadata.httpStatusCode !== 200) {
+              this.logParam(putACLData, 'createBucket')
+              return false
+            }
+          }
+          return true
+        } else {
+          this.logParam(createData, 'createBucket')
+        }
+      } else {
+        const createCommand = new CreateBucketCommand({
+          Bucket: BucketName,
+          ACL: acl
+        })
+        const createData = await client.send(createCommand)
+        if (createData.$metadata.httpStatusCode === 200) {
+          return true
+        } else {
+          this.logParam(createData, 'createBucket')
+        }
+      }
+    } catch (error) {
+      this.logParam(error, 'createBucket')
+    }
+    return false
   }
 
   /**
