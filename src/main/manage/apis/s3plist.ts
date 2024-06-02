@@ -144,9 +144,10 @@ class S3plistApi {
   logParam = (error:any, method: string) =>
     this.logger.error(formatError(error, { class: 'S3plistApi', method }))
 
-  formatFolder (item: CommonPrefix, slicedPrefix: string): any {
+  formatFolder (item: CommonPrefix, slicedPrefix: string, urlPrefix: string): any {
     return {
       Key: item.Prefix,
+      url: `${urlPrefix}/${item.Prefix}`,
       fileSize: 0,
       formatedTime: '',
       fileName: item.Prefix?.replace(slicedPrefix, '').replace('/', ''),
@@ -419,7 +420,7 @@ class S3plistApi {
         res = await client.send(command)
         if (res.$metadata.httpStatusCode === 200) {
           res.CommonPrefixes && res.CommonPrefixes.forEach((item: CommonPrefix) => {
-            result.fullList.push(this.formatFolder(item, slicedPrefix))
+            result.fullList.push(this.formatFolder(item, slicedPrefix, urlPrefix))
           })
           res.Contents && res.Contents.forEach((item: _Object) => {
             result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
@@ -471,7 +472,7 @@ class S3plistApi {
       const data = await client.send(command)
       if (data.$metadata.httpStatusCode === 200) {
         result.fullList = [
-          ...(data.CommonPrefixes?.map(item => this.formatFolder(item, slicedPrefix)) || []),
+          ...(data.CommonPrefixes?.map(item => this.formatFolder(item, slicedPrefix, urlPrefix)) || []),
           ...(data.Contents?.map(item => this.formatFile(item, slicedPrefix, urlPrefix)) || [])
         ]
         result.isTruncated = data.IsTruncated || false

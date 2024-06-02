@@ -67,11 +67,16 @@ class UpyunApi {
     return `_upt=${upt}`
   }
 
-  formatFolder (item: any, slicedPrefix: string) {
+  formatFolder (item: any, slicedPrefix: string, urlPrefix: string) {
     const key = `${slicedPrefix}${item.name}/`
+    let url = `${urlPrefix}/${key}`
+    if (this.antiLeechToken) {
+      url = `${url}?${this.getAntiLeechParam(key)}`
+    }
     return {
       ...item,
       key,
+      url,
       fileSize: 0,
       formatedTime: '',
       fileName: item.name,
@@ -202,7 +207,7 @@ class UpyunApi {
       if (res) {
         res.files?.forEach((item: any) => {
           item.type === 'N' && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
-          item.type === 'F' && result.fullList.push(this.formatFolder(item, slicedPrefix))
+          item.type === 'F' && result.fullList.push(this.formatFolder(item, slicedPrefix, urlPrefix))
         })
         window.webContents.send('refreshFileTransferList', result)
       } else {
@@ -252,7 +257,7 @@ class UpyunApi {
     if (res) {
       res.files?.forEach((item: any) => {
         item.type === 'N' && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
-        item.type === 'F' && result.fullList.push(this.formatFolder(item, slicedPrefix))
+        item.type === 'F' && result.fullList.push(this.formatFolder(item, slicedPrefix, urlPrefix))
       })
       result.isTruncated = res.next !== this.stopMarker
       result.nextMarker = res.next

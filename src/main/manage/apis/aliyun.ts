@@ -53,9 +53,10 @@ class AliyunApi {
     this.logger = logger
   }
 
-  formatFolder (item: string, slicedPrefix: string) {
+  formatFolder (item: string, slicedPrefix: string, urlPrefix: string): any {
     return {
       key: item,
+      url: `${urlPrefix}/${item}`,
       fileSize: 0,
       formatedTime: '',
       fileName: item.replace(slicedPrefix, '').replace('/', ''),
@@ -288,7 +289,7 @@ class AliyunApi {
       })
       if (res?.res?.statusCode === 200) {
         res?.prefixes?.forEach((item: string) => {
-          result.fullList.push(this.formatFolder(item, slicedPrefix))
+          result.fullList.push(this.formatFolder(item, slicedPrefix, urlPrefix))
         })
         res?.objects?.forEach((item: OSS.ObjectMeta) => {
           item.size !== 0 && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
@@ -348,7 +349,7 @@ class AliyunApi {
       }
     }
     const fullList = [
-      ...(res.prefixes?.map((item: string) => this.formatFolder(item, slicedPrefix)) || []),
+      ...(res.prefixes?.map((item: string) => this.formatFolder(item, slicedPrefix, urlPrefix)) || []),
       ...(res.objects?.filter((item: OSS.ObjectMeta) => item.size !== 0).map((item: OSS.ObjectMeta) => this.formatFile(item, slicedPrefix, urlPrefix)) || [])
     ]
     return {

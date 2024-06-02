@@ -52,10 +52,11 @@ class QiniuApi {
     this.logger = logger
   }
 
-  formatFolder (item: string, slicedPrefix: string) {
+  formatFolder (item: string, slicedPrefix: string, urlPrefix: string) {
     return {
       Key: item,
       key: item,
+      url: `${urlPrefix}/${item}`,
       fileSize: 0,
       fileName: item.replace(slicedPrefix, '').replace('/', ''),
       isDir: true,
@@ -342,7 +343,7 @@ class QiniuApi {
       })
       if (res && res.respInfo.statusCode === 200) {
         res.respBody && res.respBody.commonPrefixes && res.respBody.commonPrefixes.forEach((item: any) => {
-          result.fullList.push(this.formatFolder(item, slicedPrefix))
+          result.fullList.push(this.formatFolder(item, slicedPrefix, urlPrefix))
         })
         res.respBody && res.respBody.items && res.respBody.items.forEach((item: any) => {
           item.fsize !== 0 && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
@@ -409,7 +410,7 @@ class QiniuApi {
     if (res?.respInfo?.statusCode === 200) {
       if (res.respBody?.commonPrefixes) {
         res.respBody.commonPrefixes.forEach((item: string) => {
-          result.fullList.push(this.formatFolder(item, slicedPrefix))
+          result.fullList.push(this.formatFolder(item, slicedPrefix, urlPrefix))
         })
       }
       if (res.respBody?.items) {

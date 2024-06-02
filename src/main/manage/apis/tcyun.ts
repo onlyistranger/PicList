@@ -46,11 +46,12 @@ class TcyunApi {
     this.logger = logger
   }
 
-  formatFolder (item: {Prefix: string}, slicedPrefix: string): any {
+  formatFolder (item: {Prefix: string}, slicedPrefix: string, urlPrefix: string) {
     return {
       ...item,
       key: item.Prefix,
       fileSize: 0,
+      url: `${urlPrefix}/${item.Prefix}`,
       formatedTime: '',
       fileName: item.Prefix.replace(slicedPrefix, '').replace('/', ''),
       isDir: true,
@@ -191,7 +192,7 @@ class TcyunApi {
       })
       if (res?.statusCode === 200) {
         result.fullList.push(
-          ...res.CommonPrefixes.map(item => this.formatFolder(item, slicedPrefix)),
+          ...res.CommonPrefixes.map(item => this.formatFolder(item, slicedPrefix, urlPrefix)),
           ...res.Contents.filter(item => parseInt(item.Size) !== 0)
             .map(item => this.formatFile(item, slicedPrefix, urlPrefix))
         )
@@ -247,7 +248,7 @@ class TcyunApi {
     }
     const result = {
       fullList: [
-        ...res.CommonPrefixes.map(item => this.formatFolder(item, slicedPrefix)),
+        ...res.CommonPrefixes.map(item => this.formatFolder(item, slicedPrefix, urlPrefix)),
         ...res.Contents.filter(item => parseInt(item.Size) !== 0)
           .map(item => this.formatFile(item, slicedPrefix, urlPrefix))
       ],
