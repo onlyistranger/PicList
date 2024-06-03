@@ -223,7 +223,7 @@ class LifeCycle {
         settingWindow.focus()
       }
       const clipboardDir = path.join(picgo.baseDir, CLIPBOARD_IMAGE_FOLDER)
-      fs.ensureDir(clipboardDir)
+      fs.emptyDir(clipboardDir)
     }
     app.whenReady().then(readyFunction)
   }

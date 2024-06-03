@@ -155,7 +155,7 @@ class Uploader {
       return false
     } finally {
       if (filePath) {
-        fse.unlink(filePath)
+        fse.remove(filePath)
       }
     }
   }
