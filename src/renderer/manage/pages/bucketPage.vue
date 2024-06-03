@@ -821,7 +821,7 @@ https://www.baidu.com/img/bd_logo1.png"
         <div
           v-if="!tableData.length"
           id="upload-dragger"
-          style="position: relative;top: 0;right: 0;heigth: 100%;width: 100%;display: flex;justify-content: center;align-items: center;"
+          style="position: relative;top: 0;right: 0;height: 100%;width: 100%;display: flex;justify-content: center;align-items: center;"
         >
           <div
             class="upload-dragger__text"
@@ -1246,7 +1246,7 @@ https://www.baidu.com/img/bd_logo1.png"
       append-to-body
     >
       <div
-        style="-webkit-user-select: text"
+        style="-webkit-user-select: text; user-select: text;"
         v-html="markDownContent"
       />
       <el-button
@@ -1271,7 +1271,7 @@ https://www.baidu.com/img/bd_logo1.png"
       append-to-body
     >
       <highlightjs
-        style="-webkit-user-select: text;"
+        style="-webkit-user-select: text; user-select: text;"
         language="js"
         :code="textfileContent"
       />
