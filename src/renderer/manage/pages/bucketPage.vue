@@ -400,23 +400,12 @@
           {{ $T('MANAGE_BUCKET_SORT_TITLE') }}
         </el-button>
         <template #dropdown>
-          <el-dropdown-item @click="sortFile('name')">
-            {{ $T('MANAGE_BUCKET_SORT_NAME') }}
-          </el-dropdown-item>
-          <el-dropdown-item @click="sortFile('size')">
-            {{ $T('MANAGE_BUCKET_SORT_SIZE') }}
-          </el-dropdown-item>
-          <el-dropdown-item @click="sortFile('ext')">
-            {{ $T('MANAGE_BUCKET_SORT_TYPE') }}
-          </el-dropdown-item>
-          <el-dropdown-item @click="sortFile('time')">
-            {{ $T('MANAGE_BUCKET_SORT_TIME') }}
-          </el-dropdown-item>
-          <el-dropdown-item @click="sortFile('check')">
-            {{ $T('MANAGE_BUCKET_SORT_SELECTED') }}
-          </el-dropdown-item>
-          <el-dropdown-item @click="sortFile('init')">
-            {{ $T('MANAGE_BUCKET_INIT') }}
+          <el-dropdown-item
+            v-for="item in sortTypeList"
+            :key="item"
+            @click="sortFile(item as any)"
+          >
+            {{ $T(`MANAGE_BUCKET_SORT_${item.toUpperCase()}` as any) }}
           </el-dropdown-item>
         </template>
       </el-dropdown>
@@ -634,46 +623,11 @@ https://www.baidu.com/img/bd_logo1.png"
                     <template #dropdown>
                       <el-dropdown-menu>
                         <el-dropdown-item
-                          @click="async () => {
-                            copyToClipboard(await formatLink(item.url, item.fileName, 'url'))
-                          }"
+                          v-for="format in linkFormatList"
+                          :key="format"
+                          @click="copyLink(item, format)"
                         >
-                          Url
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                          @click="async () => {
-                            copyToClipboard(await formatLink(item.url, item.fileName, 'markdown'))
-                          }"
-                        >
-                          Markdown
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                          @click="async () => {
-                            copyToClipboard(await formatLink(item.url, item.fileName, 'markdown-with-link'))
-                          }"
-                        >
-                          Markdown-link
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                          @click="async () => {
-                            copyToClipboard(await formatLink(item.url, item.fileName, 'html'))
-                          }"
-                        >
-                          Html
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                          @click="async () => {
-                            copyToClipboard(await formatLink(item.url, item.fileName, 'bbcode'))
-                          }"
-                        >
-                          BBCode
-                        </el-dropdown-item>
-                        <el-dropdown-item
-                          @click="async () => {
-                            copyToClipboard(await formatLink(item.url, item.fileName, 'custom', manageStore.config.settings.customPasteFormat))
-                          }"
-                        >
-                          {{ $T('MANAGE_BUCKET_URL_FORMAT_CUSTOM') }}
+                          {{ $T(`MANAGE_BUCKET_URL_FORMAT_${format.toUpperCase().replace(/-/g, '_')}` as any) }}
                         </el-dropdown-item>
                         <el-dropdown-item
                           v-if="isShowPresignedUrl"
@@ -1571,8 +1525,10 @@ const linkFormatArray = [
   { key: 'BBCode', value: 'bbcode' },
   { key: 'Custom', value: 'custom' }
 ]
+const linkFormatList = ['url', 'markdown', 'markdown-with-link', 'html', 'bbcode', 'custom']
 
-type sortTypeList = 'name' | 'size' | 'time' | 'ext' | 'check' | 'init'
+type ISortTypeList = 'name' | 'size' | 'time' | 'ext' | 'check' | 'init'
+const sortTypeList = ['name', 'size', 'time', 'ext', 'check', 'init']
 
 // 路由相关
 const route = useRoute()
@@ -2230,7 +2186,7 @@ async function resetParam (force: boolean = false) {
     const cachedData = await searchExistFileList()
     if (cachedData.length > 0) {
       currentPageFilesInfo.push(...cachedData[0].value.fullList)
-      const sortType = localStorage.getItem('sortType') as sortTypeList || 'init'
+      const sortType = localStorage.getItem('sortType') as ISortTypeList || 'init'
       sortFile(sortType)
       isShowLoadingPage.value = false
       return
@@ -2240,7 +2196,7 @@ async function resetParam (force: boolean = false) {
     const res = await getBucketFileList() as IStringKeyMap
     if (res.success) {
       currentPageFilesInfo.push(...res.fullList)
-      const sortType = localStorage.getItem('sortType') as sortTypeList || 'init'
+      const sortType = localStorage.getItem('sortType') as ISortTypeList || 'init'
       sortFile(sortType)
       if (res.isTruncated && paging.value) {
         pagingMarkerStack.push(pagingMarker.value)
@@ -2311,7 +2267,7 @@ const changePage = async (cur: number | undefined, prev: number | undefined) => 
   }
   const isForwardNavigation = cur > prev
   const newPageNumber = isForwardNavigation ? prev + 1 : prev - 1
-  const sortType = localStorage.getItem('sortType') as sortTypeList || 'init'
+  const sortType = localStorage.getItem('sortType') as ISortTypeList || 'init'
 
   isShowLoadingPage.value = true
   currentPageNumber.value = newPageNumber
@@ -2771,6 +2727,10 @@ function handleBatchCopyInfo () {
   ElMessage.success(`${$T('MANAGE_BUCKET_BATCH_COPY_INFO_MSG_A')} ${selectedItems.value.length} ${$T('MANAGE_BUCKET_BATCH_COPY_INFO_MSG_B')}`)
 }
 
+async function copyLink (item: any, type: string) {
+  copyToClipboard(await formatLink(item.url, item.fileName, type, manageStore.config.settings.customPasteFormat))
+}
+
 async function handleBatchCopyLink (type: string) {
   if (!selectedItems.value.length) {
     ElMessage.warning($T('MANAGE_BUCKET_BATCH_COPY_URL_ERROR_MSG'))
@@ -2844,7 +2804,7 @@ async function getBucketFileListBackStage () {
   fileTransferInterval = setInterval(() => {
     const currentFileList = fileTransferStore.getFileTransferList()
     currentPageFilesInfo.splice(0, currentPageFilesInfo.length, ...currentFileList)
-    const sortType = localStorage.getItem('sortType') as sortTypeList || 'init'
+    const sortType = localStorage.getItem('sortType') as ISortTypeList || 'init'
     sortFile(sortType)
     const table = fileCacheDbInstance.table(currentPicBedName.value)
     table.put({

@@ -145,13 +145,13 @@
                     {{ $T('MANAGE_BUCKET_SORT_NAME') }}
                   </el-dropdown-item>
                   <el-dropdown-item @click="sortFile('ext')">
-                    {{ $T('MANAGE_BUCKET_SORT_TYPE') }}
+                    {{ $T('MANAGE_BUCKET_SORT_EXT') }}
                   </el-dropdown-item>
                   <el-dropdown-item @click="sortFile('time')">
                     {{ $T('MANAGE_BUCKET_SORT_TIME') }}
                   </el-dropdown-item>
                   <el-dropdown-item @click="sortFile('check')">
-                    {{ $T('MANAGE_BUCKET_SORT_SELECTED') }}
+                    {{ $T('MANAGE_BUCKET_SORT_CHECK') }}
                   </el-dropdown-item>
                 </template>
               </el-dropdown>
