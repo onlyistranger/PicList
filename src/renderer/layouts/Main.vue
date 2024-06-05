@@ -48,8 +48,8 @@
       </div>
     </div>
     <el-progress
-      v-if="progressShow"
-      :percentage="progressPercentage"
+      v-if="isShowprogress"
+      :percentage="progress"
       :stroke-width="7"
       :text-inside="true"
       :show-text="false"
@@ -294,8 +294,8 @@ const choosedPicBedForQRCode: Ref<string[]> = ref([])
 const isAlwaysOnTop = ref(false)
 const keepAlivePages = $router.getRoutes().filter(item => item.meta.keepAlive).map(item => item.name as string)
 
-const progressShow = ref(false)
-const progressPercentage = ref(0)
+const isShowprogress = ref(false)
+const progress = ref(0)
 
 onBeforeMount(() => {
   os.value = process.platform
@@ -306,8 +306,8 @@ onBeforeMount(() => {
     qrcodeVisible.value = true
   })
   ipcRenderer.on('updateProgress', (_event: IpcRendererEvent, data: { progress: number}) => {
-    progressShow.value = data.progress !== 100 && data.progress !== 0
-    progressPercentage.value = data.progress
+    isShowprogress.value = data.progress !== 100 && data.progress !== 0
+    progress.value = data.progress
   })
 })
 

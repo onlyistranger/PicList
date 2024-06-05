@@ -340,13 +340,6 @@ export default {
       settingWindow.webContents.reloadIgnoringCache()
     })
 
-    //  from mini window
-    ipcMain.on('syncPicBed', () => {
-      if (windowManager.has(IWindowList.SETTING_WINDOW)) {
-        windowManager.get(IWindowList.SETTING_WINDOW)!.webContents.send('syncPicBed')
-      }
-    })
-
     ipcMain.on(GET_PICBEDS, (evt: IpcMainEvent) => {
       const picBeds = getPicBeds()
       evt.sender.send(GET_PICBEDS, picBeds)
