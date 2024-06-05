@@ -29,36 +29,11 @@
                 <span
                   style="position:absolute;left: 0;"
                 >
-                  {{ $T('MANAGE_SETTING_AUTO_FRESH_TITLE') }}
-                  <el-tooltip
-                    effect="dark"
-                    :content="$T('MANAGE_SETTING_AUTO_FRESH_TIPS')"
-                    placement="right"
-                    :persistent="false"
-                    teleported
-                  >
-                    <el-icon>
-                      <InfoFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </template>
-              <el-switch
-                v-model="form.isAutoRefresh"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleIsAutoRefreshChange"
-              />
-            </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
                   <span>{{ $T('MANAGE_SETTING_CLEAR_CACHE_TITLE') }} </span>
                   <span
                     style="color: #ff4949;"
-                  >{{ formatFileSize(dbSize) === ''? 0 : formatFileSize(dbSize) }}</span>
-                  <span> {{ $T('MANAGE_SETTING_CLEAR_CACHE_FREE_TITLE') }} </span>
+                  >{{ formatFileSize(dbSize) === ''? 0 : formatFileSize(dbSize) }} </span>
+                  <span> &nbsp;{{ $T('MANAGE_SETTING_CLEAR_CACHE_FREE_TITLE') }} </span>
                   <span
                     style="color: #ff4949;"
                   >{{ dbSizeAvailableRate }} %</span>
@@ -95,165 +70,54 @@
                 </template>
               </el-popconfirm>
             </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  {{ $T('MANAGE_SETTING_SHOW_THUMBNAIL_TITLE') }}
-                </span>
-              </template>
-              <el-switch
-                v-model="form.isShowThumbnail"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleIsShowThumbnailChange"
+            <DynamicSwitch
+              v-for="item in switchFieldsConfigList"
+              :key="item.configName"
+              v-model="form[item.configName]"
+              :segments="item.segments"
+              :tooltip="item.tooltip"
+              :config-name="item.configName"
+              :active-text="item.activeText"
+              :inactive-text="item.inactiveText"
+            />
+            <el-link
+              v-if="form.customRename"
+              style="margin-top: 10px;margin-bottom: 10px;color: #409eff;"
+              :underline="false"
+            >
+              {{ $T('MANAGE_SETTING_CUSTOM_PATTERN_TITLE') }}
+            </el-link>
+            <el-input
+              v-if="form.customRename"
+              v-model="form.customRenameFormat"
+              :placeholder="$T('MANAGE_SETTING_CUSTOM_PATTERN_TIPS')"
+              style="width: 100%;"
+            />
+            <el-table
+              v-if="form.customRename"
+              :data="customRenameFormatTable"
+              style="width: 100%;margin-top: 10px;margin-left: 10%;"
+              :header-cell-style="{'text-align':'center'}"
+              :cell-style="{'text-align':'center'}"
+              @cell-click="handleCellClick"
+            >
+              <el-table-column
+                v-for="(prop) in ['placeholder', 'description', 'placeholderB', 'descriptionB']"
+                :key="prop"
+                :prop="prop"
+                :label="$T('MANAGE_SETTING_CUSTOM_PATTERN_TABLE_TITLE' as any)"
+                width="150"
               />
-            </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  {{ $T('MANAGE_SETTING_SHOW_FILE_LIST_TYPE_TITLE') }}
-                </span>
-              </template>
-              <el-switch
-                v-model="form.isShowList"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                :active-text="$T('MANAGE_SETTING_SHOW_FILE_LIST_TYPE_LIST')"
-                :inactive-text="$T('MANAGE_SETTING_SHOW_FILE_LIST_TYPE_CARD')"
-                @change="handleIsShowListChange"
-              />
-            </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  {{ $T('MANAGE_SETTING_FORCE_CUSTOM_URL_HTTPS_TITLE') }}
-                  <el-tooltip
-                    effect="dark"
-                    :content="$T('MANAGE_SETTING_FORCE_CUSTOM_URL_HTTPS_TIPS')"
-                    placement="right"
-                    :persistent="false"
-                    teleported
-                  >
-                    <el-icon>
-                      <InfoFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </template>
-              <el-switch
-                v-model="form.isForceCustomUrlHttps"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleIsForceCustomUrlHttpsChange"
-              />
-            </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  {{ $T('MANAGE_SETTING_ENCODE_URL_WHEN_COPY') }}
-                  <el-tooltip
-                    effect="dark"
-                    :content="$T('MANAGE_SETTING_ENCODE_URL_WHEN_COPY_TIPS')"
-                    placement="right"
-                    :persistent="false"
-                    teleported
-                  >
-                    <el-icon>
-                      <InfoFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </template>
-              <el-switch
-                v-model="form.isEncodeUrl"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleIsEncodeUrlChange"
-              />
-            </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  {{ $T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_UPLOAD_TITLE') }}
-                  <el-tooltip
-                    effect="dark"
-                    :content="$T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_UPLOAD_TIPS')"
-                    placement="right"
-                    :persistent="false"
-                    teleported
-                  >
-                    <el-icon>
-                      <InfoFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </template>
-              <el-switch
-                v-model="form.isUploadKeepDirStructure"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleIsUploadKeepDirStructureChange"
-              />
-            </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  <span>{{ $T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_DOWNLOAD_TITLE_A') }}</span>
-                  <span style="color: orange;">{{ $T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_DOWNLOAD_TITLE_B') }}</span>
-                  <span>{{ $T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_DOWNLOAD_TITLE_C') }}</span>
-                  <el-tooltip
-                    effect="dark"
-                    :content="$T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_DOWNLOAD_FILE_TIPS')"
-                    placement="right"
-                    :persistent="false"
-                    teleported
-                  >
-                    <el-icon>
-                      <InfoFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </template>
-              <el-switch
-                v-model="form.isDownloadFileKeepDirStructure"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleIsDownloadFileKeepDirStructureChange"
-              />
-            </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  <span>{{ $T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_DOWNLOAD_TITLE_A') }}</span>
-                  <span style="color: coral;">{{ $T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_DOWNLOAD_TITLE_D') }}</span>
-                  <span>{{ $T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_DOWNLOAD_TITLE_C') }}</span>
-                  <el-tooltip
-                    effect="dark"
-                    :content="$T('MANAGE_SETTING_KEEP_FOLDER_STRUCTURE_DOWNLOAD_FILE_TIPS')"
-                    placement="right"
-                    :persistent="false"
-                    teleported
-                  >
-                    <el-icon>
-                      <InfoFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </template>
-              <el-switch
-                v-model="form.isDownloadFolderKeepDirStructure"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleIsDownloadFolderKeepDirStructureChange"
-              />
-            </el-form-item>
+            </el-table>
+            <br v-if="form.customRename">
+            <DynamicSwitch
+              v-for="item in switchFieldsSpecialList"
+              :key="item.configName"
+              v-model="form[item.configName]"
+              :segments="item.segments"
+              :tooltip="item.tooltip"
+              :config-name="item.configName"
+            />
             <el-form-item>
               <template #label>
                 <span
@@ -274,7 +138,7 @@
                 </span>
               </template>
               <el-input-number
-                v-model="maxDownloadFileCount"
+                v-model="form.maxDownloadFileCount"
                 style="position:absolute;right: 0;"
                 :placeholder="$T('MANAGE_SETTING_MAX_DOWNLOAD_FILE_SIZE_INPUT_TIPS')"
                 :min="1"
@@ -287,10 +151,10 @@
                 <span
                   style="position:absolute;left: 0;"
                 >
-                  {{ $T('MANAGE_SETTING_SEARCH_IGNORE_CASE_TITLE') }}
+                  {{ $T('MANAGE_SETTING_PRESIGNED_URL_EXPIRE_TITLE') }}
                   <el-tooltip
                     effect="dark"
-                    :content="$T('MANAGE_SETTING_SEARCH_IGNORE_CASE_TIPS')"
+                    :content="$T('MANAGE_SETTING_PRESIGNED_URL_EXPIRE_TIPS')"
                     placement="right"
                     :persistent="false"
                     teleported
@@ -301,141 +165,14 @@
                   </el-tooltip>
                 </span>
               </template>
-              <el-switch
-                v-model="form.isIgnoreCase"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleisIgnoreCaseChange"
+              <el-input-number
+                v-model="form.PreSignedExpire"
+                style="position:absolute;right: 0;"
+                :placeholder="$T('MANAGE_SETTING_PRESIGNED_URL_EXPIRE_TIPS')"
+                :min="1"
+                :step="1"
               />
             </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  {{ $T('MANAGE_SETTING_TIMESTAMP_RENAME_TITLE') }}
-                  <el-tooltip
-                    effect="dark"
-                    :content="$T('MANAGE_SETTING_TIMESTAMP_RENAME_TIPS')"
-                    placement="right"
-                    :persistent="false"
-                    teleported
-                  >
-                    <el-icon>
-                      <InfoFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </template>
-              <el-switch
-                v-model="form.timestampRename"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleTimestampRenameChange"
-              />
-            </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  {{ $T('MANAGE_SETTING_RANDOM_STRING_RENAME_TITLE') }}
-                  <el-tooltip
-                    effect="dark"
-                    :content="$T('MANAGE_SETTING_RANDOM_STRING_RENAME_TIPS')"
-                    placement="right"
-                    :persistent="false"
-                    teleported
-                  >
-                    <el-icon>
-                      <InfoFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </template>
-              <el-switch
-                v-model="form.randomStringRename"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleRandomStringRenameChange"
-              />
-            </el-form-item>
-            <el-form-item>
-              <template #label>
-                <span
-                  style="position:absolute;left: 0;"
-                >
-                  {{ $T('MANAGE_SETTING_CUSTOM_RENAME_TITLE') }}
-                  <el-tooltip
-                    effect="dark"
-                    :content="$T('MANAGE_SETTING_CUSTOM_RENAME_TIPS')"
-                    placement="right"
-                    :persistent="false"
-                    teleported
-                  >
-                    <el-icon>
-                      <InfoFilled />
-                    </el-icon>
-                  </el-tooltip>
-                </span>
-              </template>
-              <el-switch
-                v-model="form.customRename"
-                style="position:absolute;right: 0;--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
-                @change="handleCustomRenameChange"
-              />
-            </el-form-item>
-            <el-link
-              v-if="form.customRename"
-              style="margin-top: 10px;margin-bottom: 10px;color: #409eff;"
-              :underline="false"
-            >
-              {{ $T('MANAGE_SETTING_CUSTOM_PATTERN_TITLE') }}
-            </el-link>
-            <el-input
-              v-if="form.customRename"
-              v-model="customRenameFormat.value"
-              :placeholder="$T('MANAGE_SETTING_CUSTOM_PATTERN_TIPS')"
-              style="width: 100%;"
-            />
-            <el-table
-              v-if="form.customRename"
-              :data="customRenameFormatTable"
-              style="width: 100%;margin-top: 10px;margin-left: 10%;"
-              :header-cell-style="{'text-align':'center'}"
-              :cell-style="{'text-align':'center'}"
-              @cell-click="handleCellClick"
-            >
-              <el-table-column
-                prop="placeholder"
-                :label="$T('MANAGE_SETTING_CUSTOM_PATTERN_TABLE_TITLE')"
-                width="150"
-              />
-              <el-table-column
-                prop="description"
-                :label="$T('MANAGE_SETTING_CUSTOM_PATTERN_TABLE_TIPS')"
-                width="150"
-              />
-              <el-table-column
-                prop="placeholderB"
-                :label="$T('MANAGE_SETTING_CUSTOM_PATTERN_TABLE_TITLE')"
-                width="150"
-              />
-              <el-table-column
-                prop="descriptionB"
-                :label="$T('MANAGE_SETTING_CUSTOM_PATTERN_TABLE_TIPS')"
-                width="150"
-              />
-            </el-table>
-            <el-link
-              style="margin-top: 10px;margin-bottom: 10px;color: #409eff;"
-              :underline="false"
-            >
-              {{ $T('MANAGE_SETTING_PRESIGNED_URL_EXPIRE_TITLE') }}
-            </el-link>
-            <el-input
-              v-model="PreSignedExpire"
-              :placeholder="$T('MANAGE_SETTING_PRESIGNED_URL_EXPIRE_TIPS')"
-              clearable
-              @blur="handlePreSignedExpireChange"
-            />
             <el-link
               style="margin-top: 10px;margin-bottom: 10px;color: #409eff;"
               :underline="false"
@@ -444,37 +181,26 @@
             </el-link>
             <br>
             <el-radio-group
-              v-model="pasteFormat"
+              v-model="form.pasteFormat"
             >
-              <el-radio label="markdown">
-                {{ $T('MANAGE_SETTING_CHOOSE_COPY_FORMAT_MARKDOWN') }}
-              </el-radio>
-              <el-radio label="markdown-with-link">
-                {{ $T('MANAGE_SETTING_CHOOSE_COPY_FORMAT_MARKDOWN_WITH_LINK') }}
-              </el-radio>
-              <el-radio label="rawurl">
-                {{ $T('MANAGE_SETTING_CHOOSE_COPY_FORMAT_RAWURL') }}
-              </el-radio>
-              <el-radio label="html">
-                {{ $T('MANAGE_SETTING_CHOOSE_COPY_FORMAT_HTML') }}
-              </el-radio>
-              <el-radio label="bbcode">
-                {{ $T('MANAGE_SETTING_CHOOSE_COPY_FORMAT_BBCODE') }}
-              </el-radio>
-              <el-radio label="custom">
-                {{ $T('MANAGE_SETTING_CHOOSE_COPY_FORMAT_CUSTOM') }}
+              <el-radio
+                v-for="item in pasteFormatList"
+                :key="item"
+                :label="item"
+              >
+                {{ $T(`MANAGE_SETTING_CHOOSE_COPY_FORMAT_${item.toUpperCase().replace(/-/g, '_')}` as any) }}
               </el-radio>
             </el-radio-group>
             <el-link
-              v-if="pasteFormat === 'custom'"
+              v-if="form.pasteFormat === 'custom'"
               style="margin-top: 10px;margin-bottom: 10px;color: #409eff;"
               :underline="false"
             >
               {{ $T('MANAGE_SETTING_CUSTOM_COPY_FORMAT_TITLE') }}
             </el-link>
             <el-input
-              v-if="pasteFormat === 'custom'"
-              v-model="customPasteFormat"
+              v-if="form.pasteFormat === 'custom'"
+              v-model="form.customPasteFormat"
               :placeholder="$T('MANAGE_SETTING_CUSTOM_COPY_FORMAT_TIPS')"
               style="width: 100%;"
             />
@@ -487,7 +213,7 @@
               </el-link>
             </div>
             <el-input
-              v-model="downloadDir"
+              v-model="form.downloadDir"
               disabled
               :placeholder="$T('MANAGE_SETTING_CHOOSE_DOWNLOAD_FOLDER_TIPS')"
               style="width: 100%;margin-top: 10px;"
@@ -515,199 +241,105 @@
 </template>
 
 <script lang="ts" setup>
-// Element Plus 图标
 import { InfoFilled, Folder } from '@element-plus/icons-vue'
-
-// Vue 相关
-import { ref, reactive, onBeforeMount, watch, onBeforeUnmount } from 'vue'
-
-// 数据发送工具函数
+import { ref, onBeforeMount, watch } from 'vue'
 import { getConfig, saveConfig, invokeToMain } from '../utils/dataSender'
-
-// Element Plus 消息组件
 import { ElMessage } from 'element-plus'
-
-// 状态管理相关
-import { useManageStore } from '../store/manageStore'
 import { fileCacheDbInstance } from '../store/bucketFileDb'
-
-// 工具函数
 import { formatFileSize, customRenameFormatTable } from '../utils/common'
-
-// 国际化函数
 import { T as $T } from '@/i18n'
-
-// 静态路径选择
 import { selectDownloadFolder } from '../utils/static'
+import DynamicSwitch from '../components/DynamicSwitch.vue'
 
-const manageStore = useManageStore()
-
-const form = reactive<IStringKeyMap>({
+const form = ref<IStringKeyMap>({
   timestampRename: false,
   randomStringRename: false,
   customRename: false,
   isAutoRefresh: false,
+  isShowThumbnail: false,
+  isShowList: false,
   isIgnoreCase: false,
   isForceCustomUrlHttps: false,
   isEncodeUrl: false,
-  isShowList: false,
   isUploadKeepDirStructure: true,
   isDownloadFileKeepDirStructure: false,
-  isDownloadFolderKeepDirStructure: true
+  isDownloadFolderKeepDirStructure: true,
+  downloadDir: '',
+  pasteFormat: 'markdown',
+  customPasteFormat: '$url',
+  PreSignedExpire: 14400, // seconds
+  maxDownloadFileCount: 5,
+  customRenameFormat: '{filename}'
 })
 
-const downloadDir = ref('')
-const pasteFormat = ref('markdown')
-const customPasteFormat = ref('$url')
+const settingsKeys = Object.keys(form.value)
+
 const dbSize = ref(0)
 const dbSizeAvailableRate = ref('0')
-// 单位秒
-const PreSignedExpire = ref(14400)
 
-const customRenameFormat = reactive({
-  value: '{filename}'
+const pasteFormatList = ['markdown', 'markdown-with-link', 'rawurl', 'html', 'bbcode', 'custom']
+
+settingsKeys.forEach(key => {
+  watch(() => form.value[key], (newValue) => saveConfig({ [`settings.${key}`]: newValue }))
 })
 
-const maxDownloadFileCount = ref(5)
+const switchFieldsList = ['isAutoRefresh', 'isShowThumbnail', 'isShowList', 'isForceCustomUrlHttps', 'isEncodeUrl', 'isUploadKeepDirStructure', 'isIgnoreCase', 'timestampRename', 'randomStringRename', 'customRename']
+const switchFieldsNoTipsList = ['isShowThumbnail', 'isShowList']
+const switchFieldsHasActiveTextList = ['isShowList']
 
-watch(maxDownloadFileCount, (val) => {
-  saveConfig({
-    'settings.maxDownloadFileCount': val
-  })
-})
+const switchFieldsConfigList = switchFieldsList.map((item) => ({
+  configName: item,
+  segments: [{
+    text: $T(`MANAGE_SETTING_${item.toUpperCase()}_TITLE` as any),
+    style: 'color: black;'
+  }],
+  tooltip: switchFieldsNoTipsList.includes(item) ? undefined : $T(`MANAGE_SETTING_${item.toUpperCase()}_TIPS` as any),
+  activeText: switchFieldsHasActiveTextList.includes(item) ? $T(`MANAGE_SETTING_${item.toUpperCase()}_ON` as any) : undefined,
+  inactiveText: switchFieldsHasActiveTextList.includes(item) ? $T(`MANAGE_SETTING_${item.toUpperCase()}_OFF` as any) : undefined
+}))
 
-watch(customRenameFormat, (val) => {
-  saveConfig({
-    'settings.customRenameFormat': val.value
-  })
-})
-
-watch(pasteFormat, (val) => {
-  saveConfig({
-    'settings.pasteFormat': val
-  })
-})
-
-watch(customPasteFormat, (val) => {
-  saveConfig({
-    'settings.customPasteFormat': val
-  })
-})
-
-watch(downloadDir, (val) => {
-  saveConfig({
-    'settings.downloadDir': val
-  })
-})
-
-function handlePreSignedExpireChange () {
-  if (Number.isNaN(Number(PreSignedExpire.value)) || Number(PreSignedExpire.value) <= 0) {
-    PreSignedExpire.value = 14400
-  }
-  saveConfig({
-    'settings.PreSignedExpire': PreSignedExpire.value
-  })
-}
+const switchFieldsSpecialList = [{
+  configName: 'isDownloadFileKeepDirStructure',
+  segments: [{
+    text: $T('MANAGE_SETTING_ISDOWNLOADFILEKEEPDIRSTRUCTURE_TITLE_A'),
+    style: 'color: black;'
+  }, {
+    text: $T('MANAGE_SETTING_ISDOWNLOADFILEKEEPDIRSTRUCTURE_TITLE_B'),
+    style: 'color: orange;'
+  }, {
+    text: $T('MANAGE_SETTING_ISDOWNLOADFILEKEEPDIRSTRUCTURE_TITLE_C'),
+    style: 'color: black;'
+  }],
+  tooltip: $T('MANAGE_SETTING_ISDOWNLOADFILEKEEPDIRSTRUCTURE_TIPS')
+}, {
+  configName: 'isDownloadFolderKeepDirStructure',
+  segments: [{
+    text: $T('MANAGE_SETTING_ISDOWNLOADFILEKEEPDIRSTRUCTURE_TITLE_A'),
+    style: 'color: black;'
+  },
+  {
+    text: $T('MANAGE_SETTING_ISDOWNLOADFOLDERKEEPDIRSTRUCTURE_TITLE_D'),
+    style: 'color: coral;'
+  },
+  {
+    text: $T('MANAGE_SETTING_ISDOWNLOADFILEKEEPDIRSTRUCTURE_TITLE_C'),
+    style: 'color: black;'
+  }],
+  tooltip: $T('MANAGE_SETTING_ISDOWNLOADFILEKEEPDIRSTRUCTURE_TIPS')
+}]
 
 async function initData () {
   const config = await getConfig() as IStringKeyMap
-  form.timestampRename = config.settings.timestampRename ?? false
-  form.randomStringRename = config.settings.randomStringRename ?? false
-  form.customRename = config.settings.customRename ?? false
-  form.isAutoRefresh = config.settings.isAutoRefresh ?? false
-  form.isShowThumbnail = config.settings.isShowThumbnail ?? false
-  form.isShowList = config.settings.isShowList ?? false
-  form.isIgnoreCase = config.settings.isIgnoreCase ?? false
-  form.isForceCustomUrlHttps = config.settings.isForceCustomUrlHttps ?? false
-  form.isEncodeUrl = config.settings.isEncodeUrl ?? false
-  form.isUploadKeepDirStructure = config.settings.isUploadKeepDirStructure ?? true
-  form.isDownloadFileKeepDirStructure = config.settings.isDownloadKeepDirStructure ?? false
-  form.isDownloadFolderKeepDirStructure = config.settings.isDownloadFolderKeepDirStructure ?? true
-  PreSignedExpire.value = config.settings.PreSignedExpire ?? 14400
-  maxDownloadFileCount.value = config.settings.maxDownloadFileCount ?? 5
-  customRenameFormat.value = config.settings.customRenameFormat ?? '{filename}'
-  customPasteFormat.value = config.settings.customPasteFormat ?? '$url'
-  pasteFormat.value = config.settings.pasteFormat ?? 'markdown'
-  downloadDir.value = config.settings.downloadDir ?? ''
+  settingsKeys.forEach(key => {
+    form.value[key] = config.settings[key] ?? form.value[key]
+  })
 }
 
 async function handleDownloadDirClick () {
   const result = await invokeToMain(selectDownloadFolder)
   if (result) {
-    downloadDir.value = result
+    form.value.downloadDir = result
   }
-}
-
-function handleIsShowThumbnailChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.isShowThumbnail': val
-  })
-}
-
-function handleIsShowListChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.isShowList': val
-  })
-}
-
-function handleisIgnoreCaseChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.isIgnoreCase': val
-  })
-}
-
-function handleIsAutoRefreshChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.isAutoRefresh': val
-  })
-}
-
-function handleIsUploadKeepDirStructureChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.isUploadKeepDirStructure': val
-  })
-}
-
-function handleIsDownloadFileKeepDirStructureChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.isDownloadFileKeepDirStructure': val
-  })
-}
-
-function handleIsDownloadFolderKeepDirStructureChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.isDownloadFolderKeepDirStructure': val
-  })
-}
-
-function handleIsForceCustomUrlHttpsChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.isForceCustomUrlHttps': val
-  })
-}
-
-function handleIsEncodeUrlChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.isEncodeUrl': val
-  })
-}
-
-function handleTimestampRenameChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.timestampRename': val
-  })
-}
-
-function handleRandomStringRenameChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.randomStringRename': val
-  })
-}
-
-function handleCustomRenameChange (val:ICheckBoxValueType) {
-  saveConfig({
-    'settings.customRename': val
-  })
 }
 
 const handleCellClick = (row:any, column:any) => {
@@ -733,12 +365,7 @@ async function getIndexDbSize () {
 
 onBeforeMount(() => {
   initData()
-  manageStore.refreshConfig()
   getIndexDbSize()
-})
-
-onBeforeUnmount(async () => {
-  await manageStore.refreshConfig()
 })
 
 </script>
