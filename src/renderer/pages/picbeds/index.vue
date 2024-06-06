@@ -95,42 +95,23 @@
     </el-row>
   </div>
 </template>
+
 <script lang="ts" setup>
-// 枚举类型声明
+
 import { II18nLanguage, IRPCActionType } from '~/universal/types/enum'
-
-// Vue 相关
 import { ref, onBeforeUnmount, onBeforeMount } from 'vue'
-
-// 国际化函数
 import { T as $T } from '@/i18n/index'
-
-// 数据发送工具函数
 import { getConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
-
-// Vue Router 相关
 import { useRoute, useRouter } from 'vue-router'
-
-// 组件
 import ConfigForm from '@/components/ConfigForm.vue'
-
-// Electron 相关
 import {
   clipboard,
   ipcRenderer,
   IpcRendererEvent
 } from 'electron'
-
-// 事件常量
 import { OPEN_URL } from '~/universal/events/constants'
-
-// Element Plus 图标
 import { Link } from '@element-plus/icons-vue'
-
-// 时间处理库
 import dayjs from 'dayjs'
-
-// Element Plus 下拉菜单组件
 import { ElDropdown, ElMessage } from 'element-plus'
 import { configPaths } from '~/universal/utils/configPaths'
 import { picBedManualUrlList } from '~/universal/utils/static'
@@ -213,7 +194,7 @@ async function handleCopyApi () {
   try {
     const { port = 36677, host = '127.0.0.1' } = await getConfig<IStringKeyMap>(configPaths.settings.server) || {}
     const serverKey = await getConfig(configPaths.settings.serverKey) || ''
-    const uploader = await getConfig('uploader') as IStringKeyMap || {}
+    const uploader = await getConfig(configPaths.uploader) as IStringKeyMap || {}
     const picBedConfigList = uploader[$route.params.type as string].configList || []
     const picBedConfig = picBedConfigList.find((item: IUploaderConfigListItem) => item._id === $route.params.configId)
     if (!picBedConfig) {

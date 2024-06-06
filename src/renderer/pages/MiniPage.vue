@@ -4,15 +4,15 @@
   >
     <div
       id="upload-area"
-      :class="{ 'is-dragover': dragover, uploading: showProgress, linux: os === 'linux' }"
+      :class="{ 'is-dragover': dragover, uploading: isShowingProgress, linux: os === 'linux' }"
       :style="{ backgroundPosition: '0 ' + progress + '%'}"
       @drop.prevent="onDrop"
       @dragover.prevent="dragover = true"
       @dragleave.prevent="dragover = false"
     >
       <img
-        v-if="!dragover && !showProgress"
-        :src="logoPath.value ? logoPath.value : require('../assets/squareLogo.png')"
+        v-if="!dragover && !isShowingProgress"
+        :src="logoPath ? logoPath : require('../assets/squareLogo.png')"
         style="width: 100%; height: 100%;border-radius: 50%;"
       >
       <div
@@ -30,46 +30,24 @@
   </div>
 </template>
 <script lang="ts" setup>
-// 国际化函数
 import { T as $T } from '@/i18n/index'
-
-// Element Plus 消息框组件
 import { ElMessage as $message } from 'element-plus'
-
-// Electron 相关
 import {
   ipcRenderer,
   IpcRendererEvent
 } from 'electron'
-
-// Vue 生命周期钩子
-import { onBeforeUnmount, onBeforeMount, ref, watch, reactive } from 'vue'
-
-// 事件常量
+import { onBeforeUnmount, onBeforeMount, ref, watch } from 'vue'
 import { SHOW_MINI_PAGE_MENU, SET_MINI_WINDOW_POS } from '~/universal/events/constants'
-
-// 工具函数
-import {
-  isUrl
-} from '~/universal/utils/common'
-
-// 数据发送工具函数
+import { isUrl } from '~/universal/utils/common'
 import { getConfig, sendToMain } from '@/utils/dataSender'
-
-// Piclist 配置类型声明
 import { IConfig } from 'piclist'
-
-// 数据发送工具函数
 import { invokeToMain } from '@/manage/utils/dataSender'
 
-const logoPath = reactive({
-  value: ''
-})
+const logoPath = ref('')
 const dragover = ref(false)
 const progress = ref(0)
-const showProgress = ref(false)
-const showError = ref(false)
-const dragging = ref(false)
+const isShowingProgress = ref(false)
+const draggingState = ref(false)
 const wX = ref(-1)
 const wY = ref(-1)
 const screenX = ref(-1)
@@ -90,11 +68,10 @@ onBeforeMount(async () => {
   await initLogoPath()
   ipcRenderer.on('uploadProgress', (_: IpcRendererEvent, _progress: number) => {
     if (_progress !== -1) {
-      showProgress.value = true
+      isShowingProgress.value = true
       progress.value = _progress
     } else {
       progress.value = 100
-      showError.value = true
     }
   })
   ipcRenderer.on('updateMiniIcon', async () => {
@@ -108,8 +85,7 @@ onBeforeMount(async () => {
 watch(progress, (val) => {
   if (val === 100) {
     setTimeout(() => {
-      showProgress.value = false
-      showError.value = false
+      isShowingProgress.value = false
     }, 1000)
     setTimeout(() => {
       progress.value = 0
@@ -179,7 +155,7 @@ function ipcSendFiles (files: FileList) {
 }
 
 function handleMouseDown (e: MouseEvent) {
-  dragging.value = true
+  draggingState.value = true
   wX.value = e.pageX
   wY.value = e.pageY
   screenX.value = e.screenX
@@ -189,7 +165,7 @@ function handleMouseDown (e: MouseEvent) {
 function handleMouseMove (e: MouseEvent) {
   e.preventDefault()
   e.stopPropagation()
-  if (dragging.value) {
+  if (draggingState.value) {
     const xLoc = e.screenX - wX.value
     const yLoc = e.screenY - wY.value
     sendToMain(SET_MINI_WINDOW_POS, {
@@ -202,7 +178,7 @@ function handleMouseMove (e: MouseEvent) {
 }
 
 function handleMouseUp (e: MouseEvent) {
-  dragging.value = false
+  draggingState.value = false
   if (screenX.value === e.screenX && screenY.value === e.screenY) {
     if (e.button === 0) { // left mouse
       openUploadWindow()
