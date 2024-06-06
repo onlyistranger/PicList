@@ -114,7 +114,6 @@ async function validate (): Promise<IStringKeyMap | false> {
         resolve(ruleForm)
       } else {
         resolve(false)
-        return false
       }
     })
   })

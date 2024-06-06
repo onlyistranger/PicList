@@ -24,7 +24,8 @@
           @change="handleDeleteCloudFile"
         />
         <el-button
-          type="text"
+          type="primary"
+          :link="true"
           @click="refreshPage"
         >
           <el-tooltip

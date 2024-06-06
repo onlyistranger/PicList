@@ -50,7 +50,10 @@
         style="display: flex;"
         @click="showUploadDialog"
       >
-        <el-button type="text">
+        <el-button
+          type="primary"
+          :link="true"
+        >
           <el-tooltip
             class="item"
             effect="dark"
@@ -70,7 +73,8 @@
       </div>
       <div>
         <el-button
-          type="text"
+          type="primary"
+          :link="true"
           @click="showUrlDialog"
         >
           <el-tooltip
@@ -95,7 +99,8 @@
         v-if="isShowCreateNewFolder"
       >
         <el-button
-          type="text"
+          type="primary"
+          :link="true"
           @click="handleCreateFolder"
         >
           <el-tooltip
@@ -119,7 +124,10 @@
       <div
         @click="showDownloadDialog"
       >
-        <el-button type="text">
+        <el-button
+          type="primary"
+          :link="true"
+        >
           <el-tooltip
             class="item"
             effect="dark"
@@ -142,7 +150,10 @@
         v-if="isShowRenameFileIcon"
         @click="handleBatchRenameFile"
       >
-        <el-button type="text">
+        <el-button
+          type="primary"
+          :link="true"
+        >
           <el-tooltip
             class="item"
             effect="dark"
@@ -162,7 +173,10 @@
         </el-button>
       </div>
       <div>
-        <el-button type="text">
+        <el-button
+          type="primary"
+          :link="true"
+        >
           <el-tooltip
             class="item"
             effect="dark"
@@ -177,7 +191,7 @@
               <el-icon
                 class="icon"
                 size="25px"
-                :color="selectedItems.length > 0 ? 'red' : 'gray'"
+                :color="selectedItems.length > 0 ? '#409EFF' : 'gray'"
                 style="margin-left: 10px;"
                 @click="handleBatchCopyLink(manageStore.config.settings.pasteFormat)"
               >
@@ -207,7 +221,10 @@
         </el-button>
       </div>
       <div>
-        <el-button type="text">
+        <el-button
+          type="primary"
+          :link="true"
+        >
           <el-tooltip
             class="item"
             effect="dark"
@@ -219,7 +236,7 @@
             <el-icon
               class="icon"
               size="25px"
-              :color="selectedItems.length > 0 ? 'red' : 'gray'"
+              :color="selectedItems.length > 0 ? '#409EFF' : 'gray'"
               style="margin-left: 10px;"
               @click="handleBatchCopyInfo"
             >
@@ -230,7 +247,8 @@
       </div>
       <div>
         <el-button
-          type="text"
+          type="primary"
+          :link="true"
           @click="forceRefreshFileList"
         >
           <el-tooltip

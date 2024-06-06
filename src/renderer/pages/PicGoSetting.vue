@@ -556,7 +556,7 @@
                         teleported
                       >
                         <el-icon style="margin-left: 4px">
-                          <QuestionFilled />
+                          <InfoFilled />
                         </el-icon>
                       </el-tooltip>
                     </el-row>
@@ -590,6 +590,7 @@
                       v-for="item in picBed"
                       :key="item.name"
                       :label="item.name"
+                      :value="item.name"
                     />
                   </el-checkbox-group>
                 </el-form-item>
@@ -1480,10 +1481,10 @@
           :label="$T('UPLOAD_PAGE_IMAGE_PROCESS_WMTYPE')"
         >
           <el-radio-group v-model="waterMarkForm.watermarkType">
-            <el-radio label="text">
+            <el-radio value="text">
               {{ $T('UPLOAD_PAGE_IMAGE_PROCESS_WMTYPE_TEXT') }}
             </el-radio>
-            <el-radio label="image">
+            <el-radio value="image">
               {{ $T('UPLOAD_PAGE_IMAGE_PROCESS_WMTYPE_IMAGE') }}
             </el-radio>
           </el-radio-group>
@@ -1554,7 +1555,7 @@
             <el-radio
               v-for="item in waterMarkPositionMap"
               :key="item[0]"
-              :label="item[0]"
+              :value="item[0]"
             >
               {{ item[1] }}
             </el-radio>
@@ -2230,8 +2231,6 @@ function confirmCustomLink () {
       saveConfig(configPaths.settings.customLink, customLink.value)
       customLinkVisible.value = false
       sendToMain('updateCustomLink')
-    } else {
-      return false
     }
   })
 }

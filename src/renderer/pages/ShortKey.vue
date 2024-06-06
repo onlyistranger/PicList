@@ -58,7 +58,8 @@
                   :class="{
                     disabled: scope.row.enable
                   }"
-                  type="text"
+                  type="info"
+                  :link="true"
                   @click="toggleEnable(scope.row)"
                 >
                   {{ scope.row.enable ? $T('SHORTCUT_DISABLE') : $T('SHORTCUT_ENABLE') }}
@@ -66,7 +67,8 @@
                 <el-button
                   class="edit"
                   size="small"
-                  type="text"
+                  type="info"
+                  :link="true"
                   @click="openKeyBindingDialog(scope.row, scope.$index)"
                 >
                   {{ $T('SHORTCUT_EDIT') }}

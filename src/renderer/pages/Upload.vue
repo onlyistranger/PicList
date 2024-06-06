@@ -82,27 +82,13 @@
               @change="handlePasteStyleChange"
             >
               <el-radio-button
-                label="markdown"
-                title="![alt](url)"
+                v-for="(item, key) in pasteFormatList"
+                :key="key"
+                :value="key"
+                :title="item"
               >
-                Markdown
+                {{ key }}
               </el-radio-button>
-              <el-radio-button
-                label="HTML"
-                title="<img src='url'/>"
-              />
-              <el-radio-button
-                label="URL"
-                title="http://test.com/test.png"
-              />
-              <el-radio-button
-                label="UBB"
-                title="[img]url[/img]"
-              />
-              <el-radio-button
-                label="Custom"
-                :title="customLink"
-              />
             </el-radio-group>
             <el-radio-group
               v-model="useShortUrl"
@@ -110,13 +96,13 @@
               @change="handleUseShortUrlChange"
             >
               <el-radio-button
-                :label="true"
+                :value="true"
                 style="border-radius: 5px"
               >
                 {{ $T('UPLOAD_SHORT_URL') }}
               </el-radio-button>
               <el-radio-button
-                :label="false"
+                :value="false"
                 style="border-radius: 5px"
               >
                 {{ $T('UPLOAD_NORMAL_URL') }}
@@ -180,10 +166,10 @@
           :label="$T('UPLOAD_PAGE_IMAGE_PROCESS_WMTYPE')"
         >
           <el-radio-group v-model="waterMarkForm.watermarkType">
-            <el-radio label="text">
+            <el-radio value="text">
               {{ $T('UPLOAD_PAGE_IMAGE_PROCESS_WMTYPE_TEXT') }}
             </el-radio>
-            <el-radio label="image">
+            <el-radio value="image">
               {{ $T('UPLOAD_PAGE_IMAGE_PROCESS_WMTYPE_IMAGE') }}
             </el-radio>
           </el-radio-group>
@@ -254,7 +240,7 @@
             <el-radio
               v-for="item in waterMarkPositionMap"
               :key="item[0]"
-              :label="item[0]"
+              :value="item[0]"
             >
               {{ item[1] }}
             </el-radio>
@@ -473,6 +459,22 @@ const $router = useRouter()
 
 const imageProcessDialogVisible = ref(false)
 const useShortUrl = ref(false)
+const dragover = ref(false)
+const progress = ref(0)
+const showProgress = ref(false)
+const showError = ref(false)
+const pasteStyle = ref('')
+const picBed = ref<IPicBedType[]>([])
+const picBedName = ref('')
+const picBedConfigName = ref('')
+
+const pasteFormatList = ref({
+  [IPasteStyle.MARKDOWN]: '![alt](url)',
+  [IPasteStyle.HTML]: '<img src="url"/>',
+  [IPasteStyle.URL]: 'http://test.com/test.png',
+  [IPasteStyle.UBB]: '[img]url[/img]',
+  [IPasteStyle.CUSTOM]: ''
+})
 
 const waterMarkPositionMap = new Map([
   ['north', $T('UPLOAD_PAGE_IMAGE_PROCESS_POSITION_TOP')],
@@ -519,6 +521,8 @@ const compressForm = reactive<any>({
   isFlip: false,
   isFlop: false
 })
+const waterMarkFormKeys = Object.keys(waterMarkForm)
+const compressFormKeys = Object.keys(compressForm)
 
 const formatConvertObj = ref('{}')
 
@@ -548,20 +552,9 @@ async function initData () {
   const compress = await getConfig<IBuildInCompressOptions>(configPaths.buildIn.compress)
   const watermark = await getConfig<IBuildInWaterMarkOptions>(configPaths.buildIn.watermark)
   if (compress) {
-    compressForm.quality = compress.quality ?? 100
-    compressForm.isConvert = compress.isConvert ?? false
-    compressForm.convertFormat = compress.convertFormat ?? 'jpg'
-    compressForm.isReSize = compress.isReSize ?? false
-    compressForm.reSizeWidth = compress.reSizeWidth ?? 500
-    compressForm.reSizeHeight = compress.reSizeHeight ?? 500
-    compressForm.skipReSizeOfSmallImg = compress.skipReSizeOfSmallImg ?? false
-    compressForm.isReSizeByPercent = compress.isReSizeByPercent ?? false
-    compressForm.reSizePercent = compress.reSizePercent ?? 50
-    compressForm.isRotate = compress.isRotate ?? false
-    compressForm.rotateDegree = compress.rotateDegree ?? 0
-    compressForm.isRemoveExif = compress.isRemoveExif ?? false
-    compressForm.isFlip = compress.isFlip ?? false
-    compressForm.isFlop = compress.isFlop ?? false
+    compressFormKeys.forEach((key) => {
+      compressForm[key] = compress[key] ?? compressForm[key]
+    })
     try {
       if (typeof compress.formatConvertObj === 'object') {
         formatConvertObj.value = JSON.stringify(compress.formatConvertObj)
@@ -573,28 +566,12 @@ async function initData () {
     }
   }
   if (watermark) {
-    waterMarkForm.isAddWatermark = watermark.isAddWatermark ?? false
-    waterMarkForm.watermarkType = watermark.watermarkType ?? 'text'
-    waterMarkForm.isFullScreenWatermark = watermark.isFullScreenWatermark ?? false
-    waterMarkForm.watermarkDegree = watermark.watermarkDegree ?? 0
-    waterMarkForm.watermarkText = watermark.watermarkText ?? ''
-    waterMarkForm.watermarkFontPath = watermark.watermarkFontPath ?? ''
-    waterMarkForm.watermarkScaleRatio = watermark.watermarkScaleRatio ?? 0.15
-    waterMarkForm.watermarkColor = watermark.watermarkColor === undefined || watermark.watermarkColor === '' ? '#CCCCCC73' : watermark.watermarkColor
-    waterMarkForm.watermarkImagePath = watermark.watermarkImagePath ?? ''
-    waterMarkForm.watermarkPosition = watermark.watermarkPosition ?? 'southeast'
+    waterMarkFormKeys.forEach((key) => {
+      waterMarkForm[key] = watermark[key as keyof IBuildInWaterMarkOptions] ?? waterMarkForm[key]
+    })
+    waterMarkForm.watermarkColor = watermark.watermarkColor === '' ? '#CCCCCC73' : watermark.watermarkColor
   }
 }
-
-const dragover = ref(false)
-const progress = ref(0)
-const showProgress = ref(false)
-const showError = ref(false)
-const pasteStyle = ref('')
-const picBed = ref<IPicBedType[]>([])
-const picBedName = ref('')
-const customLink = ref('')
-const picBedConfigName = ref('')
 
 onBeforeMount(() => {
   ipcRenderer.on('uploadProgress', (_event: IpcRendererEvent, _progress: number) => {
@@ -723,7 +700,7 @@ function ipcSendFiles (files: FileList) {
 
 async function getPasteStyle () {
   pasteStyle.value = await getConfig(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
-  customLink.value = await getConfig(configPaths.settings.customLink) || '![$fileName]($url)'
+  pasteFormatList.value.Custom = await getConfig(configPaths.settings.customLink) || '![$fileName]($url)'
 }
 
 async function getUseShortUrl () {
@@ -736,9 +713,9 @@ async function handleUseShortUrlChange () {
   })
 }
 
-function handlePasteStyleChange (val: string | number | boolean) {
+function handlePasteStyleChange (val: string | number | boolean | undefined) {
   saveConfig({
-    [configPaths.settings.pasteStyle]: val
+    [configPaths.settings.pasteStyle]: val || IPasteStyle.MARKDOWN
   })
 }
 

@@ -14,9 +14,6 @@ import VueVideoPlayer from '@videojs-player/vue'
 // Electron 相关
 import { webFrame } from 'electron'
 
-// Axios
-import axios from 'axios'
-
 // Mixins
 import { mainMixin } from './renderer/utils/mainMixin'
 import { dragMixin } from '@/utils/mixin'
@@ -25,7 +22,7 @@ import { dragMixin } from '@/utils/mixin'
 import db from './renderer/utils/db'
 
 // 国际化
-import { i18nManager, T } from './renderer/i18n/index'
+import { T } from './renderer/i18n/index'
 
 // 工具函数
 import { getConfig, saveConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
@@ -45,27 +42,8 @@ webFrame.setVisualZoomLevelLimits(1, 1)
 
 const app = createApp(App)
 
-app.config.globalProperties.$builtInPicBed = [
-  'smms',
-  'imgur',
-  'qiniu',
-  'tcyun',
-  'upyun',
-  'aliyun',
-  'github',
-  'webdavplist',
-  'local',
-  'sftpplist',
-  'telegraphplist',
-  'piclist',
-  'lskyplist',
-  'aws-s3-plist'
-]
-
 app.config.globalProperties.$$db = db
-app.config.globalProperties.$http = axios
 app.config.globalProperties.$T = T
-app.config.globalProperties.$i18n = i18nManager
 app.config.globalProperties.getConfig = getConfig
 app.config.globalProperties.triggerRPC = triggerRPC
 app.config.globalProperties.saveConfig = saveConfig

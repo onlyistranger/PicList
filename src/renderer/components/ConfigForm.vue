@@ -46,7 +46,7 @@
                   />
                 </template>
                 <el-icon class="ml-[4px] cursor-pointer hover:text-blue">
-                  <QuestionFilled />
+                  <InfoFilled />
                 </el-icon>
               </el-tooltip>
             </template>
@@ -105,8 +105,7 @@ import { cloneDeep, union } from 'lodash'
 import { getConfig } from '@/utils/dataSender'
 import { useRoute } from 'vue-router'
 import type { FormInstance } from 'element-plus'
-import { T as $T } from '@/i18n'
-import { QuestionFilled } from '@element-plus/icons-vue'
+import { InfoFilled } from '@element-plus/icons-vue'
 import { marked } from 'marked'
 
 interface IProps {
@@ -141,7 +140,6 @@ async function validate (): Promise<IStringKeyMap | false> {
         resolve(ruleForm)
       } else {
         resolve(false)
-        return false
       }
     })
   })

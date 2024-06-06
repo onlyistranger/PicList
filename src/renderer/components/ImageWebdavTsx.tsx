@@ -36,7 +36,7 @@ export default defineComponent({
     })
     const iconPath = computed(() => require(`../manage/pages/assets/icons/${getFileIconPath(props.item.fileName ?? '')}`))
 
-    async function getheaderOfWebdav (key: string) {
+    async function getWebdavHeader (key: string) {
       let headers = {} as any
       if (props.config.authType === 'digest') {
         const authHeader = await getAuthHeader(
@@ -59,7 +59,7 @@ export default defineComponent({
 
     const fetchImage = async () => {
       try {
-        const headers = await getheaderOfWebdav(props.item.key)
+        const headers = await getWebdavHeader(props.item.key)
         const res = await fetch(props.url, { method: 'GET', headers })
         if (res.status >= 200 && res.status < 300) {
           const blob = await res.blob()

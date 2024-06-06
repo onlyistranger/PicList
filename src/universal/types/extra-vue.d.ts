@@ -17,11 +17,8 @@ declare module 'vue/types/vue' {
 
 declare module 'vue' {
   interface ComponentCustomProperties {
-    $http: typeof axios
-    $builtInPicBed: string[]
     $$db: IGalleryDB
     $T: typeof import('~/renderer/i18n/index').T
-    $i18n: import('~/renderer/i18n/index').I18nManager
     saveConfig(data: IObj | string, value?: any): void
     getConfig<T>(key?: string): Promise<T | undefined>
     setDefaultPicBed(picBed: string): void

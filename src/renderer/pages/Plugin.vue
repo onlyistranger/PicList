@@ -534,7 +534,6 @@ async function handleConfirmConfig () {
 }
 
 function _getSearchResult (val: string) {
-  // this.$http.get(`https://api.npms.io/v2/search?q=${val}`)
   axios.get(`https://registry.npmjs.com/-/v1/search?text=${val}`)
     .then((res: INPMSearchResult) => {
       pluginList.value = res.data.objects

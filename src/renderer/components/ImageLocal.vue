@@ -30,22 +30,14 @@ import mime from 'mime-types'
 import path from 'path'
 
 const base64Image = ref('')
-const props = defineProps(
-  {
-    isShowThumbnail: {
-      type: Boolean,
-      required: true
-    },
-    item: {
-      type: Object,
-      required: true
-    },
-    localPath: {
-      type: String,
-      required: true
-    }
+const props = defineProps<{
+  isShowThumbnail: boolean
+  item: {
+    isImage: boolean
+    fileName: string
   }
-)
+  localPath: string
+}>()
 
 const createBase64Image = async () => {
   const filePath = path.normalize(props.localPath)

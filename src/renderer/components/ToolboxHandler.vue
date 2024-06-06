@@ -1,7 +1,8 @@
 <template>
   <div class="toolbox-handler">
     <ElButton
-      type="text"
+      type="primary"
+      :link="true"
       @click="() => props.handler(value)"
     >
       {{ props.handlerText }}

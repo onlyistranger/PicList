@@ -35,12 +35,12 @@
 import { InfoFilled } from '@element-plus/icons-vue'
 
 defineProps<{
-  tooltip: string,
+  tooltip?: string,
   activeText?: string,
   inactiveText?: string,
   segments?: { text: string, style: string }[],
 }>()
 
-const value = defineModel()
+const value = defineModel<boolean>()
 
 </script>

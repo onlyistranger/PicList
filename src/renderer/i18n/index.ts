@@ -10,14 +10,14 @@ export class I18nManager {
 
   #getLanguageList () {
     ipcRenderer.send(GET_LANGUAGE_LIST)
-    ipcRenderer.once(GET_LANGUAGE_LIST, (event, list: II18nItem[]) => {
+    ipcRenderer.once(GET_LANGUAGE_LIST, (_, list: II18nItem[]) => {
       this.#i18nFileList = list
     })
   }
 
   #getCurrentLanguage () {
     ipcRenderer.send(GET_CURRENT_LANGUAGE)
-    ipcRenderer.once(GET_CURRENT_LANGUAGE, (event, lang: string, locales: ILocales) => {
+    ipcRenderer.once(GET_CURRENT_LANGUAGE, (_, lang: string, locales: ILocales) => {
       this.#setLocales(lang, locales)
       bus.emit(FORCE_UPDATE)
     })
@@ -36,7 +36,7 @@ export class I18nManager {
   constructor () {
     this.#getCurrentLanguage()
     this.#getLanguageList()
-    ipcRenderer.on(SET_CURRENT_LANGUAGE, (event, lang: string, locales: ILocales) => {
+    ipcRenderer.on(SET_CURRENT_LANGUAGE, (_, lang: string, locales: ILocales) => {
       this.#setLocales(lang, locales)
       bus.emit(FORCE_UPDATE)
     })

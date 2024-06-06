@@ -186,7 +186,7 @@
               <el-radio
                 v-for="item in pasteFormatList"
                 :key="item"
-                :label="item"
+                :value="item"
               >
                 {{ $T(`MANAGE_SETTING_CHOOSE_COPY_FORMAT_${item.toUpperCase().replace(/-/g, '_')}` as any) }}
               </el-radio>

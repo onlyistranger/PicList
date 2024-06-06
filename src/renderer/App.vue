@@ -5,19 +5,10 @@
 </template>
 
 <script lang="ts" setup>
-// 状态管理
 import { useStore } from '@/hooks/useStore'
-
-// Vue 生命周期钩子
 import { onBeforeMount, onMounted, onUnmounted } from 'vue'
-
-// 数据发送工具函数
 import { getConfig } from './utils/dataSender'
-
-// 类型声明
 import type { IConfig } from 'piclist'
-
-// 其他工具
 import bus from './utils/bus'
 import { FORCE_UPDATE } from '~/universal/events/constants'
 import { useATagClick } from './hooks/useATagClick'
