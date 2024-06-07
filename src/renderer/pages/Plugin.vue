@@ -228,28 +228,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-// Element Plus 图标
 import { Close, Download, Refresh, Goods, Remove, Tools } from '@element-plus/icons-vue'
-
-// 国际化函数
 import { T as $T } from '@/i18n/index'
-
-// 组件
 import ConfigForm from '@/components/ConfigFormForPlugin.vue'
-
-// Lodash 函数节流
 import { debounce, DebouncedFunc } from 'lodash'
-
-// Electron 相关
 import {
   ipcRenderer,
   IpcRendererEvent
 } from 'electron'
-
-// 工具函数
 import { handleStreamlinePluginName } from '~/universal/utils/common'
-
-// 事件常量
 import {
   OPEN_URL,
   PICGO_CONFIG_PLUGIN,
@@ -259,20 +246,10 @@ import {
   GET_PICBEDS,
   PICGO_HANDLE_PLUGIN_DONE
 } from '#/events/constants'
-
-// Vue 相关
 import { computed, ref, onBeforeMount, onBeforeUnmount, watch, onMounted, reactive, toRaw } from 'vue'
-
-// 数据发送工具函数
 import { getConfig, saveConfig, sendRPC, sendToMain } from '@/utils/dataSender'
-
-// Element Plus 消息框组件
 import { ElMessageBox } from 'element-plus'
-
-// Axios
 import axios from 'axios'
-
-// 枚举类型声明
 import { IRPCActionType } from '~/universal/types/enum'
 import { configPaths } from '~/universal/utils/configPaths'
 
@@ -460,26 +437,6 @@ function installPlugin (item: IPicGoPlugin) {
     sendToMain('installPlugin', item.fullName)
   }
 }
-
-// function uninstallPlugin (val: string) {
-//   pluginList.value.forEach(item => {
-//     if (item.name === val) {
-//       item.ing = true
-//     }
-//   })
-//   loading.value = true
-//   sendToMain('uninstallPlugin', val)
-// }
-
-// function updatePlugin (val: string) {
-//   pluginList.value.forEach(item => {
-//     if (item.fullName === val) {
-//       item.ing = true
-//     }
-//   })
-//   loading.value = true
-//   sendToMain('updatePlugin', val)
-// }
 
 function reloadApp () {
   sendRPC(IRPCActionType.RELOAD_APP)

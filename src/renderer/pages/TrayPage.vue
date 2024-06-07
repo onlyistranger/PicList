@@ -62,31 +62,14 @@
 </template>
 
 <script lang="ts" setup>
-// Vue 相关
 import { reactive, ref, onBeforeUnmount, onBeforeMount } from 'vue'
-
-// Electron 相关
 import { clipboard, ipcRenderer } from 'electron'
-
-// 数据库操作
 import $$db from '@/utils/db'
-
-// 国际化函数
 import { T as $T } from '@/i18n/index'
-
-// Picgo Store 相关类型
 import { IResult } from '@picgo/store/dist/types'
-
-// 事件常量
 import { OPEN_WINDOW } from '#/events/constants'
-
-// 枚举类型声明
 import { IPasteStyle, IWindowList } from '#/types/enum'
-
-// 数据发送工具函数
 import { getConfig, sendToMain } from '@/utils/dataSender'
-
-// 工具函数
 import { handleUrlEncode } from '#/utils/common'
 import { configPaths } from '~/universal/utils/configPaths'
 
@@ -98,8 +81,6 @@ const notification = reactive({
 
 const clipboardFiles = ref<ImgInfo[]>([])
 const uploadFlag = ref(false)
-
-// const reverseList = computed(() => files.value.slice().reverse())
 
 function openSettingWindow () {
   sendToMain(OPEN_WINDOW, IWindowList.SETTING_WINDOW)
@@ -165,10 +146,6 @@ async function pasteTemplate (style: IPasteStyle, item: ImgInfo, customLink: str
   }
   return tpl[style]
 }
-
-// function calcHeight (width: number, height: number): number {
-//   return height * 160 / width
-// }
 
 function disableDragFile () {
   window.addEventListener('dragover', (e) => {

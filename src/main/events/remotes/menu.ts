@@ -31,6 +31,7 @@ import {
 import { PicGo as PicGoCore } from 'piclist'
 import { T } from '~/main/i18n'
 import { configPaths } from '~/universal/utils/configPaths'
+import { setTrayToolTip } from '~/main/utils/common'
 
 interface GuiMenuItem {
   label: string
@@ -185,6 +186,7 @@ const buildPicBedListMenu = () => {
               if (windowManager.has(IWindowList.SETTING_WINDOW)) {
                 windowManager.get(IWindowList.SETTING_WINDOW)!.webContents.send('syncPicBed')
               }
+              setTrayToolTip(`${item.type} ${config._configName || 'Default'}`)
             }
           }
         })
@@ -198,6 +200,7 @@ const buildPicBedListMenu = () => {
           if (windowManager.has(IWindowList.SETTING_WINDOW)) {
             windowManager.get(IWindowList.SETTING_WINDOW)!.webContents.send('syncPicBed')
           }
+          setTrayToolTip(item.type)
         }
         : undefined
     }

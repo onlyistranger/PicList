@@ -21,7 +21,7 @@ import windowManager from 'apis/app/window/windowManager'
 import { IPasteStyle, IWindowList } from '#/types/enum'
 import pasteTemplate from '~/main/utils/pasteTemplate'
 import pkg from 'root/package.json'
-import { ensureFilePath, handleCopyUrl } from '~/main/utils/common'
+import { ensureFilePath, handleCopyUrl, setTray, tray } from '~/main/utils/common'
 import { T } from '~/main/i18n'
 import { isMacOSVersionGreaterThanOrEqualTo } from '~/main/utils/getMacOSVersion'
 import { buildPicBedListMenu } from '~/main/events/remotes/menu'
@@ -31,7 +31,6 @@ import { uploadClipboardFiles } from '../uploader/apis'
 import { configPaths } from '~/universal/utils/configPaths'
 
 let contextMenu: Menu | null
-let tray: Tray | null
 
 export function setDockMenu () {
   const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
@@ -336,9 +335,10 @@ const getTrayIcon = () => {
   }
 }
 
-export function createTray () {
+export function createTray (tooltip: string) {
   const menubarPic = getTrayIcon()
-  tray = new Tray(menubarPic)
+  setTray(new Tray(menubarPic))
+  tray.setToolTip(tooltip)
   // click事件在Mac和Windows上可以触发（在Ubuntu上无法触发，Unity不支持）
   if (process.platform === 'darwin' || process.platform === 'win32') {
     tray.on('right-click', () => {
@@ -348,7 +348,7 @@ export function createTray () {
       createContextMenu()
       tray!.popUpContextMenu(contextMenu!)
     })
-    tray.on('click', (event, bounds) => {
+    tray.on('click', (_, bounds) => {
       if (process.platform === 'darwin') {
         toggleWindow(bounds)
         setTimeout(async () => {
@@ -412,7 +412,7 @@ export function createTray () {
 
     // drop-files only be supported in macOS
     // so the tray window must be available
-    tray.on('drop-files', async (event: Event, files: string[]) => {
+    tray.on('drop-files', async (_: Event, files: string[]) => {
       const pasteStyle = db.get(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
       const rawInput = cloneDeep(files)
       const trayWindow = windowManager.get(IWindowList.TRAY_WINDOW)!

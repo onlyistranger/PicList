@@ -167,11 +167,15 @@ class LifeCycle {
       }
       const isHideDock = db.get(configPaths.settings.isHideDock) || false
       const startMode = db.get(configPaths.settings.startMode) || ISartMode.QUIET
+      const currentPicBed = db.get(configPaths.picBed.uploader) || db.get(configPaths.picBed.current) || 'smms'
+      // @ts-ignore
+      const currentPicBedConfig = db.get(`picBed.${currentPicBed}`)?._configName || 'Default'
+      const tooltip = `${currentPicBed} ${currentPicBedConfig}`
       if (process.platform === 'darwin') {
         isHideDock ? app.dock.hide() : setDockMenu()
-        startMode !== ISartMode.NO_TRAY && createTray()
+        startMode !== ISartMode.NO_TRAY && createTray(tooltip)
       } else {
-        createTray()
+        createTray(tooltip)
       }
       db.set(configPaths.needReload, false)
       updateChecker()

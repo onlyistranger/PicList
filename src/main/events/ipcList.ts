@@ -68,7 +68,7 @@ import {
 import picgoCoreIPC from './picgoCoreIPC'
 
 // 处理复制的 URL 和生成短链接的函数
-import { handleCopyUrl, generateShortUrl } from '~/main/utils/common'
+import { handleCopyUrl, generateShortUrl, setTrayToolTip } from '~/main/utils/common'
 
 // 构建主页面、迷你页面、插件页面、图片床列表的菜单函数
 import { buildMainPageMenu, buildMiniPageMenu, buildPluginPageMenu, buildPicBedListMenu } from './remotes/menu'
@@ -134,6 +134,10 @@ export default {
 
     ipcMain.on('uploadChoosedFiles', async (evt: IpcMainEvent, files: IFileWithPath[]) => {
       return uploadChoosedFiles(evt.sender, files)
+    })
+
+    ipcMain.on('setTrayToolTip', (_: IpcMainEvent, title: string) => {
+      setTrayToolTip(title)
     })
 
     // ShortKey Related IPC

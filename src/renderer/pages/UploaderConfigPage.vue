@@ -119,6 +119,7 @@ import { PICBEDS_PAGE, UPLOADER_CONFIG_PAGE } from '@/router/config'
 // 状态管理
 import { useStore } from '@/hooks/useStore'
 import { configPaths } from '~/universal/utils/configPaths'
+import { ipcRenderer } from 'electron'
 
 const $router = useRouter()
 const $route = useRoute()
@@ -130,10 +131,11 @@ const store = useStore()
 
 async function selectItem (id: string) {
   await triggerRPC<void>(IRPCActionType.SELECT_UPLOADER, type.value, id)
+  ipcRenderer.send('setTrayToolTip', `${type.value} ${curConfigList.value.find(item => item._id === id)?._configName || ''}`)
   defaultConfigId.value = id
 }
 
-onBeforeRouteUpdate((to, from, next) => {
+onBeforeRouteUpdate((to, _, next) => {
   if (to.params.type && (to.name === UPLOADER_CONFIG_PAGE)) {
     type.value = to.params.type as string
     getCurrentConfigList()
@@ -193,6 +195,8 @@ function setDefaultPicBed (type: string) {
   })
 
   store?.setDefaultPicBed(type)
+  const currentConfigName = curConfigList.value.find(item => item._id === defaultConfigId.value)?._configName
+  ipcRenderer.send('setTrayToolTip', `${type} ${currentConfigName || ''}`)
   const successNotification = new Notification($T('SETTINGS_DEFAULT_PICBED'), {
     body: $T('TIPS_SET_SUCCEED')
   })

@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid'
 import { trimValues } from '#/utils/common'
 import picgo from '@core/picgo'
 import { configPaths } from '~/universal/utils/configPaths'
+import { setTrayToolTip } from './common'
 
 export const handleConfigWithFunction = (config: IPicGoPluginOriginConfig[]): IPicGoPluginConfig[] => {
   for (const i in config) {
@@ -65,6 +66,7 @@ export const changeCurrentUploader = (type: string, config?: IStringKeyMap, id?:
     [configPaths.picBed.current]: type,
     [configPaths.picBed.uploader]: type
   })
+  setTrayToolTip(`${type} ${config?._configName || ''}`)
 }
 
 export const selectUploaderConfig = (type: string, id: string) => {
