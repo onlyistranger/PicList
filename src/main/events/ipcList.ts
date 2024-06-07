@@ -235,14 +235,6 @@ export default {
 
     // PicList Setting page IPC
 
-    ipcMain.on('updateCustomLink', () => {
-      const notification = new Notification({
-        title: T('OPERATION_SUCCEED'),
-        body: T('TIPS_CUSTOM_LINK_STYLE_MODIFIED_SUCCEED')
-      })
-      notification.show()
-    })
-
     ipcMain.on('autoStart', (_: IpcMainEvent, val: boolean) => {
       app.setLoginItemSettings({
         openAtLogin: val
