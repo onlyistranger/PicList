@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { getConfig } from '../utils/dataSender'
+
+import { getConfig } from '@/manage/utils/dataSender'
 
 export const useManageStore = defineStore('manageConfig', {
   state: () => {

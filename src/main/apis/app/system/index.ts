@@ -1,34 +1,34 @@
-// External dependencies
+import {
+  app,
+  clipboard,
+  dialog,
+  Menu,
+  nativeTheme,
+  Notification,
+  screen,
+  Tray
+} from 'electron'
 import fs from 'fs-extra'
 import { cloneDeep } from 'lodash'
 
-// Electron modules
-import {
-  app,
-  Menu,
-  Tray,
-  dialog,
-  clipboard,
-  Notification,
-  screen,
-  nativeTheme
-} from 'electron'
+import db, { GalleryDB } from '@core/datastore'
+import picgo from '@core/picgo'
 
-// Custom utilities and modules
 import uploader from 'apis/app/uploader'
-import db, { GalleryDB } from '~/main/apis/core/datastore'
+import { uploadClipboardFiles } from 'apis/app/uploader/apis'
 import windowManager from 'apis/app/window/windowManager'
+
+import { buildPicBedListMenu } from '~/events/remotes/menu'
+import { T } from '~/i18n'
+import clipboardPoll from '~/utils/clipboardPoll'
+import { ensureFilePath, handleCopyUrl, setTray, tray } from '~/utils/common'
+import { isMacOSVersionGreaterThanOrEqualTo } from '~/utils/getMacOSVersion'
+import pasteTemplate from '~/utils/pasteTemplate'
+
+import { configPaths } from '#/utils/configPaths'
 import { IPasteStyle, IWindowList } from '#/types/enum'
-import pasteTemplate from '~/main/utils/pasteTemplate'
+
 import pkg from 'root/package.json'
-import { ensureFilePath, handleCopyUrl, setTray, tray } from '~/main/utils/common'
-import { T } from '~/main/i18n'
-import { isMacOSVersionGreaterThanOrEqualTo } from '~/main/utils/getMacOSVersion'
-import { buildPicBedListMenu } from '~/main/events/remotes/menu'
-import clipboardPoll from '~/main/utils/clipboardPoll'
-import picgo from '../../core/picgo'
-import { uploadClipboardFiles } from '../uploader/apis'
-import { configPaths } from '~/universal/utils/configPaths'
 
 let contextMenu: Menu | null
 

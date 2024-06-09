@@ -1,4 +1,4 @@
-import { IRPCActionType } from '~/universal/types/enum'
+import { IRPCActionType } from '#/types/enum'
 
 export class RPCRouter implements IRPCRouter {
   private routeMap: IRPCRoutes = new Map()

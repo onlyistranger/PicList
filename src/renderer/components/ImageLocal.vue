@@ -22,12 +22,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onBeforeMount } from 'vue'
-import { getFileIconPath } from '@/manage/utils/common'
-import { Loading } from '@element-plus/icons-vue'
 import fs from 'fs-extra'
 import mime from 'mime-types'
 import path from 'path'
+import { ref, onBeforeMount } from 'vue'
+import { Loading } from '@element-plus/icons-vue'
+
+import { getFileIconPath } from '@/manage/utils/common'
 
 const base64Image = ref('')
 const props = defineProps<{

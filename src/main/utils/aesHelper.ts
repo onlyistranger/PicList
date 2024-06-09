@@ -1,7 +1,9 @@
 import crypto from 'crypto'
+
 import picgo from '@core/picgo'
-import { DEFAULT_AES_PASSWORD } from '~/universal/utils/static'
-import { configPaths } from '~/universal/utils/configPaths'
+
+import { configPaths } from '#/utils/configPaths'
+import { DEFAULT_AES_PASSWORD } from '#/utils/static'
 
 export class AESHelper {
   key: Buffer

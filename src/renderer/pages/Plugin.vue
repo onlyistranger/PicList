@@ -227,16 +227,22 @@
     </el-dialog>
   </div>
 </template>
+
 <script lang="ts" setup>
-import { Close, Download, Refresh, Goods, Remove, Tools } from '@element-plus/icons-vue'
-import { T as $T } from '@/i18n/index'
-import ConfigForm from '@/components/ConfigFormForPlugin.vue'
-import { debounce, DebouncedFunc } from 'lodash'
+import axios from 'axios'
 import {
   ipcRenderer,
   IpcRendererEvent
 } from 'electron'
-import { handleStreamlinePluginName } from '~/universal/utils/common'
+import { ElMessageBox } from 'element-plus'
+import { debounce, DebouncedFunc } from 'lodash'
+import { Close, Download, Refresh, Goods, Remove, Tools } from '@element-plus/icons-vue'
+import { computed, ref, onBeforeMount, onBeforeUnmount, watch, onMounted, reactive, toRaw } from 'vue'
+
+import ConfigForm from '@/components/ConfigFormForPlugin.vue'
+import { T as $T } from '@/i18n/index'
+import { getConfig, saveConfig, sendRPC, sendToMain } from '@/utils/dataSender'
+
 import {
   OPEN_URL,
   PICGO_CONFIG_PLUGIN,
@@ -246,12 +252,9 @@ import {
   GET_PICBEDS,
   PICGO_HANDLE_PLUGIN_DONE
 } from '#/events/constants'
-import { computed, ref, onBeforeMount, onBeforeUnmount, watch, onMounted, reactive, toRaw } from 'vue'
-import { getConfig, saveConfig, sendRPC, sendToMain } from '@/utils/dataSender'
-import { ElMessageBox } from 'element-plus'
-import axios from 'axios'
-import { IRPCActionType } from '~/universal/types/enum'
-import { configPaths } from '~/universal/utils/configPaths'
+import { IRPCActionType } from '#/types/enum'
+import { handleStreamlinePluginName } from '#/utils/common'
+import { configPaths } from '#/utils/configPaths'
 
 const $confirm = ElMessageBox.confirm
 const searchText = ref('')

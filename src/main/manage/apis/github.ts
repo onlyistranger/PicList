@@ -1,35 +1,18 @@
-// HTTP 请求库
-import got from 'got'
-
-// 日志记录器
-import { ManageLogger } from '../utils/logger'
-
-// HTTP 代理格式化函数、是否为图片的判断函数
-import { formatHttpProxy, isImage } from '~/renderer/manage/utils/common'
-
-// 窗口管理器
-import windowManager from 'apis/app/window/windowManager'
-
-// 枚举类型声明
-import { IWindowList } from '#/types/enum'
-
-// Electron 相关
 import { ipcMain, IpcMainEvent } from 'electron'
-
-// got 上传函数、路径处理函数、新的下载器、获取请求代理、获取请求选项、并发异步任务池、错误格式化函数
-import { gotUpload, trimPath, NewDownloader, getAgent, getOptions, ConcurrencyPromisePool, formatError } from '../utils/common'
-
-// 上传下载任务队列
-import UpDownTaskQueue, { commonTaskStatus } from '../datastore/upDownTaskQueue'
-
-// 文件系统库
 import fs from 'fs-extra'
-
-// 路径处理库
+import got from 'got'
 import path from 'path'
 
-// 取消下载任务的加载文件列表、刷新下载文件传输列表
+import windowManager from 'apis/app/window/windowManager'
+
+import UpDownTaskQueue, { commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
+import { gotUpload, trimPath, NewDownloader, getAgent, getOptions, ConcurrencyPromisePool, formatError } from '~/manage/utils/common'
+import { ManageLogger } from '~/manage/utils/logger'
+
+import { formatHttpProxy, isImage } from '@/manage/utils/common'
 import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
+
+import { IWindowList } from '#/types/enum'
 
 class GithubApi {
   token: string

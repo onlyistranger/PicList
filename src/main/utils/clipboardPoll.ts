@@ -1,7 +1,8 @@
+import crypto from 'crypto'
 import { clipboard } from 'electron'
 import { EventEmitter } from 'events'
-import crypto from 'crypto'
-import logger from '../apis/core/picgo/logger'
+
+import logger from '@core/picgo/logger'
 
 class ClipboardWatcher extends EventEmitter {
   timer: NodeJS.Timeout | null

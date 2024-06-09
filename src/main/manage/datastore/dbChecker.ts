@@ -1,10 +1,12 @@
-import fs from 'fs-extra'
-import writeFile from 'write-file-atomic'
-import path from 'path'
-import { app } from 'electron'
-import { getLogger } from '@core/utils/localLogger'
 import dayjs from 'dayjs'
-import { T } from '~/main/i18n'
+import { app } from 'electron'
+import fs from 'fs-extra'
+import path from 'path'
+import writeFile from 'write-file-atomic'
+
+import { getLogger } from '@core/utils/localLogger'
+
+import { T } from '~/i18n'
 
 const STORE_PATH = app.getPath('userData')
 const manageConfigFilePath = path.join(STORE_PATH, 'manage.json')

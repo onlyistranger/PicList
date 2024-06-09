@@ -1,5 +1,6 @@
 import { ipcRenderer } from 'electron'
-import { deleteFailedLog, getRawData } from '~/renderer/utils/common'
+
+import { deleteFailedLog, getRawData } from '@/utils/common'
 
 export default class SftpPlistApi {
   static async delete (configMap: IStringKeyMap): Promise<boolean> {

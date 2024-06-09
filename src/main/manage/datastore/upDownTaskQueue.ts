@@ -1,9 +1,10 @@
 // a singleton class to manage the up/down task queue
 // qiniu tcyun aliyun smms imgur github upyun
 
-import path from 'path'
 import { app } from 'electron'
 import fs from 'fs-extra'
+import path from 'path'
+
 export enum commonTaskStatus {
   queuing = 'queuing',
   failed = 'failed',

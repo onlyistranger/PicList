@@ -53,14 +53,16 @@
 </template>
 
 <script lang="ts" setup>
-import { Close } from '@element-plus/icons-vue'
-import { GET_RENAME_FILE_NAME, RENAME_FILE_NAME } from '#/events/constants'
-import { sendToMain } from '@/utils/dataSender'
-import { T as $T } from '@/i18n/index'
 import { ipcRenderer, IpcRendererEvent } from 'electron'
-import { onBeforeUnmount, onBeforeMount, ref, reactive } from 'vue'
-import { useIPCOn } from '@/hooks/useIPC'
 import { FormInstance } from 'element-plus'
+import { Close } from '@element-plus/icons-vue'
+import { onBeforeUnmount, onBeforeMount, ref, reactive } from 'vue'
+
+import { useIPCOn } from '@/hooks/useIPC'
+import { T as $T } from '@/i18n/index'
+import { sendToMain } from '@/utils/dataSender'
+
+import { GET_RENAME_FILE_NAME, RENAME_FILE_NAME } from '#/events/constants'
 
 const id = ref<string | null>(null)
 const formRef = ref<FormInstance>()

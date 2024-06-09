@@ -14,10 +14,12 @@
     </template>
   </el-icon>
 </template>
+
 <script lang="ts" setup>
 import { CircleCloseFilled, Loading, SuccessFilled } from '@element-plus/icons-vue'
 import { computed } from 'vue'
-import { IToolboxItemCheckStatus } from '~/universal/types/enum'
+
+import { IToolboxItemCheckStatus } from '#/types/enum'
 
 interface IProps {
   status: IToolboxItemCheckStatus

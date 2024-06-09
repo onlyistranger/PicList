@@ -1,10 +1,12 @@
-import manageCoreIPC from './manageCoreIPC'
-import { ManageApi } from '../manageApi'
 import { ipcMain, IpcMainInvokeEvent, dialog, app, shell } from 'electron'
-import UpDownTaskQueue from '../datastore/upDownTaskQueue'
-import { downloadFileFromUrl } from '../utils/common'
-import path from 'path'
 import fs from 'fs-extra'
+import path from 'path'
+
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
+import manageCoreIPC from '~/manage/events/manageCoreIPC'
+import { ManageApi } from '~/manage/manageApi'
+import { downloadFileFromUrl } from '~/manage/utils/common'
+
 import { selectDownloadFolder } from '@/manage/utils/static'
 
 export const manageIpcList = {

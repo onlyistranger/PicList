@@ -1,29 +1,24 @@
-// External dependencies
 import { app } from 'electron'
 
-// Electron modules
-
-// Custom utilities and modules
-import bus from '@core/bus'
-import db from '~/main/apis/core/datastore'
-import picgo from '~/main/apis/core/picgo'
-import { T } from '~/main/i18n'
 import {
-  SETTING_WINDOW_URL,
-  TRAY_WINDOW_URL,
+  MANUAL_WINDOW_URL,
   MINI_WINDOW_URL,
   RENAME_WINDOW_URL,
-  TOOLBOX_WINDOW_URL,
-  MANUAL_WINDOW_URL
+  SETTING_WINDOW_URL,
+  TRAY_WINDOW_URL,
+  TOOLBOX_WINDOW_URL
 } from './constants'
 
-// Custom types/enums
-import { IWindowList } from '#/types/enum'
-
-// External utility functions
+import bus from '@core/bus'
 import { CREATE_APP_MENU } from '@core/bus/constants'
+import db from '@core/datastore'
+import picgo from '@core/picgo'
+
+import { T } from '~/i18n'
+
 import { TOGGLE_SHORTKEY_MODIFIED_MODE } from '#/events/constants'
-import { configPaths } from '~/universal/utils/configPaths'
+import { IWindowList } from '#/types/enum'
+import { configPaths } from '#/utils/configPaths'
 
 const windowList = new Map<IWindowList, IWindowListItem>()
 

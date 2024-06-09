@@ -1,13 +1,9 @@
-// External dependencies
 import http from 'http'
 import fs from 'fs-extra'
 import path from 'path'
 
-// Electron modules
-
-// Custom utilities and modules
 import picgo from '@core/picgo'
-import logger from '../apis/core/picgo/logger'
+import logger from '@core/picgo/logger'
 
 export const imgFilePath = path.join(picgo.baseDir, 'imgTemp')
 fs.ensureDirSync(imgFilePath)

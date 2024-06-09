@@ -97,24 +97,25 @@
 </template>
 
 <script lang="ts" setup>
-
-import { II18nLanguage, IRPCActionType } from '~/universal/types/enum'
-import { ref, onBeforeUnmount, onBeforeMount } from 'vue'
-import { T as $T } from '@/i18n/index'
-import { getConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
-import { useRoute, useRouter } from 'vue-router'
-import ConfigForm from '@/components/ConfigForm.vue'
+import dayjs from 'dayjs'
 import {
   clipboard,
   ipcRenderer,
   IpcRendererEvent
 } from 'electron'
-import { OPEN_URL } from '~/universal/events/constants'
-import { Link } from '@element-plus/icons-vue'
-import dayjs from 'dayjs'
 import { ElDropdown, ElMessage } from 'element-plus'
-import { configPaths } from '~/universal/utils/configPaths'
-import { picBedManualUrlList } from '~/universal/utils/static'
+import { Link } from '@element-plus/icons-vue'
+import { ref, onBeforeUnmount, onBeforeMount } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+import ConfigForm from '@/components/ConfigForm.vue'
+import { T as $T } from '@/i18n/index'
+import { getConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
+
+import { OPEN_URL } from '#/events/constants'
+import { II18nLanguage, IRPCActionType } from '#/types/enum'
+import { configPaths } from '#/utils/configPaths'
+import { picBedManualUrlList } from '#/utils/static'
 
 const type = ref('')
 const config = ref<IPicGoPluginConfig[]>([])

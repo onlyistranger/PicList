@@ -1377,25 +1377,28 @@
 </template>
 
 <script lang="ts" setup>
+import { compare } from 'compare-versions'
+import { ipcRenderer } from 'electron'
 import { ElForm, ElMessage as $message, ElMessage, ElMessageBox, FormRules } from 'element-plus'
 import { Reading, Close, Edit, InfoFilled } from '@element-plus/icons-vue'
-import pkg from 'root/package.json'
-import { PICGO_OPEN_FILE, PICGO_OPEN_DIRECTORY, OPEN_URL, GET_PICBEDS, HIDE_DOCK } from '#/events/constants'
-import { II18nLanguage, IRPCActionType, ISartMode } from '~/universal/types/enum'
-import { ipcRenderer } from 'electron'
-import { i18nManager, T as $T } from '@/i18n/index'
-import { enforceNumber } from '~/universal/utils/common'
-import { getLatestVersion } from '#/utils/getLatestVersion'
-import { compare } from 'compare-versions'
-import { computed, onBeforeMount, onBeforeUnmount, reactive, ref, toRaw, watch } from 'vue'
-import { getConfig, saveConfig, sendRPC, sendToMain } from '@/utils/dataSender'
-import { useRouter } from 'vue-router'
-import { SHORTKEY_PAGE } from '@/router/config'
 import { IConfig } from 'piclist'
-import { invokeToMain } from '@/manage/utils/dataSender'
-import { buildInRenameFormatTable } from '../manage/utils/common'
-import { configPaths, ISartModeValues } from '~/universal/utils/configPaths'
+import { computed, onBeforeMount, onBeforeUnmount, reactive, ref, toRaw, watch } from 'vue'
+import { useRouter } from 'vue-router'
+
 import ImageProcessSetting from '@/components/ImageProcessSetting.vue'
+import { i18nManager, T as $T } from '@/i18n/index'
+import { buildInRenameFormatTable } from '@/manage/utils/common'
+import { invokeToMain } from '@/manage/utils/dataSender'
+import { SHORTKEY_PAGE } from '@/router/config'
+import { getConfig, saveConfig, sendRPC, sendToMain } from '@/utils/dataSender'
+
+import { PICGO_OPEN_FILE, PICGO_OPEN_DIRECTORY, OPEN_URL, GET_PICBEDS, HIDE_DOCK } from '#/events/constants'
+import { II18nLanguage, IRPCActionType, ISartMode } from '#/types/enum'
+import { enforceNumber } from '#/utils/common'
+import { configPaths, ISartModeValues } from '#/utils/configPaths'
+import { getLatestVersion } from '#/utils/getLatestVersion'
+
+import pkg from 'root/package.json'
 
 const $router = useRouter()
 const activeName = ref<'system' | 'syncAndConfigure' | 'upload' | 'advanced' | 'upadte'>('system')

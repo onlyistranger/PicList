@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { IObject, IResult, IGetResult, IFilter } from '@picgo/store/dist/types'
 
 interface IGalleryDB {
@@ -18,11 +17,11 @@ declare module 'vue/types/vue' {
 declare module 'vue' {
   interface ComponentCustomProperties {
     $$db: IGalleryDB
-    $T: typeof import('~/renderer/i18n/index').T
+    $T: typeof import('@/i18n/index').T
     saveConfig(data: IObj | string, value?: any): void
     getConfig<T>(key?: string): Promise<T | undefined>
     setDefaultPicBed(picBed: string): void
-    triggerRPC<T> (action: import('~/universal/types/enum').IRPCActionType, ...args: any[]): Promise<T | null>
+    triggerRPC<T> (action: import('#/types/enum').IRPCActionType, ...args: any[]): Promise<T | null>
     defaultPicBed: string
     forceUpdate(): void
     sendToMain(channel: string, ...args: any[]): void

@@ -1,39 +1,34 @@
-// External dependencies
 import dayjs from 'dayjs'
+import {
+  BrowserWindow,
+  clipboard,
+  ipcMain,
+  Notification,
+  WebContents
+} from 'electron'
+import fse from 'fs-extra'
 import util from 'util'
 import path from 'path'
-import writeFile from 'write-file-atomic'
-import fse from 'fs-extra'
-
-// Electron modules
-import {
-  Notification,
-  BrowserWindow,
-  ipcMain,
-  WebContents,
-  clipboard
-} from 'electron'
-
-// Custom utilities and modules
-import picgo from '@core/picgo'
-import db from '~/main/apis/core/datastore'
-import windowManager from 'apis/app/window/windowManager'
-import { showNotification, getClipboardFilePath, calcDurationRange } from '~/main/utils/common'
-import logger from '@core/picgo/logger'
-import { T } from '~/main/i18n'
-import { CLIPBOARD_IMAGE_FOLDER } from '~/universal/utils/static'
-
-// Custom types/enums
-import { IWindowList } from '#/types/enum'
-
-// External utility functions
 import { IPicGo } from 'piclist'
+import writeFile from 'write-file-atomic'
+
+import windowManager from 'apis/app/window/windowManager'
+
+import db from '@core/datastore'
+import picgo from '@core/picgo'
+import logger from '@core/picgo/logger'
+
+import { T } from '~/i18n'
+import { showNotification, getClipboardFilePath, calcDurationRange } from '~/utils/common'
+
 import {
   GET_RENAME_FILE_NAME,
   RENAME_FILE_NAME,
   TALKING_DATA_EVENT
-} from '~/universal/events/constants'
-import { configPaths } from '~/universal/utils/configPaths'
+} from '#/events/constants'
+import { IWindowList } from '#/types/enum'
+import { configPaths } from '#/utils/configPaths'
+import { CLIPBOARD_IMAGE_FOLDER } from '#/utils/static'
 
 const waitForRename = (window: BrowserWindow, id: number): Promise<string|null> => {
   return new Promise((resolve) => {

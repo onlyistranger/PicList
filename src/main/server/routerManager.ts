@@ -1,21 +1,26 @@
-import router from './router'
-import {
-  handleResponse
-} from './utils'
-import logger from '@core/picgo/logger'
-import windowManager from 'apis/app/window/windowManager'
-import { uploadChoosedFiles, uploadClipboardFiles, deleteChoosedFiles } from 'apis/app/uploader/apis'
-import path from 'path'
-import { dbPathDir } from 'apis/core/datastore/dbChecker'
-import picgo from '@core/picgo'
-import { changeCurrentUploader } from '../utils/handleUploaderConfig'
 import { app } from 'electron'
 import fs from 'fs-extra'
-import { AESHelper } from '../utils/aesHelper'
-import { marked } from 'marked'
-import { markdownContent } from './apiDoc'
 import http from 'http'
-import { configPaths } from '~/universal/utils/configPaths'
+import { marked } from 'marked'
+import path from 'path'
+
+import { dbPathDir } from '@core/datastore/dbChecker'
+import picgo from '@core/picgo'
+import logger from '@core/picgo/logger'
+
+import { AESHelper } from '~/utils/aesHelper'
+import { changeCurrentUploader } from '~/utils/handleUploaderConfig'
+
+import { uploadChoosedFiles, uploadClipboardFiles, deleteChoosedFiles } from 'apis/app/uploader/apis'
+import windowManager from 'apis/app/window/windowManager'
+
+import { markdownContent } from '~/server/apiDoc'
+import router from '~/server/router'
+import {
+  handleResponse
+} from '~/server/utils'
+
+import { configPaths } from '#/utils/configPaths'
 
 const appPath = app.getPath('userData')
 const serverTempDir = path.join(appPath, 'serverTemp')

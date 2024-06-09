@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron'
-import { deleteFailedLog, getRawData } from '~/renderer/utils/common'
-import { removeFileFromS3InMain } from '~/main/utils/deleteFunc'
+
+import { deleteFailedLog, getRawData } from '@/utils/common'
+import { removeFileFromS3InMain } from '~/utils/deleteFunc'
 
 export default class AwsS3Api {
   static async delete (configMap: IStringKeyMap): Promise<boolean> {

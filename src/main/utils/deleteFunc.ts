@@ -1,11 +1,12 @@
-import { S3Client, DeleteObjectCommand, S3ClientConfig } from '@aws-sdk/client-s3'
-import { NodeHttpHandler } from '@smithy/node-http-handler'
-import http, { AgentOptions } from 'http'
-import https from 'https'
-import { getAgent } from '../manage/utils/common'
 import axios from 'axios'
 import crypto from 'crypto'
+import http, { AgentOptions } from 'http'
+import https from 'https'
 import querystring from 'querystring'
+import { S3Client, DeleteObjectCommand, S3ClientConfig } from '@aws-sdk/client-s3'
+import { NodeHttpHandler } from '@smithy/node-http-handler'
+
+import { getAgent } from '~/manage/utils/common'
 
 interface DogecloudTokenFull {
   Credentials: {

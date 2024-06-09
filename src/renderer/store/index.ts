@@ -1,6 +1,6 @@
 import { reactive, InjectionKey, readonly, App, UnwrapRef, ref } from 'vue'
 import { saveConfig } from '@/utils/dataSender'
-import { configPaths } from '~/universal/utils/configPaths'
+import { configPaths } from '#/utils/configPaths'
 
 export interface IState {
   defaultPicBed: string

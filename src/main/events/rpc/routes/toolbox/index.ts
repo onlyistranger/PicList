@@ -1,8 +1,9 @@
-import { IRPCActionType, IToolboxItemType } from '~/universal/types/enum'
-import { RPCRouter } from '../../router'
-import { checkFileMap, fixFileMap } from './checkFile'
-import { checkClipboardUploadMap, fixClipboardUploadMap } from './checkClipboardUpload'
-import { checkProxyMap } from './checkProxy'
+import { checkClipboardUploadMap, fixClipboardUploadMap } from '~/events/rpc/routes/toolbox/checkClipboardUpload'
+import { checkFileMap, fixFileMap } from '~/events/rpc/routes/toolbox/checkFile'
+import { checkProxyMap } from '~/events/rpc/routes/toolbox/checkProxy'
+import { RPCRouter } from '~/events/rpc/router'
+
+import { IRPCActionType, IToolboxItemType } from '#/types/enum'
 
 const toolboxRouter = new RPCRouter()
 

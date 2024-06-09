@@ -1,9 +1,11 @@
-import { defineComponent, ref, onMounted, watch, computed } from 'vue'
-import { getFileIconPath } from '@/manage/utils/common'
-import { Loading } from '@element-plus/icons-vue'
-import { getAuthHeader } from '@/manage/utils/digestAuth'
-import { formatEndpoint } from '~/main/manage/utils/common'
 import { ElImage, ElIcon } from 'element-plus'
+import { defineComponent, ref, onMounted, watch, computed } from 'vue'
+import { Loading } from '@element-plus/icons-vue'
+
+import { getFileIconPath } from '@/manage/utils/common'
+import { getAuthHeader } from '@/manage/utils/digestAuth'
+
+import { formatEndpoint } from '~/manage/utils/common'
 
 export default defineComponent({
   props: {

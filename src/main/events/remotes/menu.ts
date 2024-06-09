@@ -1,37 +1,39 @@
-// External dependencies
-import pkg from 'root/package.json'
+import {
+  app,
+  dialog,
+  BrowserWindow,
+  Menu,
+  shell
+} from 'electron'
+import { PicGo as PicGoCore } from 'piclist'
 
-// Electron modules
-import { Menu, BrowserWindow, app, dialog, shell } from 'electron'
-
-// Custom utilities and modules
-import windowManager from 'apis/app/window/windowManager'
-import getPicBeds from '~/main/utils/getPicBeds'
+import db from '@core/datastore'
 import picgo from '@core/picgo'
-import GuiApi from 'apis/gui'
-import picgoCoreIPC from '~/main/events/picgoCoreIPC'
-import { changeCurrentUploader } from '~/main/utils/handleUploaderConfig'
-import db from '~/main/apis/core/datastore'
-import clipboardPoll from '~/main/utils/clipboardPoll'
 
-// Custom types/enums
-import { IWindowList } from '#/types/enum'
-
-// External utility functions
 import {
   uploadClipboardFiles
-} from '~/main/apis/app/uploader/apis'
+} from 'apis/app/uploader/apis'
+import windowManager from 'apis/app/window/windowManager'
+import GuiApi from 'apis/gui'
+
+import picgoCoreIPC from '~/events/picgoCoreIPC'
+import { T } from '~/i18n'
+import clipboardPoll from '~/utils/clipboardPoll'
+import { setTrayToolTip } from '~/utils/common'
+import getPicBeds from '~/utils/getPicBeds'
+import { changeCurrentUploader } from '~/utils/handleUploaderConfig'
+
 import {
   PICGO_CONFIG_PLUGIN,
   PICGO_HANDLE_PLUGIN_DONE,
   PICGO_HANDLE_PLUGIN_ING,
   PICGO_TOGGLE_PLUGIN,
   SHOW_MAIN_PAGE_QRCODE
-} from '~/universal/events/constants'
-import { PicGo as PicGoCore } from 'piclist'
-import { T } from '~/main/i18n'
-import { configPaths } from '~/universal/utils/configPaths'
-import { setTrayToolTip } from '~/main/utils/common'
+} from '#/events/constants'
+import { IWindowList } from '#/types/enum'
+import { configPaths } from '#/utils/configPaths'
+
+import pkg from 'root/package.json'
 
 interface GuiMenuItem {
   label: string

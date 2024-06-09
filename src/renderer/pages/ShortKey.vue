@@ -116,14 +116,17 @@
     </el-dialog>
   </div>
 </template>
+
 <script lang="ts" setup>
-import keyBinding from '@/utils/key-binding'
 import { ipcRenderer, IpcRendererEvent } from 'electron'
-import { TOGGLE_SHORTKEY_MODIFIED_MODE } from '#/events/constants'
 import { onBeforeUnmount, onBeforeMount, ref, watch } from 'vue'
-import { getConfig, sendToMain } from '@/utils/dataSender'
+
 import { T as $T } from '@/i18n'
-import { configPaths } from '~/universal/utils/configPaths'
+import { getConfig, sendToMain } from '@/utils/dataSender'
+import keyBinding from '@/utils/key-binding'
+
+import { TOGGLE_SHORTKEY_MODIFIED_MODE } from '#/events/constants'
+import { configPaths } from '#/utils/configPaths'
 
 const list = ref<IShortKeyConfig[]>([])
 const keyBindingVisible = ref(false)

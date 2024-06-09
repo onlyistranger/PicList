@@ -1,5 +1,6 @@
-import { deleteFailedLog, deleteLog } from '@/utils/common'
 import { Octokit } from '@octokit/rest'
+
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 
 interface IConfigMap {
   fileName: string

@@ -1438,37 +1438,8 @@ https://www.baidu.com/img/bd_logo1.png"
 </template>
 
 <script lang="tsx" setup>
-// Vue 相关
-import { ref, reactive, watch, onBeforeMount, computed, onBeforeUnmount } from 'vue'
-
-// Vue Router 相关
-import { useRoute } from 'vue-router'
-
-// Element Plus 图标
-import { InfoFilled, Grid, Fold, Close, Folder, FolderAdd, Upload, CircleClose, Loading, CopyDocument, Edit, UploadFilled, Link, Refresh, ArrowRight, HomeFilled, Document, Coin, Download, DeleteFilled, Sort, FolderOpened } from '@element-plus/icons-vue'
-
-// 状态管理相关
-import { useManageStore } from '../store/manageStore'
-
-// 工具函数
-import { customRenameFormatTable, customStrMatch, customStrReplace, renameFile, formatLink, formatFileName, getFileIconPath, formatFileSize, getExtension, isValidUrl, svg } from '../utils/common'
-
-// 静态工具函数
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '../utils/static'
-
-// Electron 相关
-import { ipcRenderer, clipboard, IpcRendererEvent } from 'electron'
-
-// 数据库操作
-import { fileCacheDbInstance } from '../store/bucketFileDb'
-
-// 工具函数
-import { trimPath } from '~/main/manage/utils/common'
-
-// Axios
 import axios from 'axios'
-
-// Element Plus 组件
+import { ipcRenderer, clipboard, IpcRendererEvent } from 'electron'
 import {
   ElMessage, ElMessageBox, ElNotification,
   ElButton,
@@ -1485,44 +1456,31 @@ import {
   ElTag,
   ElCard
 } from 'element-plus'
-
-// 类型声明
 import type { Column, RowClassNameGetter } from 'element-plus'
-
-// 状态管理相关
-import { useFileTransferStore, useDownloadFileTransferStore } from '@/manage/store/manageStore'
-
-// UUID
-import { v4 as uuidv4 } from 'uuid'
-
-// 路径处理库
-import path from 'path'
-
-// 文件系统库
+import { InfoFilled, Grid, Fold, Close, Folder, FolderAdd, Upload, CircleClose, Loading, CopyDocument, Edit, UploadFilled, Link, Refresh, ArrowRight, HomeFilled, Document, Coin, Download, DeleteFilled, Sort, FolderOpened } from '@element-plus/icons-vue'
 import fs from 'fs-extra'
-
-// 数据发送工具函数
-import { getConfig, saveConfig } from '../utils/dataSender'
-
-// Markdown 解析库
 import { marked } from 'marked'
+import path from 'path'
+import { v4 as uuidv4 } from 'uuid'
+import { ref, reactive, watch, onBeforeMount, computed, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
 
-// 文本文件扩展名列表
-import { textFileExt } from '../utils/textfile'
+import { fileCacheDbInstance } from '@/manage/store/bucketFileDb'
+import { useFileTransferStore, useDownloadFileTransferStore, useManageStore } from '@/manage/store/manageStore'
+import { customRenameFormatTable, customStrMatch, customStrReplace, renameFile, formatLink, formatFileName, getFileIconPath, formatFileSize, getExtension, isValidUrl, svg } from '@/manage/utils/common'
+import { getConfig, saveConfig } from '@/manage/utils/dataSender'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
+import { textFileExt } from '@/manage/utils/textfile'
+import { videoExt } from '@/manage/utils/videofile'
 
-// 视频文件扩展名列表
-import { videoExt } from '../utils/videofile'
-
-// 组件
 import ImageWebdav from '@/components/ImageWebdav.vue'
 import ImageLocal from '@/components/ImageLocal.vue'
 import ImageWebdavTsx from '@/components/ImageWebdavTsx'
 
-// 国际化函数
 import { T as $T } from '@/i18n'
 
-import { IUploadTask, IDownloadTask } from '~/main/manage/datastore/upDownTaskQueue'
-
+import { IUploadTask, IDownloadTask } from '~/manage/datastore/upDownTaskQueue'
+import { trimPath } from '~/manage/utils/common'
 /*
 configMap:{
     prefix: string, -> baseDir

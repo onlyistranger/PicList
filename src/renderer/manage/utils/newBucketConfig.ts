@@ -1,4 +1,4 @@
-import { AliyunAreaCodeName, QiniuAreaCodeName, TencentAreaCodeName } from '~/main/manage/utils/constants'
+import { AliyunAreaCodeName, QiniuAreaCodeName, TencentAreaCodeName } from '~/manage/utils/constants'
 import { T as $T } from '@/i18n'
 
 export const newBucketConfig:IStringKeyMap = {

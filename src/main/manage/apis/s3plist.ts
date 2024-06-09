@@ -1,4 +1,3 @@
-// AWS S3 相关
 import {
   S3Client,
   ListBucketsCommand,
@@ -17,50 +16,26 @@ import {
   PutPublicAccessBlockCommand,
   PutBucketAclCommand
 } from '@aws-sdk/client-s3'
-
-// AWS S3 上传和进度
 import { Upload, Progress } from '@aws-sdk/lib-storage'
-
-// AWS S3 请求签名
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-
-// HTTP 和 HTTPS 模块
-import https from 'https'
-import http, { AgentOptions } from 'http'
 import { NodeHttpHandler } from '@smithy/node-http-handler'
-
-// 日志记录器
-import { ManageLogger } from '../utils/logger'
-
-// 端点地址格式化函数、错误格式化函数、获取请求代理、获取文件 MIME 类型、新的下载器、并发异步任务池
-import { formatEndpoint, formatError, getAgent, getFileMimeType, NewDownloader, ConcurrencyPromisePool } from '../utils/common'
-
-// 是否为图片的判断函数、HTTP 代理格式化函数
-import { isImage, formatHttpProxy } from '@/manage/utils/common'
-
-// 窗口管理器
-import windowManager from 'apis/app/window/windowManager'
-
-// 枚举类型声明
-import { IWindowList } from '#/types/enum'
-
-// Electron 相关
 import { ipcMain, IpcMainEvent } from 'electron'
-
-// 上传下载任务队列
-import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus } from '../datastore/upDownTaskQueue'
-
-// 文件系统库
 import fs from 'fs-extra'
-
-// 路径处理库
+import http, { AgentOptions } from 'http'
+import https from 'https'
 import path from 'path'
 
-// 取消下载任务的加载文件列表、刷新下载文件传输列表
+import windowManager from 'apis/app/window/windowManager'
+
+import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
+import { formatEndpoint, formatError, getAgent, getFileMimeType, NewDownloader, ConcurrencyPromisePool } from '~/manage/utils/common'
+import { dogecloudApi, DogecloudToken, getTempToken } from '~/manage/utils/dogeAPI'
+import { ManageLogger } from '~/manage/utils/logger'
+
+import { isImage, formatHttpProxy } from '@/manage/utils/common'
 import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
 
-// dogecloudApi
-import { dogecloudApi, DogecloudToken, getTempToken } from '../utils/dogeAPI'
+import { IWindowList } from '#/types/enum'
 
 class S3plistApi {
   baseOptions: S3ClientConfig

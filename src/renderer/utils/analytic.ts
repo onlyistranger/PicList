@@ -1,10 +1,13 @@
 /* eslint-disable camelcase */
+import { ipcRenderer } from 'electron'
 import {
   TALKING_DATA_APPID, TALKING_DATA_EVENT
-} from '~/universal/events/constants'
+} from '#/events/constants'
+
+import { handleTalkingDataEvent } from '@/utils/common'
+
 import pkg from 'root/package.json'
-import { ipcRenderer } from 'electron'
-import { handleTalkingDataEvent } from './common'
+
 const { version } = pkg
 
 export const initTalkingData = () => {

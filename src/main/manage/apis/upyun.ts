@@ -1,40 +1,20 @@
+import axios from 'axios'
+import { ipcMain, IpcMainEvent } from 'electron'
+import FormData from 'form-data'
+import fs from 'fs-extra'
+import path from 'path'
 import Upyun from 'upyun'
 
-// 加密函数、获取文件 MIME 类型、新的下载器、got 上传函数、并发异步任务池、错误格式化函数
-import { md5, hmacSha1Base64, getFileMimeType, NewDownloader, gotUpload, ConcurrencyPromisePool, formatError } from '../utils/common'
-
-// 是否为图片的判断函数
-import { isImage } from '~/renderer/manage/utils/common'
-
-// 窗口管理器
 import windowManager from 'apis/app/window/windowManager'
 
-// 枚举类型声明
-import { IWindowList } from '#/types/enum'
+import { md5, hmacSha1Base64, getFileMimeType, NewDownloader, gotUpload, ConcurrencyPromisePool, formatError } from '~/manage/utils/common'
+import { ManageLogger } from '~/manage/utils/logger'
+import UpDownTaskQueue, { commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
 
-// Electron 相关
-import { ipcMain, IpcMainEvent } from 'electron'
-
-// Axios
-import axios from 'axios'
-
-// 表单数据库
-import FormData from 'form-data'
-
-// 文件系统库
-import fs from 'fs-extra'
-
-// 路径处理库
-import path from 'path'
-
-// 上传下载任务队列
-import UpDownTaskQueue, { commonTaskStatus } from '../datastore/upDownTaskQueue'
-
-// 日志记录器
-import { ManageLogger } from '../utils/logger'
-
-// 取消下载任务的加载文件列表、刷新下载文件传输列表
+import { isImage } from '@/manage/utils/common'
 import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
+
+import { IWindowList } from '#/types/enum'
 
 class UpyunApi {
   ser: Upyun.Service

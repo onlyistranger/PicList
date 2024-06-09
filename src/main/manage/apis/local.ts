@@ -1,33 +1,17 @@
-// 日志记录器
-import ManageLogger from '../utils/logger'
-
-// 错误格式化函数、端点地址格式化函数、获取内部代理、新的下载器、并发异步任务池
-import { formatError } from '../utils/common'
-
-// HTTP 代理格式化函数、是否为图片的判断函数
-import { isImage } from '@/manage/utils/common'
-
-// 窗口管理器
-import windowManager from 'apis/app/window/windowManager'
-
-// 枚举类型声明
-import { IWindowList } from '#/types/enum'
-
-// Electron 相关
 import { ipcMain, IpcMainEvent } from 'electron'
-
-// 上传下载任务队列
-import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus, downloadTaskSpecialStatus } from '../datastore/upDownTaskQueue'
-
-// 文件系统库
 import fs from 'fs-extra'
-
-// 路径处理库
 import path from 'path'
 import * as fsWalk from '@nodelib/fs.walk'
 
-// 取消下载任务的加载文件列表、刷新下载文件传输列表
+import windowManager from 'apis/app/window/windowManager'
+import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus, downloadTaskSpecialStatus } from '~/manage/datastore/upDownTaskQueue'
+import { formatError } from '~/manage/utils/common'
+import ManageLogger from '~/manage/utils/logger'
+
+import { isImage } from '@/manage/utils/common'
 import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
+
+import { IWindowList } from '#/types/enum'
 
 class LocalApi {
   logger: ManageLogger

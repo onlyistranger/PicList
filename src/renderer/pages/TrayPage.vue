@@ -62,16 +62,19 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, onBeforeUnmount, onBeforeMount } from 'vue'
 import { clipboard, ipcRenderer } from 'electron'
-import $$db from '@/utils/db'
-import { T as $T } from '@/i18n/index'
+import { reactive, ref, onBeforeUnmount, onBeforeMount } from 'vue'
 import { IResult } from '@picgo/store/dist/types'
-import { OPEN_WINDOW } from '#/events/constants'
-import { IPasteStyle, IWindowList } from '#/types/enum'
+
+import { T as $T } from '@/i18n/index'
 import { getConfig, sendToMain } from '@/utils/dataSender'
+
+import $$db from '@/utils/db'
+
+import { IPasteStyle, IWindowList } from '#/types/enum'
+import { OPEN_WINDOW } from '#/events/constants'
 import { handleUrlEncode } from '#/utils/common'
-import { configPaths } from '~/universal/utils/configPaths'
+import { configPaths } from '#/utils/configPaths'
 
 const files = ref<IResult<ImgInfo>[]>([])
 const notification = reactive({

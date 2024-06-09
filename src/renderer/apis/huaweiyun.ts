@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron'
-import { deleteFailedLog, getRawData } from '~/renderer/utils/common'
-import { removeFileFromHuaweiInMain } from '~/main/utils/deleteFunc'
+
+import { deleteFailedLog, getRawData } from '@/utils/common'
+import { removeFileFromHuaweiInMain } from '~/utils/deleteFunc'
 
 export default class HuaweicloudApi {
   static async delete (configMap: IStringKeyMap): Promise<boolean> {

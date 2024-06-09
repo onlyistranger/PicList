@@ -1,7 +1,9 @@
-import { ComponentOptions } from 'vue'
-import { FORCE_UPDATE, GET_PICBEDS } from '~/universal/events/constants'
-import bus from '~/renderer/utils/bus'
 import { ipcRenderer } from 'electron'
+import { ComponentOptions } from 'vue'
+
+import bus from '@/utils/bus'
+
+import { FORCE_UPDATE, GET_PICBEDS } from '#/events/constants'
 
 export const mainMixin: ComponentOptions = {
   inject: ['forceUpdateTime'],

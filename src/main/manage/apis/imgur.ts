@@ -1,14 +1,12 @@
-// External dependencies
-import fs from 'fs-extra'
+import { ipcMain, IpcMainEvent } from 'electron'
 import FormData from 'form-data'
+import fs from 'fs-extra'
 import got from 'got'
 import path from 'path'
 
-// Electron modules
-import { ipcMain, IpcMainEvent } from 'electron'
+import windowManager from 'apis/app/window/windowManager'
 
-// Custom utilities and modules
-import { IWindowList } from '#/types/enum'
+import UpDownTaskQueue, { commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
 import {
   ConcurrencyPromisePool,
   formatError,
@@ -17,11 +15,12 @@ import {
   getAgent,
   gotUpload,
   NewDownloader
-} from '../utils/common'
-import ManageLogger from '../utils/logger'
-import windowManager from 'apis/app/window/windowManager'
-import { formatHttpProxy, isImage } from '~/renderer/manage/utils/common'
-import UpDownTaskQueue, { commonTaskStatus } from '../datastore/upDownTaskQueue'
+} from '~/manage/utils/common'
+import ManageLogger from '~/manage/utils/logger'
+
+import { formatHttpProxy, isImage } from '@/manage/utils/common'
+
+import { IWindowList } from '#/types/enum'
 
 class ImgurApi {
   userName: string

@@ -1,33 +1,19 @@
-// 日志记录器
-import ManageLogger from '../utils/logger'
-
-// SSH 客户端
-import SSHClient from '~/main/utils/sshClient'
-
-// 错误格式化函数、新的下载器、并发异步任务池
-import { formatError } from '../utils/common'
-
-// 是否为图片的判断函数
-import { isImage } from '@/manage/utils/common'
-
-// 窗口管理器
-import windowManager from 'apis/app/window/windowManager'
-
-// 枚举类型声明
-import { IWindowList } from '#/types/enum'
-
-// Electron 相关
 import { ipcMain, IpcMainEvent } from 'electron'
-
-// 上传下载任务队列
-import UpDownTaskQueue, { commonTaskStatus, downloadTaskSpecialStatus, uploadTaskSpecialStatus } from '../datastore/upDownTaskQueue'
-
-// 路径处理库
 import path from 'path'
 
-// 取消下载任务的加载文件列表、刷新下载文件传输列表
+import windowManager from 'apis/app/window/windowManager'
+
+import SSHClient from '~/utils/sshClient'
+
+import UpDownTaskQueue, { commonTaskStatus, downloadTaskSpecialStatus, uploadTaskSpecialStatus } from '~/manage/datastore/upDownTaskQueue'
+import { formatError } from '~/manage/utils/common'
+import ManageLogger from '~/manage/utils/logger'
+
+import { isImage } from '@/manage/utils/common'
 import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
-import { Undefinable } from '~/universal/types/manage'
+
+import { IWindowList } from '#/types/enum'
+import { Undefinable } from '#/types/manage'
 
 interface listDirResult {
   permissions: string

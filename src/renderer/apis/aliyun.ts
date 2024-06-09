@@ -1,5 +1,6 @@
-import { deleteFailedLog, deleteLog } from '@/utils/common'
 import OSS from 'ali-oss'
+
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 
 interface IConfigMap {
   fileName: string

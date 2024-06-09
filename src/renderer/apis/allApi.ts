@@ -1,38 +1,38 @@
-import AliyunApi from './aliyun'
-import AwsS3Api from './awss3'
-import GithubApi from './github'
-import ImgurApi from './imgur'
-import LocalApi from './local'
-import QiniuApi from './qiniu'
-import SftpPlistApi from './sftpplist'
-import SmmsApi from './smms'
-import TcyunApi from './tcyun'
-import UpyunApi from './upyun'
-import WebdavApi from './webdav'
-import DogeCloudApi from './dogecloud'
-import HuaweicloudApi from './huaweiyun'
-import AlistApi from './alist'
-import PiclistApi from './piclist'
-import LskyplistApi from './lskyplist'
+import AlistApi from '@/apis/alist'
+import AliyunApi from '@/apis/aliyun'
+import AwsS3Api from '@/apis/awss3'
+import DogeCloudApi from '@/apis/dogecloud'
+import GithubApi from '@/apis/github'
+import HuaweicloudApi from '@/apis/huaweiyun'
+import ImgurApi from '@/apis/imgur'
+import LocalApi from '@/apis/local'
+import LskyplistApi from '@/apis/lskyplist'
+import PiclistApi from '@/apis/piclist'
+import QiniuApi from '@/apis/qiniu'
+import SftpPlistApi from '@/apis/sftpplist'
+import SmmsApi from '@/apis/smms'
+import TcyunApi from '@/apis/tcyun'
+import UpyunApi from '@/apis/upyun'
+import WebdavApi from '@/apis/webdav'
 
 const apiMap: IStringKeyMap = {
+  alist: AlistApi,
   aliyun: AliyunApi,
   'aws-s3': AwsS3Api,
   'aws-s3-plist': AwsS3Api,
+  dogecloud: DogeCloudApi,
   github: GithubApi,
+  'huaweicloud-uploader': HuaweicloudApi,
   imgur: ImgurApi,
   local: LocalApi,
+  lskyplist: LskyplistApi,
+  piclist: PiclistApi,
   qiniu: QiniuApi,
   sftpplist: SftpPlistApi,
   smms: SmmsApi,
   tcyun: TcyunApi,
   upyun: UpyunApi,
-  webdavplist: WebdavApi,
-  dogecloud: DogeCloudApi,
-  'huaweicloud-uploader': HuaweicloudApi,
-  alist: AlistApi,
-  piclist: PiclistApi,
-  lskyplist: LskyplistApi
+  webdavplist: WebdavApi
 }
 
 export default class ALLApi {

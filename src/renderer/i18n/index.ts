@@ -1,7 +1,9 @@
 import { ipcRenderer } from 'electron'
 import { ObjectAdapter, I18n } from '@picgo/i18n'
-import { GET_CURRENT_LANGUAGE, SET_CURRENT_LANGUAGE, FORCE_UPDATE, GET_LANGUAGE_LIST } from '#/events/constants'
+
 import bus from '@/utils/bus'
+
+import { GET_CURRENT_LANGUAGE, SET_CURRENT_LANGUAGE, FORCE_UPDATE, GET_LANGUAGE_LIST } from '#/events/constants'
 import { builtinI18nList } from '#/i18n'
 
 export class I18nManager {

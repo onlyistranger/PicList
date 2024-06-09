@@ -1,6 +1,8 @@
-import db from '~/main/apis/core/datastore'
 import { autoUpdater } from 'electron-updater'
-import { configPaths } from '~/universal/utils/configPaths'
+
+import db from '@core/datastore'
+
+import { configPaths } from '#/utils/configPaths'
 
 const updateChecker = async () => {
   let showTip = db.get(configPaths.settings.showUpdateTip)

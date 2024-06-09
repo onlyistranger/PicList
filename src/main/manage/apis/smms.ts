@@ -1,35 +1,17 @@
-// 是否为图片的判断函数
-import { isImage } from '@/manage/utils/common'
-
-// Axios 和 Axios 实例类型声明
 import axios, { AxiosInstance } from 'axios'
-
-// 窗口管理器
-import windowManager from 'apis/app/window/windowManager'
-
-// 枚举类型声明
-import { IWindowList } from '#/types/enum'
-
-// Electron 相关
 import { ipcMain, IpcMainEvent } from 'electron'
-
-// 表单数据库
 import FormData from 'form-data'
-
-// 文件系统库
 import fs from 'fs-extra'
-
-// 获取文件 MIME 类型、got 上传函数、新的下载器、并发异步任务池、错误格式化函数
-import { getFileMimeType, gotUpload, NewDownloader, ConcurrencyPromisePool, formatError } from '../utils/common'
-
-// 路径处理库
 import path from 'path'
 
-// 上传下载任务队列
-import UpDownTaskQueue, { commonTaskStatus } from '../datastore/upDownTaskQueue'
+import windowManager from 'apis/app/window/windowManager'
 
-// 日志记录器
-import { ManageLogger } from '../utils/logger'
+import { getFileMimeType, gotUpload, NewDownloader, ConcurrencyPromisePool, formatError } from '~/manage/utils/common'
+import { ManageLogger } from '~/manage/utils/logger'
+import UpDownTaskQueue, { commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
+
+import { isImage } from '@/manage/utils/common'
+import { IWindowList } from '#/types/enum'
 
 class SmmsApi {
   baseUrl = 'https://smms.app/api/v2'

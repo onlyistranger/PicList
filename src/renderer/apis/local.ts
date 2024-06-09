@@ -1,5 +1,6 @@
-import { deleteFailedLog, deleteLog } from '@/utils/common'
 import fs from 'fs-extra'
+
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 
 interface IConfigMap {
   hash: string

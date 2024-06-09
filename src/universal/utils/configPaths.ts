@@ -1,5 +1,5 @@
 
-import { II18nLanguage, IPasteStyle, ISartMode, IShortUrlServer } from '../types/enum'
+import { II18nLanguage, IPasteStyle, ISartMode, IShortUrlServer } from '#/types/enum'
 import { IBuildInCompressOptions, IBuildInWaterMarkOptions } from 'piclist'
 
 export type ISartModeValues = typeof ISartMode[keyof typeof ISartMode]

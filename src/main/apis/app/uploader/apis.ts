@@ -1,30 +1,30 @@
-// External dependencies
-import fs from 'fs-extra'
-import { cloneDeep } from 'lodash'
-
-// Electron modules
 import {
   Notification,
   WebContents
 } from 'electron'
+import fs from 'fs-extra'
+import { cloneDeep } from 'lodash'
+import path from 'path'
+import { ISftpPlistConfig } from 'piclist'
 
-// Custom utilities and modules
-import windowManager from 'apis/app/window/windowManager'
-import pasteTemplate from '~/main/utils/pasteTemplate'
-import db, { GalleryDB } from '~/main/apis/core/datastore'
-import { handleCopyUrl, handleUrlEncodeWithSetting } from '~/main/utils/common'
-import { T } from '~/main/i18n/index'
-import ALLApi from '@/apis/allApi'
 import picgo from '@core/picgo'
-import GuiApi from '../../gui'
-import uploader from '.'
+import db, { GalleryDB } from '@core/datastore'
+
+import GuiApi from 'apis/gui'
+import uploader from 'apis/app/uploader'
+import windowManager from 'apis/app/window/windowManager'
+
+import { T } from '~/i18n/index'
+import { handleCopyUrl, handleUrlEncodeWithSetting } from '~/utils/common'
+import pasteTemplate from '~/utils/pasteTemplate'
+import SSHClient from '~/utils/sshClient'
+
+import ALLApi from '@/apis/allApi'
+import { getRawData } from '@/utils/common'
+
 import { IPasteStyle, IWindowList } from '#/types/enum'
 import { picBedsCanbeDeleted } from '#/utils/static'
-import path from 'path'
-import SSHClient from '~/main/utils/sshClient'
-import { ISftpPlistConfig } from 'piclist'
-import { getRawData } from '~/renderer/utils/common'
-import { configPaths } from '~/universal/utils/configPaths'
+import { configPaths } from '#/utils/configPaths'
 
 const handleClipboardUploading = async (): Promise<false | ImgInfo[]> => {
   const useBuiltinClipboard = db.get(configPaths.settings.useBuiltinClipboard) === undefined ? true : !!db.get(configPaths.settings.useBuiltinClipboard)

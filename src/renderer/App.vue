@@ -6,12 +6,14 @@
 
 <script lang="ts" setup>
 import { useStore } from '@/hooks/useStore'
-import { onBeforeMount, onMounted, onUnmounted } from 'vue'
-import { getConfig } from './utils/dataSender'
 import type { IConfig } from 'piclist'
-import bus from './utils/bus'
-import { FORCE_UPDATE } from '~/universal/events/constants'
-import { useATagClick } from './hooks/useATagClick'
+import { onBeforeMount, onMounted, onUnmounted } from 'vue'
+
+import { useATagClick } from '@/hooks/useATagClick'
+import bus from '@/utils/bus'
+import { getConfig } from '@/utils/dataSender'
+
+import { FORCE_UPDATE } from '#/events/constants'
 
 useATagClick()
 const store = useStore()

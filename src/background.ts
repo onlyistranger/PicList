@@ -1,3 +1,3 @@
-import { bootstrap } from '~/main/lifeCycle'
+import { bootstrap } from '~/lifeCycle'
 
 bootstrap.launchApp()

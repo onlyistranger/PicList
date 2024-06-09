@@ -1,6 +1,8 @@
 import path from 'path'
 import { app } from 'electron'
-import { getLogger } from 'apis/core/utils/localLogger'
+
+import { getLogger } from '@core/utils/localLogger'
+
 const STORE_PATH = app.getPath('userData')
 const LOG_PATH = path.join(STORE_PATH, 'piclist-gui-local.log')
 

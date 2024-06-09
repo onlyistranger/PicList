@@ -1,5 +1,6 @@
-import { deleteFailedLog, deleteLog } from '@/utils/common'
 import axios, { AxiosResponse } from 'axios'
+
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 
 interface IConfigMap {
   hash?: string

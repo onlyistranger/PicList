@@ -1,9 +1,11 @@
 import fs from 'fs-extra'
+import yaml from 'js-yaml'
 import path from 'path'
 import os from 'os'
-import { dbPathChecker } from 'apis/core/datastore/dbChecker'
-import yaml from 'js-yaml'
-import { i18nManager } from '~/main/i18n'
+
+import { dbPathChecker } from '@core/datastore/dbChecker'
+
+import { i18nManager } from '~/i18n'
 
 const configPath = dbPathChecker()
 const CONFIG_DIR = path.dirname(configPath)

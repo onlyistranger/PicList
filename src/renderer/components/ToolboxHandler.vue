@@ -9,8 +9,9 @@
     </ElButton>
   </div>
 </template>
+
 <script lang="ts" setup>
-import { IToolboxItemCheckStatus } from '~/universal/types/enum'
+import { IToolboxItemCheckStatus } from '#/types/enum'
 
 interface IProps {
   status: IToolboxItemCheckStatus

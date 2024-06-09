@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import * as config from './config'
+import * as config from '@/router/config'
 
 export default createRouter({
   history: createWebHashHistory(),

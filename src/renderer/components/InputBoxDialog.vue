@@ -26,16 +26,19 @@
     </template>
   </el-dialog>
 </template>
+
 <script lang="ts" setup>
-import { ref, reactive, onBeforeUnmount, onBeforeMount } from 'vue'
 import { ipcRenderer, IpcRendererEvent } from 'electron'
+import { ref, reactive, onBeforeUnmount, onBeforeMount } from 'vue'
+
+import { T as $T } from '@/i18n/index'
+import $bus from '@/utils/bus'
+import { sendToMain } from '@/utils/dataSender'
+
 import {
   SHOW_INPUT_BOX,
   SHOW_INPUT_BOX_RESPONSE
-} from '~/universal/events/constants'
-import $bus from '@/utils/bus'
-import { sendToMain } from '@/utils/dataSender'
-import { T as $T } from '@/i18n/index'
+} from '#/events/constants'
 
 const inputBoxValue = ref('')
 const showInputBoxVisible = ref(false)

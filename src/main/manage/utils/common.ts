@@ -1,24 +1,26 @@
-import fs from 'fs-extra'
-import path from 'path'
-import mime from 'mime-types'
 import axios from 'axios'
-import { app } from 'electron'
 import crypto from 'crypto'
+import { app } from 'electron'
+import fs from 'fs-extra'
 import got, { OptionsOfTextResponseBody, RequestError } from 'got'
+import { HttpsProxyAgent, HttpProxyAgent } from 'hpagent'
+import http from 'http'
+import https from 'https'
+import mime from 'mime-types'
+import Downloader from 'nodejs-file-downloader'
+import path from 'path'
 import { Stream } from 'stream'
 import { promisify } from 'util'
+
 import UpDownTaskQueue,
 {
   uploadTaskSpecialStatus,
   commonTaskStatus,
   downloadTaskSpecialStatus
-} from '../datastore/upDownTaskQueue'
-import { ManageLogger } from '../utils/logger'
+} from '~/manage/datastore/upDownTaskQueue'
+import { ManageLogger } from '~/manage/utils/logger'
+
 import { formatHttpProxy, IHTTPProxy } from '@/manage/utils/common'
-import { HttpsProxyAgent, HttpProxyAgent } from 'hpagent'
-import http from 'http'
-import https from 'https'
-import Downloader from 'nodejs-file-downloader'
 
 export const getFSFile = async (
   filePath: string,

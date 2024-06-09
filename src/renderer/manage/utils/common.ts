@@ -1,20 +1,11 @@
-// UUID
+import crypto from 'crypto'
+import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 
-// 路径处理库
-import path from 'path'
+import { availableIconList } from '@/manage/utils/icon'
+import { getConfig } from '@/manage/utils/dataSender'
 
-// 加密库
-import crypto from 'crypto'
-
-// 可用图标列表
-import { availableIconList } from './icon'
-
-// 数据发送工具函数
-import { getConfig } from './dataSender'
-
-// 工具函数
-import { handleUrlEncode, safeSliceF, isNeedToShorten } from '~/universal/utils/common'
+import { handleUrlEncode, safeSliceF, isNeedToShorten } from '#/utils/common'
 
 export function randomStringGenerator (length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

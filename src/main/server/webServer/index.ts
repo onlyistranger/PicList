@@ -1,10 +1,12 @@
-import http from 'http'
 import fs from 'fs-extra'
+import http from 'http'
 import path from 'path'
+
 import picgo from '@core/picgo'
-import logger from '../../apis/core/picgo/logger'
-import { encodeFilePath } from '~/universal/utils/common'
-import { configPaths } from '~/universal/utils/configPaths'
+import logger from '@core/picgo/logger'
+
+import { encodeFilePath } from '#/utils/common'
+import { configPaths } from '#/utils/configPaths'
 
 const defaultPath = process.platform === 'win32' ? 'C:\\Users' : '/'
 

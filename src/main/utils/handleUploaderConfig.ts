@@ -1,8 +1,11 @@
 import { v4 as uuid } from 'uuid'
-import { trimValues } from '#/utils/common'
+
 import picgo from '@core/picgo'
-import { configPaths } from '~/universal/utils/configPaths'
-import { setTrayToolTip } from './common'
+
+import { setTrayToolTip } from '~/utils/common'
+
+import { trimValues } from '#/utils/common'
+import { configPaths } from '#/utils/configPaths'
 
 export const handleConfigWithFunction = (config: IPicGoPluginOriginConfig[]): IPicGoPluginConfig[] => {
   for (const i in config) {

@@ -1,19 +1,10 @@
-// External dependencies
 import fs from 'fs-extra'
-
-// Electron modules
-
-// Custom utilities and modules
-import { dbPathChecker, dbPathDir, getGalleryDBPath } from './dbChecker'
-
-// Custom types/enums
-
-// External utility functions
 import { DBStore, JSONStore } from '@picgo/store'
 
-// External utility functions
-import { T } from '~/main/i18n'
-import { configPaths } from '~/universal/utils/configPaths'
+import { dbPathChecker, dbPathDir, getGalleryDBPath } from '@core/datastore/dbChecker'
+
+import { T } from '~/i18n'
+import { configPaths } from '#/utils/configPaths'
 
 const STORE_PATH = dbPathDir()
 

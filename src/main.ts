@@ -1,42 +1,27 @@
-
-// Vue 相关
-import { createApp } from 'vue'
-import App from './renderer/App.vue'
-import router from './renderer/router'
+import { webFrame } from 'electron'
 import ElementUI from 'element-plus'
 import 'element-plus/dist/index.css'
+import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import { createApp } from 'vue'
 import VueLazyLoad from 'vue3-lazyload'
-import { initTalkingData } from './renderer/utils/analytic'
 import vue3PhotoPreview from 'vue3-photo-preview'
 import 'vue3-photo-preview/dist/index.css'
 import VueVideoPlayer from '@videojs-player/vue'
-
-// Electron 相关
-import { webFrame } from 'electron'
-
-// Mixins
-import { mainMixin } from './renderer/utils/mainMixin'
-import { dragMixin } from '@/utils/mixin'
-
-// 数据库
-import db from './renderer/utils/db'
-
-// 国际化
-import { T } from './renderer/i18n/index'
-
-// 工具函数
-import { getConfig, saveConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
-
-// 状态管理
-import { store } from '@/store'
-import { createPinia } from 'pinia'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
-
-// 代码高亮
 import 'highlight.js/styles/atom-one-dark.css'
 import hljsVuePlugin from '@highlightjs/vue-plugin'
 import hljsCommon from 'highlight.js/lib/common'
 import 'video.js/dist/video-js.css'
+
+import App from '@/App.vue'
+import router from '@/router'
+import db from '@/utils/db'
+import { T } from '@/i18n/index'
+import { store } from '@/store'
+import { initTalkingData } from '@/utils/analytic'
+import { getConfig, saveConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
+import { mainMixin } from '@/utils/mainMixin'
+import { dragMixin } from '@/utils/mixin'
 
 webFrame.setVisualZoomLevelLimits(1, 1)
 

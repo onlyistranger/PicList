@@ -10,7 +10,7 @@ const config = {
   chainWebpack: config => {
     config.resolve.alias
       .set('@', resolve('src/renderer'))
-      .set('~', resolve('src'))
+      .set('~', resolve('src/main'))
       .set('root', resolve('./'))
       .set('#', resolve('src/universal'))
     // define
@@ -27,7 +27,7 @@ const config = {
       chainWebpackMainProcess: config => {
         config.resolve.alias
           .set('@', resolve('src/renderer'))
-          .set('~', resolve('src'))
+          .set('~', resolve('src/main'))
           .set('root', resolve('./'))
           .set('#', resolve('src/universal'))
           .set('apis', resolve('src/main/apis'))

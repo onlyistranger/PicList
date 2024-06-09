@@ -1,4 +1,5 @@
-import './errorHandler'
+import axios from 'axios'
+import fs from 'fs-extra'
 import {
   app,
   globalShortcut,
@@ -8,46 +9,50 @@ import {
   screen,
   shell
 } from 'electron'
+import { UpdateInfo, autoUpdater } from 'electron-updater'
+import path from 'path'
 import {
   createProtocol
 } from 'vue-cli-plugin-electron-builder/lib'
-import beforeOpen from '~/main/utils/beforeOpen'
-import ipcList from '~/main/events/ipcList'
-import busEventList from '~/main/events/busEventList'
-import { II18nLanguage, IRemoteNoticeTriggerHook, ISartMode, IWindowList } from '#/types/enum'
-import windowManager from 'apis/app/window/windowManager'
+
+import bus from '@core/bus'
+import db from '@core/datastore'
+import picgo from '@core/picgo'
+import logger from '@core/picgo/logger'
+
+import { remoteNoticeHandler } from 'apis/app/remoteNotice'
+import shortKeyHandler from 'apis/app/shortKey/shortKeyHandler'
+import {
+  createTray, setDockMenu
+} from 'apis/app/system'
 import {
   uploadChoosedFiles,
   uploadClipboardFiles
 } from 'apis/app/uploader/apis'
-import {
-  createTray, setDockMenu
-} from 'apis/app/system'
-import server from '~/main/server/index'
-import shortKeyHandler from 'apis/app/shortKey/shortKeyHandler'
-import { getUploadFiles } from '~/main/utils/handleArgv'
-import db from '~/main/apis/core/datastore'
-import bus from '@core/bus'
-import logger from 'apis/core/picgo/logger'
-import picgo from 'apis/core/picgo'
-import fixPath from './fixPath'
-import { clearTempFolder } from '../manage/utils/common'
-import { initI18n } from '~/main/utils/handleI18n'
-import { remoteNoticeHandler } from 'apis/app/remoteNotice'
-import { manageIpcList } from '../manage/events/ipcList'
-import getManageApi from '../manage/Main'
-import UpDownTaskQueue from '../manage/datastore/upDownTaskQueue'
-import { T } from '~/main/i18n'
-import { UpdateInfo, autoUpdater } from 'electron-updater'
-import updateChecker from '../utils/updateChecker'
-import clipboardPoll from '../utils/clipboardPoll'
-import path from 'path'
-import { CLIPBOARD_IMAGE_FOLDER } from '~/universal/utils/static'
-import fs from 'fs-extra'
-import { startFileServer } from '../fileServer'
-import webServer from '../server/webServer'
-import axios from 'axios'
-import { configPaths } from '~/universal/utils/configPaths'
+import windowManager from 'apis/app/window/windowManager'
+
+import busEventList from '~/events/busEventList'
+import ipcList from '~/events/ipcList'
+import { startFileServer } from '~/fileServer'
+import { T } from '~/i18n'
+import '~/lifeCycle/errorHandler'
+import fixPath from '~/lifeCycle/fixPath'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
+import { manageIpcList } from '~/manage/events/ipcList'
+import getManageApi from '~/manage/Main'
+import { clearTempFolder } from '~/manage/utils/common'
+import server from '~/server/index'
+import webServer from '~/server/webServer'
+import beforeOpen from '~/utils/beforeOpen'
+import clipboardPoll from '~/utils/clipboardPoll'
+import { getUploadFiles } from '~/utils/handleArgv'
+import { initI18n } from '~/utils/handleI18n'
+import updateChecker from '~/utils/updateChecker'
+
+import { II18nLanguage, IRemoteNoticeTriggerHook, ISartMode, IWindowList } from '#/types/enum'
+import { configPaths } from '#/utils/configPaths'
+import { CLIPBOARD_IMAGE_FOLDER } from '#/utils/static'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const handleStartUpFiles = (argv: string[], cwd: string) => {

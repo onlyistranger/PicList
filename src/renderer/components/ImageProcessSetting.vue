@@ -262,11 +262,12 @@
 </template>
 
 <script lang="ts" setup>
-import { T as $T } from '@/i18n/index'
 import { IBuildInCompressOptions, IBuildInWaterMarkOptions } from 'piclist'
 import { onBeforeMount, reactive, ref, toRaw } from 'vue'
+
+import { T as $T } from '@/i18n/index'
 import { getConfig, saveConfig } from '@/utils/dataSender'
-import { configPaths } from '~/universal/utils/configPaths'
+import { configPaths } from '#/utils/configPaths'
 
 const imageProcessDialogVisible = defineModel<boolean>()
 

@@ -1,12 +1,14 @@
+import axios from 'axios'
 import { app } from 'electron'
 import fs from 'fs-extra'
-import path from 'path'
-import axios from 'axios'
-import db from '~/main/apis/core/datastore'
 import { HttpsProxyAgent } from 'hpagent'
+import path from 'path'
 import { Octokit } from '@octokit/rest'
-import logger from 'apis/core/picgo/logger'
-import { configPaths } from '~/universal/utils/configPaths'
+
+import db from '@core/datastore'
+import logger from '@core/picgo/logger'
+
+import { configPaths } from '#/utils/configPaths'
 
 const STORE_PATH = app.getPath('userData')
 

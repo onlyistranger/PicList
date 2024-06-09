@@ -1,17 +1,10 @@
-// External dependencies
 import { ipcMain, IpcMainEvent } from 'electron'
 
-// Electron modules
+import { configRouter } from '~/events/rpc/routes/config'
+import { toolboxRouter } from '~/events/rpc/routes/toolbox'
+import { systemRouter } from '~/events/rpc/routes/system'
 
-// Custom utilities and modules
-import { configRouter } from './routes/config'
-import { toolboxRouter } from './routes/toolbox'
-import { systemRouter } from './routes/system'
-
-// Custom types/enums
-import { IRPCActionType } from '~/universal/types/enum'
-
-// External utility functions
+import { IRPCActionType } from '#/types/enum'
 import { RPC_ACTIONS } from '#/events/constants'
 
 class RPCServer implements IRPCServer {

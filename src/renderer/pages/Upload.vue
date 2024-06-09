@@ -154,27 +154,29 @@
 </template>
 
 <script lang="ts" setup>
-import { UploadFilled, CaretBottom } from '@element-plus/icons-vue'
 import { ipcRenderer, IpcRendererEvent } from 'electron'
+import { ElMessage as $message } from 'element-plus'
+import { UploadFilled, CaretBottom } from '@element-plus/icons-vue'
 import { ref, onBeforeMount, onBeforeUnmount, watch } from 'vue'
+import { useRouter } from 'vue-router'
+
+import ImageProcessSetting from '@/components/ImageProcessSetting.vue'
 import { T as $T } from '@/i18n'
+import { PICBEDS_PAGE } from '@/router/config'
 import $bus from '@/utils/bus'
+import { getConfig, saveConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
+
 import {
   SHOW_INPUT_BOX,
   SHOW_INPUT_BOX_RESPONSE,
   SHOW_UPLOAD_PAGE_MENU,
   GET_PICBEDS
-} from '~/universal/events/constants'
+} from '#/events/constants'
+import { IPasteStyle, IRPCActionType } from '#/types/enum'
 import {
   isUrl
-} from '~/universal/utils/common'
-import { ElMessage as $message } from 'element-plus'
-import { getConfig, saveConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
-import { useRouter } from 'vue-router'
-import { PICBEDS_PAGE } from '@/router/config'
-import { IPasteStyle, IRPCActionType } from '~/universal/types/enum'
-import { configPaths } from '~/universal/utils/configPaths'
-import ImageProcessSetting from '@/components/ImageProcessSetting.vue'
+} from '#/utils/common'
+import { configPaths } from '#/utils/configPaths'
 
 const $router = useRouter()
 

@@ -10,10 +10,12 @@
 </template>
 
 <script lang="ts" setup>
-import { getConfig } from '@/utils/dataSender'
 import { onMounted, ref } from 'vue'
-import { II18nLanguage } from '~/universal/types/enum'
-import { configPaths } from '~/universal/utils/configPaths'
+
+import { getConfig } from '@/utils/dataSender'
+
+import { II18nLanguage } from '#/types/enum'
+import { configPaths } from '#/utils/configPaths'
 
 const srcUrl = ref('https://piclist.cn/app.html')
 

@@ -1,7 +1,8 @@
-import { isReactive, isRef, toRaw, unref } from 'vue'
 import { ipcRenderer } from 'electron'
-import { OPEN_URL } from '~/universal/events/constants'
-import { ILogType } from '~/universal/types/enum'
+import { isReactive, isRef, toRaw, unref } from 'vue'
+
+import { OPEN_URL } from '#/events/constants'
+import { ILogType } from '#/types/enum'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 export const handleTalkingDataEvent = (data: ITalkingDataOptions) => {

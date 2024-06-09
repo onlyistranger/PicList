@@ -1,5 +1,5 @@
 import picgo from '@core/picgo'
-import { configPaths } from '~/universal/utils/configPaths'
+import { configPaths } from '#/utils/configPaths'
 
 const getPicBeds = () => {
   const picBedTypes = picgo.helper.uploader.getIdList()

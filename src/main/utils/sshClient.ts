@@ -1,9 +1,9 @@
 // @ts-nocheck
+import fs from 'fs-extra'
 import { NodeSSH, Config, SSHExecCommandResponse } from 'node-ssh-no-cpu-features'
 import path from 'path'
 import { ISftpPlistConfig } from 'piclist/dist/types'
 import { Client } from 'ssh2-no-cpu-features'
-import fs from 'fs-extra'
 
 class SSHClient {
   // eslint-disable-next-line no-use-before-define

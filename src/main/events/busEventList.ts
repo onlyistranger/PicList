@@ -1,33 +1,26 @@
-// External dependencies
 import bus from '@core/bus'
-
-// Electron modules
-
-// Custom utilities and modules
 import {
-  uploadClipboardFiles,
-  uploadChoosedFiles
-} from 'apis/app/uploader/apis'
-import {
-  createMenu
-} from 'apis/app/system'
-import windowManager from 'apis/app/window/windowManager'
-
-// Custom types/enums
-import { IWindowList } from '#/types/enum'
-
-// External utility functions
-import {
-  UPLOAD_WITH_FILES,
-  UPLOAD_WITH_FILES_RESPONSE,
-  UPLOAD_WITH_CLIPBOARD_FILES,
-  UPLOAD_WITH_CLIPBOARD_FILES_RESPONSE,
+  CREATE_APP_MENU,
   GET_WINDOW_ID,
   GET_WINDOW_ID_REPONSE,
   GET_SETTING_WINDOW_ID,
   GET_SETTING_WINDOW_ID_RESPONSE,
-  CREATE_APP_MENU
+  UPLOAD_WITH_FILES,
+  UPLOAD_WITH_FILES_RESPONSE,
+  UPLOAD_WITH_CLIPBOARD_FILES,
+  UPLOAD_WITH_CLIPBOARD_FILES_RESPONSE
 } from '@core/bus/constants'
+
+import {
+  createMenu
+} from 'apis/app/system'
+import {
+  uploadChoosedFiles,
+  uploadClipboardFiles
+} from 'apis/app/uploader/apis'
+import windowManager from 'apis/app/window/windowManager'
+
+import { IWindowList } from '#/types/enum'
 
 function initEventCenter () {
   const eventList: any = {

@@ -216,8 +216,8 @@
     <input-box-dialog />
   </div>
 </template>
+
 <script lang="ts" setup>
-// Element Plus 图标
 import {
   Tools,
   UploadFilled,
@@ -232,55 +232,34 @@ import {
   Link,
   ArrowUpBold
 } from '@element-plus/icons-vue'
-
-// Element Plus 消息框组件
-import { ElMessage as $message, ElMessageBox } from 'element-plus'
-
-// 国际化函数
-import { T as $T } from '@/i18n/index'
-
-// Vue 相关
-import { ref, onBeforeUnmount, Ref, onBeforeMount, watch, nextTick, reactive } from 'vue'
-
-// Vue Router 相关
-import { onBeforeRouteUpdate, useRouter } from 'vue-router'
-
-// 二维码组件
-import QrcodeVue from 'qrcode.vue'
-
-// Lodash pick 函数
-import pick from 'lodash/pick'
-
-// 根目录 package.json
-import pkg from 'root/package.json'
-
-// 路由配置常量
-import * as config from '@/router/config'
-
-// Electron 相关
 import {
   ipcRenderer,
   IpcRendererEvent,
   clipboard
 } from 'electron'
+import { ElMessage as $message, ElMessageBox } from 'element-plus'
+import pick from 'lodash/pick'
+import QrcodeVue from 'qrcode.vue'
+import { ref, onBeforeUnmount, Ref, onBeforeMount, watch, nextTick, reactive } from 'vue'
+import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 
-// 输入框对话框组件
 import InputBoxDialog from '@/components/InputBoxDialog.vue'
+import { T as $T } from '@/i18n/index'
+import * as config from '@/router/config'
+import { getConfig, saveConfig, sendToMain } from '@/utils/dataSender'
+import { openURL } from '@/utils/common'
 
-// 事件常量
 import {
   MINIMIZE_WINDOW,
   CLOSE_WINDOW,
   SHOW_MAIN_PAGE_MENU,
   SHOW_MAIN_PAGE_QRCODE,
   GET_PICBEDS
-} from '~/universal/events/constants'
+} from '#/events/constants'
+import { configPaths, manualPageOpenType } from '#/utils/configPaths'
+import { II18nLanguage } from '#/types/enum'
 
-// 数据发送工具函数
-import { getConfig, saveConfig, sendToMain } from '@/utils/dataSender'
-import { openURL } from '@/utils/common'
-import { configPaths, manualPageOpenType } from '~/universal/utils/configPaths'
-import { II18nLanguage } from '~/universal/types/enum'
+import pkg from 'root/package.json'
 
 const version = ref(process.env.NODE_ENV === 'production' ? pkg.version : 'Dev')
 const routerConfig = reactive(config)

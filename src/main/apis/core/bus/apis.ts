@@ -1,14 +1,14 @@
-import bus from '.'
+import bus from '@core/bus/index'
 import {
-  UPLOAD_WITH_FILES,
-  UPLOAD_WITH_FILES_RESPONSE,
-  UPLOAD_WITH_CLIPBOARD_FILES,
-  UPLOAD_WITH_CLIPBOARD_FILES_RESPONSE,
+  GET_SETTING_WINDOW_ID,
+  GET_SETTING_WINDOW_ID_RESPONSE,
   GET_WINDOW_ID,
   GET_WINDOW_ID_REPONSE,
-  GET_SETTING_WINDOW_ID,
-  GET_SETTING_WINDOW_ID_RESPONSE
-} from './constants'
+  UPLOAD_WITH_CLIPBOARD_FILES,
+  UPLOAD_WITH_CLIPBOARD_FILES_RESPONSE,
+  UPLOAD_WITH_FILES,
+  UPLOAD_WITH_FILES_RESPONSE
+} from '@core/bus/constants'
 
 export const uploadWithClipboardFiles = (): Promise<{
   success: boolean,

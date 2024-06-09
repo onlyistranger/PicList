@@ -21,10 +21,12 @@
 
 <script lang="ts" setup>
 import { ref, onMounted, watch, computed } from 'vue'
-import { getFileIconPath } from '@/manage/utils/common'
 import { Loading } from '@element-plus/icons-vue'
+
 import { getAuthHeader } from '@/manage/utils/digestAuth'
-import { formatEndpoint } from '~/main/manage/utils/common'
+import { getFileIconPath } from '@/manage/utils/common'
+
+import { formatEndpoint } from '~/manage/utils/common'
 
 const base64Url = ref('')
 const success = ref(false)

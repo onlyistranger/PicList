@@ -1,24 +1,28 @@
 
-import fs from 'fs-extra'
-import path from 'path'
+import { ipcMain } from 'electron'
 import { EventEmitter } from 'events'
-import { managePathChecker } from './datastore/dbChecker'
+import fs from 'fs-extra'
+import { get, set, unset } from 'lodash'
+import { homedir } from 'os'
+import path from 'path'
+
+import windowManager from 'apis/app/window/windowManager'
+
+import API from '~/manage/apis/api'
+import ManageDB from '~/manage/datastore/db'
+import { managePathChecker } from '~/manage/datastore/dbChecker'
+import { isInputConfigValid, formatError } from '~/manage/utils/common'
+import { ManageLogger } from '~/manage/utils/logger'
+
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
+
+import { IWindowList } from '#/types/enum'
 import {
   ManageApiType,
   ManageConfigType,
   ManageError,
   PicBedMangeConfig
-} from '~/universal/types/manage'
-import ManageDB from './datastore/db'
-import { ManageLogger } from './utils/logger'
-import { get, set, unset } from 'lodash'
-import { homedir } from 'os'
-import { isInputConfigValid, formatError } from './utils/common'
-import API from './apis/api'
-import windowManager from 'apis/app/window/windowManager'
-import { IWindowList } from '#/types/enum'
-import { ipcMain } from 'electron'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
+} from '#/types/manage'
 
 export class ManageApi extends EventEmitter implements ManageApiType {
   private _config!: Partial<ManageConfigType>

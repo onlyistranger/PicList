@@ -1,7 +1,7 @@
-/* eslint-disable */
 import { JSONStore } from '@picgo/store'
 import { IJSON } from '@picgo/store/dist/types'
-import { ManageApiType, ManageConfigType } from '~/universal/types/manage'
+
+import { ManageApiType, ManageConfigType } from '#/types/manage'
 
 class ManageDB {
   readonly #ctx: ManageApiType
@@ -9,11 +9,11 @@ class ManageDB {
   constructor (ctx: ManageApiType) {
     this.#ctx = ctx
     this.#db = new JSONStore(this.#ctx.configPath)
-    let initParams: IStringKeyMap = {
+    const initParams: IStringKeyMap = {
       picBed: {},
       settings: {}
     }
-    for (let key in initParams) {
+    for (const key in initParams) {
       if (!this.#db.has(key)) {
         try {
           this.#db.set(key, initParams[key])

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import yaml from 'js-yaml'
-import { RELEASE_URL, RELEASE_URL_BACKUP } from './static'
+import { RELEASE_URL, RELEASE_URL_BACKUP } from '#/utils/static'
 
 export const getLatestVersion = async (): Promise<string> => {
   try {

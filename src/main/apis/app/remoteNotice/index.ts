@@ -1,24 +1,21 @@
-// External dependencies
 import axios from 'axios'
+import {
+  app,
+  clipboard,
+  dialog,
+  shell
+} from 'electron'
 import fs from 'fs-extra'
 import path from 'path'
+import { gte, lte } from 'semver'
 
-// Electron modules
-import { app, clipboard, dialog, shell } from 'electron'
-
-// Custom modules and utilities
-import windowManager from '../window/windowManager'
-import { showNotification } from '~/main/utils/common'
-
-// Custom types/enums
+import windowManager from 'apis/app/window/windowManager'
+import { showNotification } from '~/utils/common'
 import {
   IRemoteNoticeActionType,
   IRemoteNoticeTriggerCount,
   IRemoteNoticeTriggerHook
 } from '#/types/enum'
-
-// External utility functions
-import { gte, lte } from 'semver'
 
 // for test
 const REMOTE_NOTICE_URL = 'https://release.piclist.cn/remote-notice.json'

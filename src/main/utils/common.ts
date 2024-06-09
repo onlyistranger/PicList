@@ -1,12 +1,14 @@
-import fs from 'fs-extra'
-import db from '~/main/apis/core/datastore'
-import { clipboard, Notification, dialog, Tray } from 'electron'
-import { handleUrlEncode } from '~/universal/utils/common'
 import axios from 'axios'
+import { clipboard, Notification, dialog, Tray } from 'electron'
 import FormData from 'form-data'
-import logger from '../apis/core/picgo/logger'
-import { configPaths } from '~/universal/utils/configPaths'
-import { IShortUrlServer } from '~/universal/types/enum'
+import fs from 'fs-extra'
+
+import db from '@core/datastore'
+import logger from '@core/picgo/logger'
+
+import { IShortUrlServer } from '#/types/enum'
+import { handleUrlEncode } from '#/utils/common'
+import { configPaths } from '#/utils/configPaths'
 
 export let tray: Tray
 

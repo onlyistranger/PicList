@@ -1,24 +1,18 @@
-// External dependencies
+
 import {
   globalShortcut
 } from 'electron'
 
+import shortKeyService from 'apis/app/shortKey/shortKeyService'
+import GuiApi from 'apis/gui'
+
 import bus from '@core/bus'
-import db from '~/main/apis/core/datastore'
+import db from '@core/datastore'
 import logger from '@core/picgo/logger'
 import picgo from '@core/picgo'
 
-// Electron modules
-
-// Custom utilities and modules
-import GuiApi from '../../gui'
-import shortKeyService from './shortKeyService'
-
-// Custom types/enums
-
-// External utility functions
 import { TOGGLE_SHORTKEY_MODIFIED_MODE } from '#/events/constants'
-import { configPaths } from '~/universal/utils/configPaths'
+import { configPaths } from '#/utils/configPaths'
 
 class ShortKeyHandler {
   private isInModifiedMode: boolean = false

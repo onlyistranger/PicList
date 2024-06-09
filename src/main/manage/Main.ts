@@ -1,6 +1,5 @@
-/* eslint-disable */
-import { manageDbChecker } from './datastore/dbChecker'
-import { ManageApi } from './manageApi'
+import { manageDbChecker } from '~/manage/datastore/dbChecker'
+import { ManageApi } from '~/manage/manageApi'
 
 manageDbChecker()
 const getManageApi = (picBedName: string = 'placeholder'): ManageApi => {

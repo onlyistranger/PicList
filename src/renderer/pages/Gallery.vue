@@ -458,50 +458,30 @@
     </el-dialog>
   </div>
 </template>
+
 <script lang="ts" setup>
-// 类型声明
-import type { IResult } from '@picgo/store/dist/types'
-
-// 事件常量
-import { PASTE_TEXT, GET_PICBEDS } from '#/events/constants'
-
-// Element Plus 组件
-import { CheckboxValueType, ElMessageBox, ElNotification, ElMessage } from 'element-plus'
-
-// Element Plus 图标
-import { InfoFilled, Close, CaretBottom, Document, Edit, Delete, CaretTop, Sort, Refresh } from '@element-plus/icons-vue'
-
-// Electron 相关
 import {
   ipcRenderer,
   clipboard,
   IpcRendererEvent
 } from 'electron'
-
-// Vue 相关
+import { CheckboxValueType, ElMessageBox, ElNotification, ElMessage } from 'element-plus'
+import { InfoFilled, Close, CaretBottom, Document, Edit, Delete, CaretTop, Sort, Refresh } from '@element-plus/icons-vue'
+import path from 'path'
 import { computed, nextTick, onActivated, onBeforeUnmount, onBeforeMount, reactive, ref, watch } from 'vue'
-
-// 数据发送工具函数
-import { getConfig, saveConfig, sendToMain } from '@/utils/dataSender'
-
-// Vue Router 相关
 import { onBeforeRouteUpdate } from 'vue-router'
+import type { IResult } from '@picgo/store/dist/types'
 
-// 国际化函数
+import ALLApi from '@/apis/allApi'
 import { T as $T } from '@/i18n/index'
-
-// 数据库操作
+import { customRenameFormatTable, customStrMatch, customStrReplace } from '@/manage/utils/common'
+import { getConfig, saveConfig, sendToMain } from '@/utils/dataSender'
 import $$db from '@/utils/db'
 
-// API 接口
-import ALLApi from '@/apis/allApi'
-
-// 工具函数
-import { customRenameFormatTable, customStrMatch, customStrReplace } from '../manage/utils/common'
+import { PASTE_TEXT, GET_PICBEDS } from '#/events/constants'
+import { configPaths } from '#/utils/configPaths'
 import { picBedsCanbeDeleted } from '#/utils/static'
-import path from 'path'
-import { configPaths } from '~/universal/utils/configPaths'
-import { IPasteStyle } from '~/universal/types/enum'
+import { IPasteStyle } from '#/types/enum'
 
 const images = ref<ImgInfo[]>([])
 const dialogVisible = ref(false)

@@ -1,5 +1,6 @@
-import { openURL } from '@/utils/common'
 import { onMounted, onUnmounted } from 'vue'
+
+import { openURL } from '@/utils/common'
 
 export function useATagClick () {
   const handleATagClick = (e: MouseEvent) => {

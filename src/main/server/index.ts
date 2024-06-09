@@ -1,17 +1,20 @@
+import axios from 'axios'
+import { app } from 'electron'
+import fs from 'fs-extra'
 import http from 'http'
-import routers from './routerManager'
+import multer from 'multer'
+import path from 'path'
+
+import picgo from '@core/picgo'
+import logger from '@core/picgo/logger'
+
+import routers from '~/server/routerManager'
 import {
   handleResponse,
   ensureHTTPLink
-} from './utils'
-import picgo from '@core/picgo'
-import logger from '@core/picgo/logger'
-import axios from 'axios'
-import multer from 'multer'
-import { app } from 'electron'
-import path from 'path'
-import fs from 'fs-extra'
-import { configPaths } from '~/universal/utils/configPaths'
+} from '~/server/utils'
+
+import { configPaths } from '#/utils/configPaths'
 
 const DEFAULT_PORT = 36677
 const DEFAULT_HOST = '0.0.0.0'

@@ -1,6 +1,7 @@
-import { deleteFailedLog, deleteLog } from '@/utils/common'
 import axios from 'axios'
 import path from 'path'
+
+import { deleteFailedLog, deleteLog } from '@/utils/common'
 
 interface IConfigMap {
   fileName: string

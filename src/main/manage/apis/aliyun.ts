@@ -1,38 +1,19 @@
-// Axios
-import axios from 'axios'
-
-// 加密函数、获取文件 MIME 类型、错误格式化函数、新的下载器、并发异步任务池
-import { hmacSha1Base64, getFileMimeType, formatError, NewDownloader, ConcurrencyPromisePool } from '../utils/common'
-
-// Electron 相关
-import { ipcMain, IpcMainEvent } from 'electron'
-
-// 快速 XML 解析器
-import { XMLParser } from 'fast-xml-parser'
-
-// 阿里云 OSS 客户端库
 import OSS from 'ali-oss'
-
-// 路径处理库
+import axios from 'axios'
+import { ipcMain, IpcMainEvent } from 'electron'
+import { XMLParser } from 'fast-xml-parser'
 import path from 'path'
 
-// 是否为图片的判断函数
-import { isImage } from '~/renderer/manage/utils/common'
-
-// 窗口管理器
 import windowManager from 'apis/app/window/windowManager'
 
-// 枚举类型声明
-import { IWindowList } from '#/types/enum'
+import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
+import { ManageLogger } from '~/manage/utils/logger'
+import { hmacSha1Base64, getFileMimeType, formatError, NewDownloader, ConcurrencyPromisePool } from '~/manage/utils/common'
 
-// 上传下载任务队列
-import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus } from '../datastore/upDownTaskQueue'
-
-// 日志记录器
-import { ManageLogger } from '../utils/logger'
-
-// 取消下载任务的加载文件列表、刷新下载文件传输列表
+import { isImage } from '@/manage/utils/common'
 import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
+
+import { IWindowList } from '#/types/enum'
 
 // 坑爹阿里云 返回数据类型标注和实际各种不一致
 class AliyunApi {

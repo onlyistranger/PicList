@@ -1,16 +1,9 @@
-// External dependencies
-import yaml from 'js-yaml'
-import { ObjectAdapter, I18n } from '@picgo/i18n'
-import path from 'path'
 import fs from 'fs-extra'
+import yaml from 'js-yaml'
+import path from 'path'
 
-// Electron modules
+import { ObjectAdapter, I18n } from '@picgo/i18n'
 
-// Custom utilities and modules
-
-// Custom types/enums
-
-// External utility functions
 import { builtinI18nList } from '#/i18n'
 
 class I18nManager {
