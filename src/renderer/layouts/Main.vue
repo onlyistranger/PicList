@@ -246,8 +246,8 @@ import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 import InputBoxDialog from '@/components/InputBoxDialog.vue'
 import { T as $T } from '@/i18n/index'
 import * as config from '@/router/config'
-import { getConfig, saveConfig, sendToMain } from '@/utils/dataSender'
-import { openURL } from '@/utils/common'
+import { getConfig, saveConfig } from '@/utils/dataSender'
+import { openURL, sendToMain } from '@/utils/common'
 
 import {
   MINIMIZE_WINDOW,

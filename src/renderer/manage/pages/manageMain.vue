@@ -287,11 +287,11 @@ import { ref, reactive, computed, onBeforeMount, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 import { supportedPicBedList } from '@/manage/utils/constants'
-import { invokeToMain } from '@/manage/utils/dataSender'
 import { useManageStore } from '@/manage/store/manageStore'
 import { newBucketConfig } from '@/manage/utils/newBucketConfig'
 
 import { T as $T } from '@/i18n'
+import { invokeToMain } from '@/utils/common'
 
 const manageStore = useManageStore() as any
 const route = useRoute()

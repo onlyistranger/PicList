@@ -19,9 +19,10 @@ import db from '@/utils/db'
 import { T } from '@/i18n/index'
 import { store } from '@/store'
 import { initTalkingData } from '@/utils/analytic'
-import { getConfig, saveConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
+import { getConfig, saveConfig, triggerRPC } from '@/utils/dataSender'
 import { mainMixin } from '@/utils/mainMixin'
 import { dragMixin } from '@/utils/mixin'
+import { sendToMain } from '@/utils/common'
 
 webFrame.setVisualZoomLevelLimits(1, 1)
 

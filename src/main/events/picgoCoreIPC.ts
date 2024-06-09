@@ -38,7 +38,8 @@ import {
   OPEN_WINDOW,
   GET_LANGUAGE_LIST,
   SET_CURRENT_LANGUAGE,
-  GET_CURRENT_LANGUAGE
+  GET_CURRENT_LANGUAGE,
+  PICGO_GET_CONFIG_SYNC
 } from '#/events/constants'
 import { configPaths } from '#/utils/configPaths'
 import { IPasteStyle, IPicGoHelperType, IWindowList } from '#/types/enum'
@@ -211,7 +212,7 @@ const handlePluginUpdate = async (fullName: string | string[]) => {
 }
 
 const handleUpdateAllPlugin = () => {
-  ipcMain.on('updateAllPlugin', async (event: IpcMainEvent, list: string[]) => {
+  ipcMain.on('updateAllPlugin', async (_: IpcMainEvent, list: string[]) => {
     handlePluginUpdate(list)
   })
 }
@@ -249,7 +250,7 @@ const handleGetPicBedConfig = () => {
 
 // TODO: remove it
 const handlePluginActions = () => {
-  ipcMain.on('pluginActions', (event: IpcMainEvent, name: string, label: string) => {
+  ipcMain.on('pluginActions', (_: IpcMainEvent, name: string, label: string) => {
     const plugin = picgo.pluginLoader.getPlugin(name)
     if (plugin?.guiMenu?.(picgo)?.length) {
       const menu: GuiMenuItem[] = plugin.guiMenu(picgo)
@@ -263,7 +264,7 @@ const handlePluginActions = () => {
 }
 
 const handleRemoveFiles = () => {
-  ipcMain.on('removeFiles', (event: IpcMainEvent, files: ImgInfo[]) => {
+  ipcMain.on('removeFiles', (_: IpcMainEvent, files: ImgInfo[]) => {
     setTimeout(() => {
       picgo.emit('remove', files, GuiApi.getInstance())
     }, 500)
@@ -271,15 +272,21 @@ const handleRemoveFiles = () => {
 }
 
 const handlePicGoSaveConfig = () => {
-  ipcMain.on(PICGO_SAVE_CONFIG, (event: IpcMainEvent, data: IObj) => {
+  ipcMain.on(PICGO_SAVE_CONFIG, (_: IpcMainEvent, data: IObj) => {
     picgo.saveConfig(data)
   })
 }
 
 const handlePicGoGetConfig = () => {
-  ipcMain.on(PICGO_GET_CONFIG, (event: IpcMainEvent, key: string | undefined, callbackId: string) => {
+  ipcMain.handle(PICGO_GET_CONFIG, (_, key: string | undefined) => {
+    return picgo.getConfig(key)
+  })
+}
+
+const handlePicGoGetConfigSync = () => {
+  ipcMain.on(PICGO_GET_CONFIG_SYNC, (event: IpcMainEvent, key: string | undefined) => {
     const result = picgo.getConfig(key)
-    event.sender.send(PICGO_GET_CONFIG, result, callbackId)
+    event.returnValue = result
   })
 }
 
@@ -436,6 +443,7 @@ export default {
     handleRemoveFiles()
     handlePicGoSaveConfig()
     handlePicGoGetConfig()
+    handlePicGoGetConfigSync()
     handlePicGoGalleryDB()
     handleImportLocalPlugin()
     handleUpdateAllPlugin()

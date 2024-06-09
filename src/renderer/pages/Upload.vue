@@ -164,7 +164,8 @@ import ImageProcessSetting from '@/components/ImageProcessSetting.vue'
 import { T as $T } from '@/i18n'
 import { PICBEDS_PAGE } from '@/router/config'
 import $bus from '@/utils/bus'
-import { getConfig, saveConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
+import { sendToMain } from '@/utils/common'
+import { getConfig, saveConfig, triggerRPC } from '@/utils/dataSender'
 
 import {
   SHOW_INPUT_BOX,

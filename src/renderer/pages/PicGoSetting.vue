@@ -1388,9 +1388,8 @@ import { useRouter } from 'vue-router'
 import ImageProcessSetting from '@/components/ImageProcessSetting.vue'
 import { i18nManager, T as $T } from '@/i18n/index'
 import { buildInRenameFormatTable } from '@/manage/utils/common'
-import { invokeToMain } from '@/manage/utils/dataSender'
 import { SHORTKEY_PAGE } from '@/router/config'
-import { getConfig, saveConfig, sendRPC, sendToMain } from '@/utils/dataSender'
+import { getConfig, saveConfig, sendRPC } from '@/utils/dataSender'
 
 import { PICGO_OPEN_FILE, PICGO_OPEN_DIRECTORY, OPEN_URL, GET_PICBEDS, HIDE_DOCK } from '#/events/constants'
 import { II18nLanguage, IRPCActionType, ISartMode } from '#/types/enum'
@@ -1399,6 +1398,7 @@ import { configPaths, ISartModeValues } from '#/utils/configPaths'
 import { getLatestVersion } from '#/utils/getLatestVersion'
 
 import pkg from 'root/package.json'
+import { invokeToMain, sendToMain } from '@/utils/common'
 
 const $router = useRouter()
 const activeName = ref<'system' | 'syncAndConfigure' | 'upload' | 'advanced' | 'upadte'>('system')
@@ -1422,7 +1422,7 @@ const languageList = i18nManager.languageList.map(item => ({
 }))
 
 const startModeList = Object.values(ISartMode).map(item => ({
-  label: $T(`SETTINGS_START_MODE_${item.toUpperCase().replace(/_/g, '')}` as any),
+  label: $T(`SETTINGS_START_MODE_${item.toUpperCase().replace(/-/g, '_')}` as any),
   value: item
 }))
 

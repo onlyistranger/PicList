@@ -5,6 +5,7 @@ import { OPEN_URL } from '#/events/constants'
 import { ILogType } from '#/types/enum'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
+
 export const handleTalkingDataEvent = (data: ITalkingDataOptions) => {
   const { EventId, Label = '', MapKv = {} } = data
   MapKv.from = window.location.href
@@ -31,9 +32,14 @@ export const getRawData = (args: any): any => {
   return args
 }
 
-function sendToMain (channel: string, ...args: any[]) {
+export function sendToMain (channel: string, ...args: any[]) {
   const data = getRawData(args)
   ipcRenderer.send(channel, ...data)
+}
+
+export function invokeToMain (channel: string, ...args: any[]) {
+  const data = getRawData(args)
+  return ipcRenderer.invoke(channel, ...data)
 }
 
 export const openURL = (url: string) => {

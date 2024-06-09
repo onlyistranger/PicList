@@ -110,7 +110,8 @@ import { useRoute, useRouter } from 'vue-router'
 
 import ConfigForm from '@/components/ConfigForm.vue'
 import { T as $T } from '@/i18n/index'
-import { getConfig, sendToMain, triggerRPC } from '@/utils/dataSender'
+import { sendToMain } from '@/utils/common'
+import { getConfig, triggerRPC } from '@/utils/dataSender'
 
 import { OPEN_URL } from '#/events/constants'
 import { II18nLanguage, IRPCActionType } from '#/types/enum'

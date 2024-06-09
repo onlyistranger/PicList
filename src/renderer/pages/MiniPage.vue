@@ -40,8 +40,8 @@ import { IConfig } from 'piclist'
 import { onBeforeUnmount, onBeforeMount, ref, watch } from 'vue'
 
 import { T as $T } from '@/i18n/index'
-import { invokeToMain } from '@/manage/utils/dataSender'
-import { getConfig, sendToMain } from '@/utils/dataSender'
+import { sendToMain, invokeToMain } from '@/utils/common'
+import { getConfig } from '@/utils/dataSender'
 
 import { SHOW_MINI_PAGE_MENU, SET_MINI_WINDOW_POS } from '#/events/constants'
 import { isUrl } from '#/utils/common'

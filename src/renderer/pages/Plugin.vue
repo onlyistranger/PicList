@@ -241,7 +241,8 @@ import { computed, ref, onBeforeMount, onBeforeUnmount, watch, onMounted, reacti
 
 import ConfigForm from '@/components/ConfigFormForPlugin.vue'
 import { T as $T } from '@/i18n/index'
-import { getConfig, saveConfig, sendRPC, sendToMain } from '@/utils/dataSender'
+import { sendToMain } from '@/utils/common'
+import { getConfig, saveConfig, sendRPC } from '@/utils/dataSender'
 
 import {
   OPEN_URL,

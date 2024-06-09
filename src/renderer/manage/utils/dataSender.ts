@@ -34,13 +34,3 @@ export function saveConfig (_config: IObj | string, value?: any) {
 export function removeConfig (key: string, propName: string) {
   ipcRenderer.send(PICLIST_MANAGE_REMOVE_CONFIG, key, propName)
 }
-
-export function sendToMain (channel: string, ...args: any[]) {
-  const data = getRawData(args)
-  ipcRenderer.send(channel, ...data)
-}
-
-export function invokeToMain (channel: string, ...args: any[]) {
-  const data = getRawData(args)
-  return ipcRenderer.invoke(channel, ...data)
-}

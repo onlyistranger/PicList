@@ -248,11 +248,12 @@ import { ref, onBeforeMount, watch } from 'vue'
 import DynamicSwitch from '@/manage/components/DynamicSwitch.vue'
 import { fileCacheDbInstance } from '@/manage/store/bucketFileDb'
 import { formatFileSize, customRenameFormatTable } from '@/manage/utils/common'
-import { getConfig, saveConfig, invokeToMain } from '@/manage/utils/dataSender'
+import { getConfig, saveConfig } from '@/manage/utils/dataSender'
 
 import { T as $T } from '@/i18n'
 
 import { selectDownloadFolder } from '#/utils/static'
+import { invokeToMain } from '@/utils/common'
 
 const form = ref<IStringKeyMap>({
   timestampRename: false,

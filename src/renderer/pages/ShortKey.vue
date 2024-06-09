@@ -122,7 +122,8 @@ import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { onBeforeUnmount, onBeforeMount, ref, watch } from 'vue'
 
 import { T as $T } from '@/i18n'
-import { getConfig, sendToMain } from '@/utils/dataSender'
+import { sendToMain } from '@/utils/common'
+import { getConfig } from '@/utils/dataSender'
 import keyBinding from '@/utils/key-binding'
 
 import { TOGGLE_SHORTKEY_MODIFIED_MODE } from '#/events/constants'

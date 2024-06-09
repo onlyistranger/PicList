@@ -301,7 +301,7 @@ export default {
     ipcMain.on(GET_PICBEDS, (evt: IpcMainEvent) => {
       const picBeds = getPicBeds()
       evt.sender.send(GET_PICBEDS, picBeds)
-      evt.returnValue = picBeds
+      // evt.returnValue = picBeds
     })
 
     ipcMain.on(TOGGLE_SHORTKEY_MODIFIED_MODE, (_: IpcMainEvent, val: boolean) => {

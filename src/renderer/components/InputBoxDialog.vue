@@ -33,7 +33,7 @@ import { ref, reactive, onBeforeUnmount, onBeforeMount } from 'vue'
 
 import { T as $T } from '@/i18n/index'
 import $bus from '@/utils/bus'
-import { sendToMain } from '@/utils/dataSender'
+import { sendToMain } from '@/utils/common'
 
 import {
   SHOW_INPUT_BOX,

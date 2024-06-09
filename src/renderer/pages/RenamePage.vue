@@ -60,7 +60,7 @@ import { onBeforeUnmount, onBeforeMount, ref, reactive } from 'vue'
 
 import { useIPCOn } from '@/hooks/useIPC'
 import { T as $T } from '@/i18n/index'
-import { sendToMain } from '@/utils/dataSender'
+import { sendToMain } from '@/utils/common'
 
 import { GET_RENAME_FILE_NAME, RENAME_FILE_NAME } from '#/events/constants'
 

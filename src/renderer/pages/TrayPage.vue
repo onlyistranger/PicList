@@ -67,7 +67,8 @@ import { reactive, ref, onBeforeUnmount, onBeforeMount } from 'vue'
 import { IResult } from '@picgo/store/dist/types'
 
 import { T as $T } from '@/i18n/index'
-import { getConfig, sendToMain } from '@/utils/dataSender'
+import { sendToMain } from '@/utils/common'
+import { getConfig } from '@/utils/dataSender'
 
 import $$db from '@/utils/db'
 
