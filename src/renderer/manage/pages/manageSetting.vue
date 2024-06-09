@@ -249,9 +249,10 @@ import DynamicSwitch from '@/manage/components/DynamicSwitch.vue'
 import { fileCacheDbInstance } from '@/manage/store/bucketFileDb'
 import { formatFileSize, customRenameFormatTable } from '@/manage/utils/common'
 import { getConfig, saveConfig, invokeToMain } from '@/manage/utils/dataSender'
-import { selectDownloadFolder } from '@/manage/utils/static'
 
 import { T as $T } from '@/i18n'
+
+import { selectDownloadFolder } from '#/utils/static'
 
 const form = ref<IStringKeyMap>({
   timestampRename: false,

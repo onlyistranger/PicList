@@ -6,14 +6,13 @@ import path from 'path'
 
 import windowManager from 'apis/app/window/windowManager'
 
-import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 import { ManageLogger } from '~/manage/utils/logger'
 import { hmacSha1Base64, getFileMimeType, formatError, NewDownloader, ConcurrencyPromisePool } from '~/manage/utils/common'
 
-import { isImage } from '@/manage/utils/common'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
-
-import { IWindowList } from '#/types/enum'
+import { commonTaskStatus, IWindowList, uploadTaskSpecialStatus } from '#/types/enum'
+import { isImage } from '#/utils/common'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
 // 坑爹阿里云 返回数据类型标注和实际各种不一致
 class AliyunApi {

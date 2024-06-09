@@ -8,10 +8,10 @@ import windowManager from 'apis/app/window/windowManager'
 
 import { getFileMimeType, gotUpload, NewDownloader, ConcurrencyPromisePool, formatError } from '~/manage/utils/common'
 import { ManageLogger } from '~/manage/utils/logger'
-import UpDownTaskQueue, { commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 
-import { isImage } from '@/manage/utils/common'
-import { IWindowList } from '#/types/enum'
+import { commonTaskStatus, IWindowList } from '#/types/enum'
+import { isImage } from '#/utils/common'
 
 class SmmsApi {
   baseUrl = 'https://smms.app/api/v2'

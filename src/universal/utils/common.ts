@@ -1,3 +1,5 @@
+import path from 'path'
+
 export const isUrl = (url: string): boolean => {
   try {
     return Boolean(new URL(url))
@@ -67,4 +69,40 @@ export function encodeFilePath (filePath: string) {
     .split('/')
     .map(encodeURIComponent)
     .join('/')
+}
+
+export const getExtension = (fileName: string) => path.extname(fileName).slice(1)
+
+export const isImage = (fileName: string) =>
+  ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'ico', 'svg'].includes(getExtension(fileName))
+
+export const formatEndpoint = (endpoint: string, sslEnabled: boolean): string =>
+  !/^https?:\/\//.test(endpoint)
+    ? `${sslEnabled ? 'https' : 'http'}://${endpoint}`
+    : sslEnabled
+      ? endpoint.replace('http://', 'https://')
+      : endpoint.replace('https://', 'http://')
+
+export const trimPath = (path: string) => path.replace(/^\/+|\/+$/g, '').replace(/\/+/g, '/')
+
+export const formatHttpProxy = (proxy: string | undefined, type: 'object' | 'string'): IHTTPProxy | undefined | string => {
+  if (!proxy) return undefined
+  if (/^https?:\/\//.test(proxy)) {
+    const { protocol, hostname, port } = new URL(proxy)
+    return type === 'string'
+      ? `${protocol}//${hostname}:${port}`
+      : {
+        host: hostname,
+        port: Number(port),
+        protocol: protocol.slice(0, -1)
+      }
+  }
+  const [host, port] = proxy.split(':')
+  return type === 'string'
+    ? `http://${host}:${port}`
+    : {
+      host,
+      port: port ? Number(port) : 80,
+      protocol: 'http'
+    }
 }

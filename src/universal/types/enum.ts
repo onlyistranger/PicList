@@ -115,3 +115,20 @@ export enum IShortUrlServer {
   YOURLS = 'yourls',
   CFWORKER = 'cf_worker'
 }
+
+export enum commonTaskStatus {
+  queuing = 'queuing',
+  failed = 'failed',
+  canceled = 'canceled',
+  paused = 'paused'
+}
+
+export enum uploadTaskSpecialStatus {
+  uploading = 'uploading',
+  uploaded = 'uploaded'
+}
+
+export enum downloadTaskSpecialStatus {
+  downloading = 'downloading',
+  downloaded = 'downloaded',
+}

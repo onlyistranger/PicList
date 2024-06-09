@@ -281,8 +281,7 @@ import { formObjToTableData, svg } from '@/manage/utils/common'
 import { getConfig as getPicBedsConfig } from '@/utils/dataSender'
 import { T as $T } from '@/i18n'
 
-import { formatEndpoint } from '~/manage/utils/common'
-import { isNeedToShorten, safeSliceF } from '#/utils/common'
+import { formatEndpoint, isNeedToShorten, safeSliceF } from '#/utils/common'
 
 const manageStore = useManageStore()
 const router = useRouter()

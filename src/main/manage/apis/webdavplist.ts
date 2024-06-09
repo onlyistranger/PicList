@@ -7,15 +7,15 @@ import { createClient, WebDAVClient, FileStat, ProgressEvent, AuthType, WebDAVCl
 
 import windowManager from 'apis/app/window/windowManager'
 
-import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
-import { formatError, formatEndpoint, getInnerAgent, NewDownloader, ConcurrencyPromisePool } from '~/manage/utils/common'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
+import { formatError, getInnerAgent, NewDownloader, ConcurrencyPromisePool } from '~/manage/utils/common'
 import ManageLogger from '~/manage/utils/logger'
 
-import { formatHttpProxy, isImage } from '@/manage/utils/common'
 import { getAuthHeader } from '@/manage/utils/digestAuth'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
 
-import { IWindowList } from '#/types/enum'
+import { commonTaskStatus, IWindowList, uploadTaskSpecialStatus } from '#/types/enum'
+import { isImage, formatEndpoint, formatHttpProxy } from '#/utils/common'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
 class WebdavplistApi {
   endpoint: string

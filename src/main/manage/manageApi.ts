@@ -14,24 +14,23 @@ import { managePathChecker } from '~/manage/datastore/dbChecker'
 import { isInputConfigValid, formatError } from '~/manage/utils/common'
 import { ManageLogger } from '~/manage/utils/logger'
 
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
-
 import { IWindowList } from '#/types/enum'
 import {
-  ManageApiType,
-  ManageConfigType,
-  ManageError,
-  PicBedMangeConfig
+  IManageApiType,
+  IManageConfigType,
+  IManageError,
+  IPicBedMangeConfig
 } from '#/types/manage'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
-export class ManageApi extends EventEmitter implements ManageApiType {
-  private _config!: Partial<ManageConfigType>
+export class ManageApi extends EventEmitter implements IManageApiType {
+  private _config!: Partial<IManageConfigType>
   private db!: ManageDB
   currentPicBed: string
   configPath: string
   baseDir!: string
   logger: ManageLogger
-  currentPicBedConfig: PicBedMangeConfig
+  currentPicBedConfig: IPicBedMangeConfig
 
   constructor (currentPicBed: string = '') {
     super()
@@ -85,8 +84,8 @@ export class ManageApi extends EventEmitter implements ManageApiType {
     }
   }
 
-  private getPicBedConfig (picBedName: string): PicBedMangeConfig {
-    return this.getConfig<PicBedMangeConfig>(`picBed.${picBedName}`)
+  private getPicBedConfig (picBedName: string): IPicBedMangeConfig {
+    return this.getConfig<IPicBedMangeConfig>(`picBed.${picBedName}`)
   }
 
   private initConfigPath (): void {
@@ -106,7 +105,7 @@ export class ManageApi extends EventEmitter implements ManageApiType {
 
   private initconfig (): void {
     this.db = new ManageDB(this)
-    this._config = this.db.read(true) as ManageConfigType
+    this._config = this.db.read(true) as IManageConfigType
   }
 
   getConfig<T> (name?: string): T {
@@ -194,14 +193,14 @@ export class ManageApi extends EventEmitter implements ManageApiType {
 
   async getBucketInfo (
     param?: IStringKeyMap | undefined
-  ): Promise<IStringKeyMap | ManageError> {
+  ): Promise<IStringKeyMap | IManageError> {
     console.log(param)
     return {}
   }
 
   async getBucketDomain (
     param: IStringKeyMap
-  ): Promise<IStringKeyMap | ManageError> {
+  ): Promise<IStringKeyMap | IManageError> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':
@@ -256,7 +255,7 @@ export class ManageApi extends EventEmitter implements ManageApiType {
 
   async getOperatorList (
     param?: IStringKeyMap
-  ): Promise<string[] | ManageError> {
+  ): Promise<string[] | IManageError> {
     console.log(param)
     return []
   }
@@ -277,7 +276,7 @@ export class ManageApi extends EventEmitter implements ManageApiType {
 
   async getBucketAclPolicy (
     param?: IStringKeyMap
-  ): Promise<IStringKeyMap | ManageError> {
+  ): Promise<IStringKeyMap | IManageError> {
     console.log(param)
     return {}
   }
@@ -302,7 +301,7 @@ export class ManageApi extends EventEmitter implements ManageApiType {
 
   async getBucketListRecursively (
     param?: IStringKeyMap
-  ): Promise<IStringKeyMap | ManageError> {
+  ): Promise<IStringKeyMap | IManageError> {
     let client
     let window
     const defaultResult = {
@@ -347,7 +346,7 @@ export class ManageApi extends EventEmitter implements ManageApiType {
    */
   async getBucketListBackstage (
     param?: IStringKeyMap
-  ): Promise<IStringKeyMap | ManageError> {
+  ): Promise<IStringKeyMap | IManageError> {
     let client
     let window
     const defaultResult = {
@@ -396,7 +395,7 @@ export class ManageApi extends EventEmitter implements ManageApiType {
   **/
   async getBucketFileList (
     param?: IStringKeyMap
-  ): Promise<IStringKeyMap | ManageError> {
+  ): Promise<IStringKeyMap | IManageError> {
     const defaultResponse = {
       fullList: <any>[],
       isTruncated: false,

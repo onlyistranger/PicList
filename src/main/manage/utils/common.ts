@@ -12,15 +12,11 @@ import path from 'path'
 import { Stream } from 'stream'
 import { promisify } from 'util'
 
-import UpDownTaskQueue,
-{
-  uploadTaskSpecialStatus,
-  commonTaskStatus,
-  downloadTaskSpecialStatus
-} from '~/manage/datastore/upDownTaskQueue'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 import { ManageLogger } from '~/manage/utils/logger'
 
-import { formatHttpProxy, IHTTPProxy } from '@/manage/utils/common'
+import { commonTaskStatus, downloadTaskSpecialStatus, uploadTaskSpecialStatus } from '#/types/enum'
+import { formatHttpProxy } from '#/utils/common'
 
 export const getFSFile = async (
   filePath: string,
@@ -218,8 +214,6 @@ export const formatError = (err: any, params:IStringKeyMap) => {
   return `${String(err)}${JSON.stringify(params)}`
 }
 
-export const trimPath = (path: string) => path.replace(/^\/+|\/+$/g, '').replace(/\/+/g, '/')
-
 const commonOptions = {
   keepAlive: true,
   keepAliveMsecs: 1000,
@@ -308,13 +302,6 @@ export function getOptions (
     throwHttpErrors: false
   }
 }
-
-export const formatEndpoint = (endpoint: string, sslEnabled: boolean): string =>
-  !/^https?:\/\//.test(endpoint)
-    ? `${sslEnabled ? 'https' : 'http'}://${endpoint}`
-    : sslEnabled
-      ? endpoint.replace('http://', 'https://')
-      : endpoint.replace('https://', 'http://')
 
 export class ConcurrencyPromisePool {
   limit: number

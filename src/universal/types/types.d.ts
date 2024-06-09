@@ -35,6 +35,8 @@ interface IServerConfig {
   enable: boolean
 }
 
+// Sync
+
 interface ISyncConfig {
   type: string
   file?: string
@@ -528,3 +530,9 @@ interface IUploaderConfigItem {
 type IUploaderConfigListItem = IStringKeyMap & IUploaderListItemMetaInfo
 
 type ICheckBoxValueType = boolean | string | number
+
+interface IHTTPProxy {
+  host: string
+  port: number
+  protocol: string
+}

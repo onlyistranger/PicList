@@ -5,14 +5,13 @@ import path from 'path'
 
 import windowManager from 'apis/app/window/windowManager'
 
-import UpDownTaskQueue, { commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
-import { gotUpload, trimPath, NewDownloader, getAgent, getOptions, ConcurrencyPromisePool, formatError } from '~/manage/utils/common'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
+import { gotUpload, NewDownloader, getAgent, getOptions, ConcurrencyPromisePool, formatError } from '~/manage/utils/common'
 import { ManageLogger } from '~/manage/utils/logger'
 
-import { formatHttpProxy, isImage } from '@/manage/utils/common'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
-
-import { IWindowList } from '#/types/enum'
+import { commonTaskStatus, IWindowList } from '#/types/enum'
+import { formatHttpProxy, isImage, trimPath } from '#/utils/common'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
 class GithubApi {
   token: string

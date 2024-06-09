@@ -1467,9 +1467,8 @@ import { useRoute } from 'vue-router'
 
 import { fileCacheDbInstance } from '@/manage/store/bucketFileDb'
 import { useFileTransferStore, useDownloadFileTransferStore, useManageStore } from '@/manage/store/manageStore'
-import { customRenameFormatTable, customStrMatch, customStrReplace, renameFile, formatLink, formatFileName, getFileIconPath, formatFileSize, getExtension, isValidUrl, svg } from '@/manage/utils/common'
+import { customRenameFormatTable, customStrMatch, customStrReplace, renameFile, formatLink, formatFileName, getFileIconPath, formatFileSize, isValidUrl, svg } from '@/manage/utils/common'
 import { getConfig, saveConfig } from '@/manage/utils/dataSender'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
 import { textFileExt } from '@/manage/utils/textfile'
 import { videoExt } from '@/manage/utils/videofile'
 
@@ -1479,8 +1478,10 @@ import ImageWebdavTsx from '@/components/ImageWebdavTsx'
 
 import { T as $T } from '@/i18n'
 
-import { IUploadTask, IDownloadTask } from '~/manage/datastore/upDownTaskQueue'
-import { trimPath } from '~/manage/utils/common'
+import { getExtension, trimPath } from '#/utils/common'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
+import { IUploadTask, IDownloadTask } from '#/types/manage'
+
 /*
 configMap:{
     prefix: string, -> baseDir

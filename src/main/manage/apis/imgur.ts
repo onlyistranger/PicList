@@ -6,7 +6,7 @@ import path from 'path'
 
 import windowManager from 'apis/app/window/windowManager'
 
-import UpDownTaskQueue, { commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 import {
   ConcurrencyPromisePool,
   formatError,
@@ -18,9 +18,8 @@ import {
 } from '~/manage/utils/common'
 import ManageLogger from '~/manage/utils/logger'
 
-import { formatHttpProxy, isImage } from '@/manage/utils/common'
-
-import { IWindowList } from '#/types/enum'
+import { commonTaskStatus, IWindowList } from '#/types/enum'
+import { formatHttpProxy, isImage } from '#/utils/common'
 
 class ImgurApi {
   userName: string

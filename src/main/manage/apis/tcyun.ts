@@ -8,13 +8,11 @@ import windowManager from 'apis/app/window/windowManager'
 
 import { formatError, getFileMimeType } from '~/manage/utils/common'
 import { ManageLogger } from '~/manage/utils/logger'
-import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus, downloadTaskSpecialStatus } from '~/manage/datastore/upDownTaskQueue'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 
-import { isImage } from '@/manage/utils/common'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
-
-import { handleUrlEncode } from '#/utils/common'
-import { IWindowList } from '#/types/enum'
+import { handleUrlEncode, isImage } from '#/utils/common'
+import { commonTaskStatus, downloadTaskSpecialStatus, IWindowList, uploadTaskSpecialStatus } from '#/types/enum'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
 class TcyunApi {
   ctx: COS

@@ -1,22 +1,19 @@
-import { ILogger } from "piclist/dist/types";
+import { ILogger } from 'piclist/dist/types'
+import { commonTaskStatus, downloadTaskSpecialStatus, uploadTaskSpecialStatus } from './enum'
 
 // common type
-type Undefinable<T> = T | undefined;
+export type Undefinable<T> = T | undefined;
 
-declare interface ManageError extends Error {
+export interface IManageError extends Error {
   code?: number
   param?: string
   stack?: string
   picbed?: string
 }
 
-type PicBedMangeConfig = IStringKeyMap;
+export type IPicBedMangeConfig = IStringKeyMap;
 
-interface PicBedManageConfigMap {
-  [key: string]: PicBedMangeConfig
-}
-
-interface ManageApiType {
+export interface IManageApiType {
   /**
    * logger
    */
@@ -36,7 +33,7 @@ interface ManageApiType {
   /**
    * current picBed config
    */
-  currentPicBedConfig: PicBedMangeConfig
+  currentPicBedConfig: IPicBedMangeConfig
   /**
    * get manage config
    */
@@ -62,19 +59,19 @@ interface ManageApiType {
    */
   getBucketListRecursively: (
     param?: IStringKeyMap
-  ) => Promise<any | ManageError>
+  ) => Promise<any | IManageError>
   /**
    * get bucket list
    */
   getBucketListBackstage: (
     param?: IStringKeyMap
-  ) => Promise<any | ManageError>
+  ) => Promise<any | IManageError>
   /**
    * get bucket list
    */
   getBucketList: (
     param?: IStringKeyMap
-  ) => Promise<any | ManageError>
+  ) => Promise<any | IManageError>
   getBucketDomain: (
     param: IStringKeyMap
   ) => Promise<any>
@@ -83,7 +80,7 @@ interface ManageApiType {
    */
   getBucketInfo: (
     param?: IStringKeyMap
-  ) => Promise<IStringKeyMap | ManageError>
+  ) => Promise<IStringKeyMap | IManageError>
   /**
    * create bucket
    */
@@ -102,7 +99,7 @@ interface ManageApiType {
    */
   getOperatorList: (
     param?: IStringKeyMap
-  ) => Promise<string[] | ManageError>
+  ) => Promise<string[] | IManageError>
   /**
    * add Operator
    * specific for upyun
@@ -122,7 +119,7 @@ interface ManageApiType {
    */
   getBucketAclPolicy: (
     param?: IStringKeyMap
-  ) => Promise<IStringKeyMap | ManageError>
+  ) => Promise<IStringKeyMap | IManageError>
   /**
    * set bucket ACL policy
    */
@@ -134,7 +131,7 @@ interface ManageApiType {
    */
   getBucketFileList: (
     param?: IStringKeyMap
-  ) => Promise<IStringKeyMap | ManageError>
+  ) => Promise<IStringKeyMap | IManageError>
   /**
    * delete bucket file
    */
@@ -177,7 +174,7 @@ interface ManageApiType {
   uploadBucketFile: (
     param?: IStringKeyMap
   ) => Promise<boolean>
-    /**
+  /**
    * get presigned url
    */
   getPreSignedUrl: (
@@ -186,7 +183,7 @@ interface ManageApiType {
 }
 
 /** PicList 存储管理功能配置文件类型定义 */
-interface ManageConfigType {
+export interface IManageConfigType {
   picBed: {
     [others: string]: any
   }
@@ -194,4 +191,38 @@ interface ManageConfigType {
     [others: string]: any
   }
   [others: string]: any
+}
+
+type uploadTaskStatus = commonTaskStatus | uploadTaskSpecialStatus
+type downloadTaskStatus = commonTaskStatus | downloadTaskSpecialStatus
+
+export interface IUploadTask {
+  id: string
+  progress: number
+  status: uploadTaskStatus
+  sourceFilePath: string
+  sourceFileName: string
+  targetFilePath: string
+  targetFileBucket?: string
+  response?: any
+  cancelToken?: string
+  timeConsuming?: number
+  alias?: string
+  [other: string]: any
+}
+
+export interface IDownloadTask {
+  id: string
+  progress: number
+  status: downloadTaskStatus
+  sourceFileUrl?: string
+  sourceFileName?: string
+  sourceConfig?: IStringKeyMap
+  targetFilePath?: string
+  response?: any
+  cancelToken?: string
+  timeConsuming?: number
+  reseumConfig?: IStringKeyMap
+  alias?: string
+  [other: string]: any
 }

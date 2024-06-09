@@ -5,56 +5,8 @@ import { app } from 'electron'
 import fs from 'fs-extra'
 import path from 'path'
 
-export enum commonTaskStatus {
-  queuing = 'queuing',
-  failed = 'failed',
-  canceled = 'canceled',
-  paused = 'paused'
-}
-
-export enum uploadTaskSpecialStatus {
-  uploading = 'uploading',
-  uploaded = 'uploaded'
-}
-
-export enum downloadTaskSpecialStatus {
-  downloading = 'downloading',
-  downloaded = 'downloaded',
-}
-
-export type uploadTaskStatus = commonTaskStatus | uploadTaskSpecialStatus
-type downloadTaskStatus = commonTaskStatus | downloadTaskSpecialStatus
-
-export interface IUploadTask {
-  id: string
-  progress: number
-  status: uploadTaskStatus
-  sourceFilePath: string
-  sourceFileName: string
-  targetFilePath: string
-  targetFileBucket?: string
-  response?: any
-  cancelToken?: string
-  timeConsuming?: number
-  alias?: string
-  [other: string]: any
-}
-
-export interface IDownloadTask {
-  id: string
-  progress: number
-  status: downloadTaskStatus
-  sourceFileUrl?: string
-  sourceFileName?: string
-  sourceConfig?: IStringKeyMap
-  targetFilePath?: string
-  response?: any
-  cancelToken?: string
-  timeConsuming?: number
-  reseumConfig?: IStringKeyMap
-  alias?: string
-  [other: string]: any
-}
+import { commonTaskStatus, downloadTaskSpecialStatus, uploadTaskSpecialStatus } from '#/types/enum'
+import { IDownloadTask, IUploadTask } from '#/types/manage'
 
 class UpDownTaskQueue {
   /* eslint-disable */

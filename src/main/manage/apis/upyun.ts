@@ -9,12 +9,11 @@ import windowManager from 'apis/app/window/windowManager'
 
 import { md5, hmacSha1Base64, getFileMimeType, NewDownloader, gotUpload, ConcurrencyPromisePool, formatError } from '~/manage/utils/common'
 import { ManageLogger } from '~/manage/utils/logger'
-import UpDownTaskQueue, { commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 
-import { isImage } from '@/manage/utils/common'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
-
-import { IWindowList } from '#/types/enum'
+import { commonTaskStatus, IWindowList } from '#/types/enum'
+import { isImage } from '#/utils/common'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
 class UpyunApi {
   ser: Upyun.Service

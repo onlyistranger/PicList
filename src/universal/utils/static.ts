@@ -3,6 +3,12 @@ export const RELEASE_URL = 'https://api.github.com/repos/Kuingsmile/PicList/rele
 export const RELEASE_URL_BACKUP = 'https://release.piclist.cn'
 export const STABLE_RELEASE_URL = 'https://github.com/Kuingsmile/PicList/releases/latest'
 
+export const DEFAULT_AES_PASSWORD = 'aesPassword'
+
+export const cancelDownloadLoadingFileList = 'cancelDownloadLoadingFileList'
+export const refreshDownloadFileTransferList = 'refreshDownloadFileTransferList'
+export const selectDownloadFolder = 'selectDownloadFolder'
+
 export const picBedsCanbeDeleted = [
   'aliyun',
   'alist',
@@ -63,5 +69,3 @@ export const picBedManualUrlList: IStringKeyMap = {
     webdavplist: 'https://piclist.cn/en/configure.html#webdav'
   }
 }
-
-export const DEFAULT_AES_PASSWORD = 'aesPassword'

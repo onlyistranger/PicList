@@ -5,7 +5,7 @@ import { Loading } from '@element-plus/icons-vue'
 import { getFileIconPath } from '@/manage/utils/common'
 import { getAuthHeader } from '@/manage/utils/digestAuth'
 
-import { formatEndpoint } from '~/manage/utils/common'
+import { formatEndpoint } from '#/utils/common'
 
 export default defineComponent({
   props: {

@@ -6,7 +6,7 @@ import { ILogColor, ILogger } from 'piclist/dist/types'
 import util from 'util'
 
 import { ILogType } from '#/types/enum'
-import { ManageApiType, Undefinable } from '#/types/manage'
+import { IManageApiType, Undefinable } from '#/types/manage'
 import { enforceNumber, isDev } from '#/utils/common'
 import { configPaths } from '#/utils/configPaths'
 
@@ -18,11 +18,11 @@ export class ManageLogger implements ILogger {
     [ILogType.error]: 'red'
   }
 
-  readonly #ctx: ManageApiType
+  readonly #ctx: IManageApiType
   #logLevel!: string
   #logPath!: string
 
-  constructor (ctx: ManageApiType) {
+  constructor (ctx: IManageApiType) {
     this.#ctx = ctx
   }
 

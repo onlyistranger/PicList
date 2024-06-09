@@ -4,14 +4,13 @@ import path from 'path'
 import * as fsWalk from '@nodelib/fs.walk'
 
 import windowManager from 'apis/app/window/windowManager'
-import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus, downloadTaskSpecialStatus } from '~/manage/datastore/upDownTaskQueue'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 import { formatError } from '~/manage/utils/common'
 import ManageLogger from '~/manage/utils/logger'
 
-import { isImage } from '@/manage/utils/common'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
-
-import { IWindowList } from '#/types/enum'
+import { commonTaskStatus, downloadTaskSpecialStatus, IWindowList, uploadTaskSpecialStatus } from '#/types/enum'
+import { isImage } from '#/utils/common'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
 class LocalApi {
   logger: ManageLogger

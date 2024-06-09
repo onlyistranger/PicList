@@ -7,7 +7,7 @@ import manageCoreIPC from '~/manage/events/manageCoreIPC'
 import { ManageApi } from '~/manage/manageApi'
 import { downloadFileFromUrl } from '~/manage/utils/common'
 
-import { selectDownloadFolder } from '@/manage/utils/static'
+import { selectDownloadFolder } from '#/utils/static'
 
 export const manageIpcList = {
   listen () {

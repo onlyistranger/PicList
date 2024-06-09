@@ -5,15 +5,14 @@ import windowManager from 'apis/app/window/windowManager'
 
 import SSHClient from '~/utils/sshClient'
 
-import UpDownTaskQueue, { commonTaskStatus, downloadTaskSpecialStatus, uploadTaskSpecialStatus } from '~/manage/datastore/upDownTaskQueue'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 import { formatError } from '~/manage/utils/common'
 import ManageLogger from '~/manage/utils/logger'
 
-import { isImage } from '@/manage/utils/common'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
-
-import { IWindowList } from '#/types/enum'
+import { commonTaskStatus, downloadTaskSpecialStatus, IWindowList, uploadTaskSpecialStatus } from '#/types/enum'
 import { Undefinable } from '#/types/manage'
+import { isImage } from '#/utils/common'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
 interface listDirResult {
   permissions: string

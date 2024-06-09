@@ -6,14 +6,13 @@ import qiniu from 'qiniu/index'
 
 import windowManager from 'apis/app/window/windowManager'
 
-import UpDownTaskQueue, { uploadTaskSpecialStatus, commonTaskStatus } from '~/manage/datastore/upDownTaskQueue'
+import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 import { hmacSha1Base64, getFileMimeType, NewDownloader, formatError, ConcurrencyPromisePool } from '~/manage/utils/common'
 import { ManageLogger } from '~/manage/utils/logger'
 
-import { isImage } from '@/manage/utils/common'
-import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '@/manage/utils/static'
-
-import { IWindowList } from '#/types/enum'
+import { commonTaskStatus, IWindowList, uploadTaskSpecialStatus } from '#/types/enum'
+import { isImage } from '#/utils/common'
+import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
 class QiniuApi {
   mac: qiniu.auth.digest.Mac

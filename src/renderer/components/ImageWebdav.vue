@@ -26,7 +26,7 @@ import { Loading } from '@element-plus/icons-vue'
 import { getAuthHeader } from '@/manage/utils/digestAuth'
 import { getFileIconPath } from '@/manage/utils/common'
 
-import { formatEndpoint } from '~/manage/utils/common'
+import { formatEndpoint } from '#/utils/common'
 
 const base64Url = ref('')
 const success = ref(false)
