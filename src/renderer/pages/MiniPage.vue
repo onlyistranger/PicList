@@ -4,7 +4,7 @@
   >
     <div
       id="upload-area"
-      :class="{ 'is-dragover': dragover, uploading: isShowingProgress, linux: os === 'linux' }"
+      :class="{ 'is-dragover': dragover, uploading: isShowingProgress, linux: osGlobal === 'linux' }"
       :style="{ backgroundPosition: '0 ' + progress + '%'}"
       @drop.prevent="onDrop"
       @dragover.prevent="dragover = true"
@@ -40,11 +40,12 @@ import { IConfig } from 'piclist'
 import { onBeforeUnmount, onBeforeMount, ref, watch } from 'vue'
 
 import { T as $T } from '@/i18n/index'
-import { sendToMain, invokeToMain } from '@/utils/common'
+import { invokeToMain, sendRPC } from '@/utils/common'
 import { getConfig } from '@/utils/dataSender'
+import { osGlobal } from '@/utils/global'
 
-import { SHOW_MINI_PAGE_MENU, SET_MINI_WINDOW_POS } from '#/events/constants'
 import { isUrl } from '#/utils/common'
+import { IRPCActionType } from '#/types/enum'
 
 const logoPath = ref('')
 const dragover = ref(false)
@@ -55,11 +56,10 @@ const wX = ref(-1)
 const wY = ref(-1)
 const screenX = ref(-1)
 const screenY = ref(-1)
-const os = ref('')
 
 async function initLogoPath () {
-  const config = (await getConfig<IConfig>())!
-  if (config !== undefined) {
+  const config = await getConfig<IConfig>()
+  if (config) {
     if (config.settings?.isCustomMiniIcon && config.settings?.customMiniIcon) {
       logoPath.value = 'data:image/jpg;base64,' + await invokeToMain('convertPathToBase64', config.settings.customMiniIcon)
     }
@@ -67,7 +67,6 @@ async function initLogoPath () {
 }
 
 onBeforeMount(async () => {
-  os.value = process.platform
   await initLogoPath()
   ipcRenderer.on('uploadProgress', (_: IpcRendererEvent, _progress: number) => {
     if (_progress !== -1) {
@@ -110,7 +109,7 @@ function onDrop (e: DragEvent) {
     } else if (items[0].type === 'text/plain') {
       const str = e.dataTransfer!.getData(items[0].type)
       if (isUrl(str)) {
-        sendToMain('uploadChoosedFiles', [{ path: str }])
+        sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, [{ path: str }])
       } else {
         $message.error($T('TIPS_DRAG_VALID_PICTURE_OR_URL'))
       }
@@ -124,7 +123,7 @@ function handleURLDrag (items: DataTransferItemList, dataTransfer: DataTransfer)
   const urlString = dataTransfer.getData(items[1].type)
   const urlMatch = urlString.match(/<img.*src="(.*?)"/)
   if (urlMatch) {
-    sendToMain('uploadChoosedFiles', [
+    sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, [
       {
         path: urlMatch[1]
       }
@@ -154,7 +153,7 @@ function ipcSendFiles (files: FileList) {
     }
     sendFiles.push(obj)
   })
-  sendToMain('uploadChoosedFiles', sendFiles)
+  sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, sendFiles)
 }
 
 function handleMouseDown (e: MouseEvent) {
@@ -171,7 +170,7 @@ function handleMouseMove (e: MouseEvent) {
   if (draggingState.value) {
     const xLoc = e.screenX - wX.value
     const yLoc = e.screenY - wY.value
-    sendToMain(SET_MINI_WINDOW_POS, {
+    sendRPC(IRPCActionType.SET_MINI_WINDOW_POS, {
       x: xLoc,
       y: yLoc,
       width: 64,
@@ -192,7 +191,7 @@ function handleMouseUp (e: MouseEvent) {
 }
 
 function openContextMenu () {
-  sendToMain(SHOW_MINI_PAGE_MENU)
+  sendRPC(IRPCActionType.SHOW_MINI_PAGE_MENU)
 }
 
 onBeforeUnmount(() => {

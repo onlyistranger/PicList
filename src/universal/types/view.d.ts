@@ -1,6 +1,5 @@
 interface ISettingForm {
-  updateHelper: boolean
-  showPicBedList: string[]
+  showUpdateTip: boolean
   autoStart: boolean
   rename: boolean
   autoRename: boolean
@@ -10,7 +9,7 @@ interface ISettingForm {
   autoCloseMiniWindow: boolean
   autoCloseMainWindow: boolean
   logLevel: string[]
-  autoCopyUrl: boolean
+  autoCopy: boolean
   useBuiltinClipboard: boolean
   logFileSizeLimit: number
   deleteCloudFile: boolean
@@ -34,6 +33,10 @@ interface ISettingForm {
   webServerHost: string
   webServerPort: number
   webServerPath: string
+  registry: string
+  proxy: string
+  mainWindowWidth: number
+  mainWindowHeight: number
 }
 
 interface IShortKeyMap {

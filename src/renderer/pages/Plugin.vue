@@ -80,7 +80,7 @@
       >
         <div
           class="plugin-item"
-          :class="{ 'darwin': os === 'darwin' }"
+          :class="{ 'darwin': osGlobal === 'darwin' }"
         >
           <div
             v-if="!item.gui"
@@ -241,16 +241,14 @@ import { computed, ref, onBeforeMount, onBeforeUnmount, watch, onMounted, reacti
 
 import ConfigForm from '@/components/ConfigFormForPlugin.vue'
 import { T as $T } from '@/i18n/index'
-import { sendToMain } from '@/utils/common'
-import { getConfig, saveConfig, sendRPC } from '@/utils/dataSender'
+import { sendRPC } from '@/utils/common'
+import { getConfig, saveConfig } from '@/utils/dataSender'
+import { osGlobal, updatePicBedGlobal } from '@/utils/global'
 
 import {
-  OPEN_URL,
   PICGO_CONFIG_PLUGIN,
   PICGO_HANDLE_PLUGIN_ING,
   PICGO_TOGGLE_PLUGIN,
-  SHOW_PLUGIN_PAGE_MENU,
-  GET_PICBEDS,
   PICGO_HANDLE_PLUGIN_DONE
 } from '#/events/constants'
 import { IRPCActionType } from '#/types/enum'
@@ -272,7 +270,6 @@ const pluginListToolTip = $T('PLUGIN_LIST')
 const importLocalPluginToolTip = $T('PLUGIN_IMPORT_LOCAL')
 const updateAllToolTip = $T('PLUGIN_UPDATE_ALL')
 // const id = ref('')
-const os = ref('')
 const defaultLogo = ref(`this.src="file://${__static.replace(/\\/g, '/')}/roundLogo.png"`)
 const $configForm = ref<InstanceType<typeof ConfigForm> | null>(null)
 const npmSearchText = computed(() => {
@@ -314,7 +311,6 @@ async function getLatestVersionOfPlugIn (pluginName: string) {
 }
 
 onBeforeMount(async () => {
-  os.value = process.platform
   ipcRenderer.on('hideLoading', () => {
     loading.value = false
   })
@@ -353,7 +349,7 @@ onBeforeMount(async () => {
         item.ing = false
         item.hasInstall = true
       }
-      getPicBeds()
+      updatePicBedGlobal()
     })
     handleReload()
     getPluginList()
@@ -368,7 +364,7 @@ onBeforeMount(async () => {
         if (item.config.uploader.name) {
           handleRestoreState('uploader', item.config.uploader.name)
         }
-        getPicBeds()
+        updatePicBedGlobal()
       }
       return item.fullName !== plugin
     })
@@ -392,7 +388,7 @@ onBeforeMount(async () => {
     const plugin = pluginList.value.find(item => item.fullName === fullName)
     if (plugin) {
       plugin.enabled = enabled
-      getPicBeds()
+      updatePicBedGlobal()
       needReload.value = true
     }
   })
@@ -402,7 +398,7 @@ onBeforeMount(async () => {
 })
 
 async function buildContextMenu (plugin: IPicGoPlugin) {
-  sendToMain(SHOW_PLUGIN_PAGE_MENU, plugin)
+  sendRPC(IRPCActionType.SHOW_PLUGIN_PAGE_MENU, plugin)
 }
 
 function handleResize () {
@@ -417,11 +413,7 @@ onMounted(() => {
 })
 
 function getPluginList () {
-  sendToMain('getPluginList')
-}
-
-function getPicBeds () {
-  sendToMain(GET_PICBEDS)
+  sendRPC(IRPCActionType.PLUGIN_GET_LIST)
 }
 
 function installPlugin (item: IPicGoPlugin) {
@@ -432,13 +424,13 @@ function installPlugin (item: IPicGoPlugin) {
       type: 'warning'
     }).then(() => {
       item.ing = true
-      sendToMain('installPlugin', item.fullName)
+      sendRPC(IRPCActionType.PLUGIN_INSTALL, item.fullName)
     }).catch(() => {
       console.log('Install canceled')
     })
   } else {
     item.ing = true
-    sendToMain('installPlugin', item.fullName)
+    sendRPC(IRPCActionType.PLUGIN_INSTALL, item.fullName)
   }
 }
 
@@ -558,21 +550,21 @@ async function handleRestoreState (item: string, name: string) {
 
 function openHomepage (url: string) {
   if (url) {
-    sendToMain(OPEN_URL, url)
+    sendRPC(IRPCActionType.OPEN_URL, url)
   }
 }
 
 function goAwesomeList () {
-  sendToMain(OPEN_URL, 'https://github.com/PicGo/Awesome-PicGo')
+  sendRPC(IRPCActionType.OPEN_URL, 'https://github.com/PicGo/Awesome-PicGo')
 }
 
 function handleImportLocalPlugin () {
-  sendToMain('importLocalPlugin')
+  sendRPC(IRPCActionType.PLUGIN_IMPORT_LOCAL)
   loading.value = true
 }
 
 function handleUpdateAllPlugin () {
-  sendToMain('updateAllPlugin', toRaw(pluginNameList.value))
+  sendRPC(IRPCActionType.PLUGIN_UPDATE_ALL, toRaw(pluginNameList.value))
 }
 
 onBeforeUnmount(() => {

@@ -17,6 +17,7 @@ import { FORCE_UPDATE } from '#/events/constants'
 
 useATagClick()
 const store = useStore()
+
 onBeforeMount(async () => {
   const config = await getConfig<IConfig>()
   if (config) {

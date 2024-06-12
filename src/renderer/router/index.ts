@@ -32,34 +32,34 @@ export default createRouter({
         {
           path: 'manage-main-page',
           name: config.MANAGE_MAIN_PAGE,
-          component: () => import(/* webpackChunkName: "ManageMainPage" */ '@/manage/pages/manageMain.vue'),
+          component: () => import(/* webpackChunkName: "ManageMainPage" */ '@/manage/pages/ManageMain.vue'),
           children: [
             {
               path: '',
               name: config.MANAGE_EMPTY_PAGE,
-              component: () => import(/* webpackChunkName: "ManageEmptyPage" */ '@/manage/pages/emptyPage.vue')
+              component: () => import(/* webpackChunkName: "ManageEmptyPage" */ '@/manage/pages/EmptyPage.vue')
             },
             {
               path: 'manage-setting-page',
               name: config.MANAGE_SETTING_PAGE,
-              component: () => import(/* webpackChunkName: "ManageSettingPage" */ '@/manage/pages/manageSetting.vue')
+              component: () => import(/* webpackChunkName: "ManageSettingPage" */ '@/manage/pages/ManageSetting.vue')
             },
             {
               path: 'manage-bucket-page',
               name: config.MANAGE_BUCKET_PAGE,
-              component: () => import(/* webpackChunkName: "ManageBucketPage" */ '@/manage/pages/bucketPage.vue')
+              component: () => import(/* webpackChunkName: "ManageBucketPage" */ '@/manage/pages/BucketPage.vue')
             }
           ]
         },
         {
           path: 'manage-login-page',
           name: config.MANAGE_LOGIN_PAGE,
-          component: () => import(/* webpackChunkName: "ManageLoginPage" */ '@/manage/pages/logIn.vue')
+          component: () => import(/* webpackChunkName: "ManageLoginPage" */ '@/manage/pages/LogInPage.vue')
         },
         {
           path: 'picbeds/:type/:configId?',
-          component: () => import(/* webpackChunkName: "Other" */ '@/pages/picbeds/index.vue'),
-          name: config.PICBEDS_PAGE
+          name: config.PICBEDS_PAGE,
+          component: () => import(/* webpackChunkName: "Other" */ '@/pages/picbeds/index.vue')
         },
         {
           path: 'gallery',
@@ -71,8 +71,8 @@ export default createRouter({
         },
         {
           path: 'setting',
-          component: () => import(/* webpackChunkName: "setting" */ '@/pages/PicGoSetting.vue'),
-          name: config.SETTING_PAGE
+          name: config.SETTING_PAGE,
+          component: () => import(/* webpackChunkName: "setting" */ '@/pages/PicGoSetting.vue')
         },
         {
           path: 'plugin',

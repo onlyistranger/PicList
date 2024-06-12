@@ -6,7 +6,7 @@ import {
   Notification,
   WebContents
 } from 'electron'
-import fse from 'fs-extra'
+import fs from 'fs-extra'
 import util from 'util'
 import path from 'path'
 import { IPicGo } from 'piclist'
@@ -26,7 +26,7 @@ import {
   RENAME_FILE_NAME,
   TALKING_DATA_EVENT
 } from '#/events/constants'
-import { IWindowList } from '#/types/enum'
+import { ICOREBuildInEvent, IWindowList } from '#/types/enum'
 import { configPaths } from '#/utils/configPaths'
 import { CLIPBOARD_IMAGE_FOLDER } from '#/utils/static'
 
@@ -61,21 +61,22 @@ const handleTalkingData = (webContents: WebContents, options: IAnalyticsData) =>
 
 class Uploader {
   private webContents: WebContents | null = null
-  // private uploading: boolean = false
+
   constructor () {
     this.init()
   }
 
   init () {
-    picgo.on('notification', (message: Electron.NotificationConstructorOptions | undefined) => {
+    picgo.on(ICOREBuildInEvent.NOTIFICATION, (message: Electron.NotificationConstructorOptions | undefined) => {
       const notification = new Notification(message)
       notification.show()
     })
 
-    picgo.on('uploadProgress', (progress: any) => {
+    picgo.on(ICOREBuildInEvent.UPLOAD_PROGRESS, (progress: any) => {
       this.webContents?.send('uploadProgress', progress)
     })
-    picgo.on('beforeTransform', () => {
+
+    picgo.on(ICOREBuildInEvent.BEFORE_TRANSFORM, () => {
       if (db.get(configPaths.settings.uploadNotification)) {
         const notification = new Notification({
           title: T('UPLOAD_PROGRESS'),
@@ -84,6 +85,7 @@ class Uploader {
         notification.show()
       }
     })
+
     picgo.helper.beforeUploadPlugins.register('renameFn', {
       handle: async (ctx: IPicGo) => {
         const rename = db.get(configPaths.settings.rename)
@@ -150,7 +152,7 @@ class Uploader {
       return false
     } finally {
       if (filePath) {
-        fse.remove(filePath)
+        fs.remove(filePath)
       }
     }
   }

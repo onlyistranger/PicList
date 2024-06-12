@@ -65,7 +65,7 @@ class GuiApi implements IGuiApi {
     await this.showSettingWindow()
     this.getWebcontentsByWindowId(this.settingWindowId)?.send(SHOW_INPUT_BOX, options)
     return new Promise<string>((resolve) => {
-      ipcMain.once(SHOW_INPUT_BOX, (event: Event, value: string) => {
+      ipcMain.once(SHOW_INPUT_BOX, (_: Event, value: string) => {
         resolve(value)
       })
     })

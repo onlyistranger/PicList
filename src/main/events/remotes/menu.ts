@@ -3,7 +3,9 @@ import {
   dialog,
   BrowserWindow,
   Menu,
-  shell
+  shell,
+  MenuItemConstructorOptions,
+  MenuItem
 } from 'electron'
 import { PicGo as PicGoCore } from 'piclist'
 
@@ -16,7 +18,7 @@ import {
 import windowManager from 'apis/app/window/windowManager'
 import GuiApi from 'apis/gui'
 
-import picgoCoreIPC from '~/events/picgoCoreIPC'
+import { handlePluginUninstall, handlePluginUpdate } from '~/events/rpc/routes/plugin/utils'
 import { T } from '~/i18n'
 import clipboardPoll from '~/utils/clipboardPoll'
 import { setTrayToolTip } from '~/utils/common'
@@ -34,6 +36,7 @@ import { IWindowList } from '#/types/enum'
 import { configPaths } from '#/utils/configPaths'
 
 import pkg from 'root/package.json'
+import { openMainWindow } from '~/utils/windowHelper'
 
 interface GuiMenuItem {
   label: string
@@ -44,18 +47,10 @@ const buildMiniPageMenu = () => {
   const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
   const ClipboardWatcher = clipboardPoll
   const submenu = buildPicBedListMenu()
-  const template = [
+  const template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [
     {
       label: T('OPEN_MAIN_WINDOW'),
-      click () {
-        windowManager.get(IWindowList.SETTING_WINDOW)!.show()
-        const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
-        if (autoCloseMiniWindow) {
-          if (windowManager.has(IWindowList.MINI_WINDOW)) {
-            windowManager.get(IWindowList.MINI_WINDOW)!.hide()
-          }
-        }
-      }
+      click: openMainWindow
     },
     {
       label: T('CHOOSE_DEFAULT_PICBED'),
@@ -69,7 +64,7 @@ const buildMiniPageMenu = () => {
       }
     },
     {
-      label: T('HIDE_WINDOW'),
+      label: T('HIDE_MINI_WINDOW'),
       click () {
         BrowserWindow.getFocusedWindow()!.hide()
       }
@@ -85,7 +80,7 @@ const buildMiniPageMenu = () => {
         })
         buildMiniPageMenu()
       },
-      enabled: !isListeningClipboard
+      visible: !isListeningClipboard
     },
     {
       label: T('STOP_WATCH_CLIPBOARD'),
@@ -95,7 +90,7 @@ const buildMiniPageMenu = () => {
         ClipboardWatcher.removeAllListeners()
         buildMiniPageMenu()
       },
-      enabled: isListeningClipboard
+      visible: isListeningClipboard
     },
     {
       label: T('RELOAD_APP'),
@@ -109,7 +104,6 @@ const buildMiniPageMenu = () => {
       label: T('QUIT')
     }
   ]
-  // @ts-ignore
   return Menu.buildFromTemplate(template)
 }
 
@@ -269,14 +263,14 @@ const buildPluginPageMenu = (plugin: IPicGoPlugin) => {
     click () {
       const window = windowManager.get(IWindowList.SETTING_WINDOW)!
       window.webContents.send(PICGO_HANDLE_PLUGIN_ING, plugin.fullName)
-      picgoCoreIPC.handlePluginUninstall(plugin.fullName)
+      handlePluginUninstall(plugin.fullName)
     }
   }, {
     label: T('UPDATE_PLUGIN'),
     click () {
       const window = windowManager.get(IWindowList.SETTING_WINDOW)!
       window.webContents.send(PICGO_HANDLE_PLUGIN_ING, plugin.fullName)
-      picgoCoreIPC.handlePluginUpdate(plugin.fullName)
+      handlePluginUpdate(plugin.fullName)
     }
   }]
   for (const i in plugin.config) {
@@ -330,7 +324,6 @@ const buildPluginPageMenu = (plugin: IPicGoPlugin) => {
       menu.push({
         label: i.label,
         click () {
-          // ipcRenderer.send('pluginActions', plugin.fullName, i.label)
           const picgPlugin = picgo.pluginLoader.getPlugin(plugin.fullName)
           if (picgPlugin?.guiMenu?.(picgo)?.length) {
             const menu: GuiMenuItem[] = picgPlugin.guiMenu(picgo)

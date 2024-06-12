@@ -32,8 +32,7 @@ import {
 import windowManager from 'apis/app/window/windowManager'
 
 import busEventList from '~/events/busEventList'
-import ipcList from '~/events/ipcList'
-import { startFileServer } from '~/fileServer'
+import { startFileServer, stopFileServer } from '~/fileServer'
 import { T } from '~/i18n'
 import '~/lifeCycle/errorHandler'
 import fixPath from '~/lifeCycle/fixPath'
@@ -52,6 +51,7 @@ import updateChecker from '~/utils/updateChecker'
 import { II18nLanguage, IRemoteNoticeTriggerHook, ISartMode, IWindowList } from '#/types/enum'
 import { configPaths } from '#/utils/configPaths'
 import { CLIPBOARD_IMAGE_FOLDER } from '#/utils/static'
+import { rpcServer } from '~/events/rpc'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -146,7 +146,7 @@ class LifeCycle {
     fixPath()
     beforeOpen()
     initI18n()
-    ipcList.listen()
+    rpcServer.start()
     getManageApi()
     UpDownTaskQueue.getInstance()
     manageIpcList.listen()
@@ -285,6 +285,8 @@ class LifeCycle {
       globalShortcut.unregisterAll()
       bus.removeAllListeners()
       server.shutdown()
+      webServer.stop()
+      stopFileServer()
     })
     // Exit cleanly on request from parent process in development mode.
     if (isDevelopment) {

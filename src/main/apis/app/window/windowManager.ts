@@ -6,6 +6,7 @@ import { IWindowList } from '#/types/enum'
 class WindowManager implements IWindowManager {
   #windowMap: Map<IWindowList | string, BrowserWindow> = new Map()
   #windowIdMap: Map<number, IWindowList | string> = new Map()
+
   create (name: IWindowList) {
     const windowConfig: IWindowListItem = windowList.get(name)!
     if (windowConfig.isValid) {

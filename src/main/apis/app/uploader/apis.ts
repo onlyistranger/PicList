@@ -4,26 +4,18 @@ import {
 } from 'electron'
 import fs from 'fs-extra'
 import { cloneDeep } from 'lodash'
-import path from 'path'
-import { ISftpPlistConfig } from 'piclist'
 
 import picgo from '@core/picgo'
 import db, { GalleryDB } from '@core/datastore'
 
-import GuiApi from 'apis/gui'
 import uploader from 'apis/app/uploader'
 import windowManager from 'apis/app/window/windowManager'
 
 import { T } from '~/i18n/index'
 import { handleCopyUrl, handleUrlEncodeWithSetting } from '~/utils/common'
 import pasteTemplate from '~/utils/pasteTemplate'
-import SSHClient from '~/utils/sshClient'
-
-import ALLApi from '@/apis/allApi'
-import { getRawData } from '@/utils/common'
 
 import { IPasteStyle, IWindowList } from '#/types/enum'
-import { picBedsCanbeDeleted } from '#/utils/static'
 import { configPaths } from '#/utils/configPaths'
 
 const handleClipboardUploading = async (): Promise<false | ImgInfo[]> => {
@@ -128,63 +120,4 @@ export const uploadChoosedFiles = async (webContents: WebContents, files: IFileW
   } else {
     return []
   }
-}
-
-async function deleteSFTPFile (config: ISftpPlistConfig, fileName: string) {
-  try {
-    const client = SSHClient.instance
-    await client.connect(config)
-    const uploadPath = `/${(config.uploadPath || '')}/`.replace(/\/+/g, '/')
-    const remote = path.join(uploadPath, fileName)
-    const deleteResult = await client.deleteFileSFTP(config, remote)
-    client.close()
-    return deleteResult
-  } catch (err: any) {
-    picgo.log.error(err)
-    return false
-  }
-}
-
-export const deleteChoosedFiles = async (list: ImgInfo[]): Promise<boolean[]> => {
-  const result = []
-  for (const item of list) {
-    if (item.id) {
-      try {
-        const dbStore = GalleryDB.getInstance()
-        const file = await dbStore.getById(item.id)
-        await dbStore.removeById(item.id)
-        if (await picgo.getConfig(configPaths.settings.deleteCloudFile)) {
-          if (item.type !== undefined && picBedsCanbeDeleted.includes(item.type)) {
-            const noteFunc = (value: boolean) => {
-              const notification = new Notification({
-                title: T('MANAGE_BUCKET_BATCH_DELETE_ERROR_MSG_MSG2'),
-                body: T(value ? 'GALLERY_SYNC_DELETE_NOTICE_SUCCEED' : 'GALLERY_SYNC_DELETE_NOTICE_FAILED')
-              })
-              notification.show()
-            }
-            if (item.type === 'sftpplist') {
-              const { fileName, config } = item
-              setTimeout(() => {
-                deleteSFTPFile(getRawData(config), fileName || '').then(noteFunc)
-              }, 0)
-            } else {
-              setTimeout(() => {
-                ALLApi.delete(item).then(noteFunc)
-              }, 0)
-            }
-          }
-        }
-        setTimeout(() => {
-          picgo.emit('remove', [file], GuiApi.getInstance())
-        }, 500)
-        result.push(true)
-      } catch (e) {
-        result.push(false)
-      }
-    }
-  }
-  if (windowManager.has(IWindowList.SETTING_WINDOW)) {
-    windowManager.get(IWindowList.SETTING_WINDOW)!.webContents?.send('updateGallery')
-  }
-  return result
 }

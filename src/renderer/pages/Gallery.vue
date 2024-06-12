@@ -68,7 +68,7 @@
                 teleported
               >
                 <el-option
-                  v-for="item in picBed"
+                  v-for="item in picBedGlobal"
                   :key="item.type"
                   :label="item.name"
                   :value="item.type"
@@ -462,8 +462,7 @@
 <script lang="ts" setup>
 import {
   ipcRenderer,
-  clipboard,
-  IpcRendererEvent
+  clipboard
 } from 'electron'
 import { CheckboxValueType, ElMessageBox, ElNotification, ElMessage } from 'element-plus'
 import { InfoFilled, Close, CaretBottom, Document, Edit, Delete, CaretTop, Sort, Refresh } from '@element-plus/icons-vue'
@@ -475,14 +474,14 @@ import type { IResult } from '@picgo/store/dist/types'
 import ALLApi from '@/apis/allApi'
 import { T as $T } from '@/i18n/index'
 import { customRenameFormatTable, customStrMatch, customStrReplace } from '@/manage/utils/common'
-import { sendToMain } from '@/utils/common'
+import { sendRPC, triggerRPC } from '@/utils/common'
 import { getConfig, saveConfig } from '@/utils/dataSender'
 import $$db from '@/utils/db'
+import { picBedGlobal } from '@/utils/global'
 
-import { PASTE_TEXT, GET_PICBEDS } from '#/events/constants'
 import { configPaths } from '#/utils/configPaths'
 import { picBedsCanbeDeleted } from '#/utils/static'
-import { IPasteStyle } from '#/types/enum'
+import { IPasteStyle, IRPCActionType } from '#/types/enum'
 
 const images = ref<ImgInfo[]>([])
 const dialogVisible = ref(false)
@@ -529,7 +528,6 @@ const mathcedCount = computed(() => {
   return matchedFiles.length
 })
 const dateRange = ref('')
-const picBed = ref<IPicBedType[]>([])
 onBeforeRouteUpdate((to, from) => {
   if (from.name === 'gallery') {
     clearChoosedList()
@@ -551,8 +549,6 @@ onBeforeMount(async () => {
       updateGallery()
     })
   })
-  sendToMain(GET_PICBEDS)
-  ipcRenderer.on(GET_PICBEDS, getPicBeds)
   updateGallery()
 
   document.addEventListener('keydown', handleDetectShiftKey)
@@ -586,10 +582,6 @@ const isAllSelected = computed(() => {
 
 function formatFileName (name: string) {
   return path.basename(name)
-}
-
-function getPicBeds (event: IpcRendererEvent, picBeds: IPicBedType[]) {
-  picBed.value = picBeds
 }
 
 function getGallery (): IGalleryItem[] {
@@ -636,7 +628,7 @@ function getGallery (): IGalleryItem[] {
 }
 
 async function updateGallery () {
-  images.value = (await $$db.get({ orderBy: 'desc' })).data
+  images.value = (await $$db.get({ orderBy: 'desc' }))!.data
 }
 
 watch(() => filterList, () => {
@@ -659,7 +651,7 @@ function handleChooseImage (val: CheckboxValueType, index: number) {
 }
 
 function refreshPage () {
-  ipcRenderer.send('refreshSettingWindow')
+  sendRPC(IRPCActionType.REFRESH_SETTING_WINDOW)
 }
 
 function clearChoosedList () {
@@ -694,7 +686,7 @@ function handleClose () {
 
 async function copy (item: ImgInfo) {
   item.config = JSON.parse(JSON.stringify(item.config) || '{}')
-  const copyLink = await ipcRenderer.invoke(PASTE_TEXT, item)
+  const copyLink = await triggerRPC<string>(IRPCActionType.GALLERY_PASTE_TEXT, item)
   const obj = {
     title: $T('COPY_LINK_SUCCEED'),
     body: copyLink
@@ -733,7 +725,7 @@ function remove (item: ImgInfo) {
       }
     }
     await $$db.removeById(item.id!)
-    sendToMain('removeFiles', [file])
+    sendRPC(IRPCActionType.GALLERY_REMOVE_FILES, [file])
     const obj = {
       title: $T('OPERATION_SUCCEED'),
       body: ''
@@ -858,7 +850,7 @@ function multiRemove () {
         title: $T('OPERATION_SUCCEED'),
         body: ''
       }
-      sendToMain('removeFiles', files)
+      sendRPC(IRPCActionType.GALLERY_REMOVE_FILES, files)
       const myNotification = new Notification(obj.title, obj)
       myNotification.onclick = () => {
         return true
@@ -880,8 +872,8 @@ async function multiCopy () {
       if (choosedList[key]) {
         const item = await $$db.getById<ImgInfo>(key)
         if (item) {
-          const txt = await ipcRenderer.invoke(PASTE_TEXT, item)
-          copyString.push(txt)
+          const txt = await triggerRPC<string>(IRPCActionType.GALLERY_PASTE_TEXT, item)
+          copyString.push(txt!)
           choosedList[key] = false
         }
       }
@@ -1026,7 +1018,6 @@ function handleBatchRename () {
 
 onBeforeUnmount(() => {
   ipcRenderer.removeAllListeners('updateGallery')
-  ipcRenderer.removeListener(GET_PICBEDS, getPicBeds)
 })
 
 onActivated(async () => {

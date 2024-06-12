@@ -12,7 +12,6 @@ import {
 import bus from '@core/bus'
 import { CREATE_APP_MENU } from '@core/bus/constants'
 import db from '@core/datastore'
-import picgo from '@core/picgo'
 
 import { T } from '~/i18n'
 
@@ -25,16 +24,14 @@ const windowList = new Map<IWindowList, IWindowListItem>()
 const handleWindowParams = (windowURL: string) => windowURL
 
 const getDefaultWindowSizes = (): { width: number, height: number } => {
-  const mainWindowWidth = picgo.getConfig<any>(configPaths.settings.mainWindowWidth)
-  const mainWindowHeight = picgo.getConfig<any>(configPaths.settings.mainWindowHeight)
+  const [mainWindowWidth, mainWindowHeight] = db.get([configPaths.settings.mainWindowWidth, configPaths.settings.mainWindowHeight])
   return {
     width: mainWindowWidth || 1200,
     height: mainWindowHeight || 800
   }
 }
 
-const defaultWindowWidth = getDefaultWindowSizes().width
-const defaultWindowHeight = getDefaultWindowSizes().height
+const { width: defaultWindowWidth, height: defaultWindowHeight } = getDefaultWindowSizes()
 
 const trayWindowOptions = {
   height: 350,

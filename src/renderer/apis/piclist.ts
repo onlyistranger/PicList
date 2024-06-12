@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 
-import { deleteFailedLog, deleteLog } from '@/utils/common'
+import { deleteFailedLog, deleteLog } from '#/utils/deleteLog'
 
 export default class PiclistApi {
   static async delete (configMap: IStringKeyMap): Promise<boolean> {

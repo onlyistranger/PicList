@@ -1,34 +1,16 @@
-import { ipcRenderer, IpcRendererEvent } from 'electron'
-import { v4 as uuid } from 'uuid'
+import { ipcRenderer } from 'electron'
 
 import { getRawData } from '@/utils/common'
 
 import { PICLIST_MANAGE_GET_CONFIG, PICLIST_MANAGE_SAVE_CONFIG, PICLIST_MANAGE_REMOVE_CONFIG } from '~/manage/events/constants'
 
-export function getConfig<T> (key?: string): Promise<T | undefined> {
-  return new Promise((resolve) => {
-    const callbackId = uuid()
-    const callback = (_: IpcRendererEvent, config: T | undefined, returnCallbackId: string) => {
-      if (returnCallbackId === callbackId) {
-        resolve(config)
-        ipcRenderer.removeListener(PICLIST_MANAGE_GET_CONFIG, callback)
-      }
-    }
-    ipcRenderer.on(PICLIST_MANAGE_GET_CONFIG, callback)
-    ipcRenderer.send(PICLIST_MANAGE_GET_CONFIG, key, callbackId)
-  })
+export function saveConfig (config: IObj | string, value?: any) {
+  const configObj = typeof config === 'string' ? { [config]: value } : getRawData(config)
+  ipcRenderer.send(PICLIST_MANAGE_SAVE_CONFIG, configObj)
 }
 
-export function saveConfig (_config: IObj | string, value?: any) {
-  let config
-  if (typeof _config === 'string') {
-    config = {
-      [_config]: value
-    }
-  } else {
-    config = getRawData(_config)
-  }
-  ipcRenderer.send(PICLIST_MANAGE_SAVE_CONFIG, config)
+export async function getConfig<T> (key?: string): Promise<T | undefined> {
+  return await ipcRenderer.invoke(PICLIST_MANAGE_GET_CONFIG, key)
 }
 
 export function removeConfig (key: string, propName: string) {

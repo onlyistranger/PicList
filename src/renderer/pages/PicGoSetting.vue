@@ -74,13 +74,13 @@
                       :value="'quiet'"
                     />
                     <el-option
-                      v-if="os !== 'darwin'"
+                      v-if="osGlobal !== 'darwin'"
                       key="mini"
                       :label="$T('SETTINGS_START_MODE_MINI')"
                       :value="'mini'"
                     />
                     <el-option
-                      v-if="os === 'darwin'"
+                      v-if="osGlobal === 'darwin'"
                       key="no-tray"
                       :label="$T('SETTINGS_START_MODE_NO_TRAY')"
                       :value="'no-tray'"
@@ -113,7 +113,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item
-                  v-if="os === 'darwin'"
+                  v-if="osGlobal === 'darwin'"
                   :label="$T('SETTINGS_ISHIDEDOCK')"
                 >
                   <el-switch
@@ -136,7 +136,7 @@
                   </el-button>
                 </el-form-item>
                 <el-form-item
-                  v-if="os !== 'darwin'"
+                  v-if="osGlobal !== 'darwin'"
                   :label="$T('SETTINGS_CLOSE_MINI_WINDOW_SYNC')"
                 >
                   <el-switch
@@ -146,7 +146,7 @@
                   />
                 </el-form-item>
                 <el-form-item
-                  v-if="os !== 'darwin'"
+                  v-if="osGlobal !== 'darwin'"
                   :label="$T('SETTINGS_CLOSE_MAIN_WINDOW_SYNC')"
                 >
                   <el-switch
@@ -156,7 +156,7 @@
                   />
                 </el-form-item>
                 <el-form-item
-                  v-if="os !== 'darwin'"
+                  v-if="osGlobal !== 'darwin'"
                   :label="$T('SETTINGS_MINI_WINDOW_ON_TOP')"
                 >
                   <el-switch
@@ -167,7 +167,7 @@
                   />
                 </el-form-item>
                 <el-form-item
-                  v-if="os !== 'darwin'"
+                  v-if="osGlobal !== 'darwin'"
                   :label="$T('SETTINGS_CUSTOM_MINI_ICON')"
                 >
                   <el-switch
@@ -177,7 +177,7 @@
                   />
                 </el-form-item>
                 <el-form-item
-                  v-if="os !== 'darwin' && formOfSetting.isCustomMiniIcon"
+                  v-if="osGlobal !== 'darwin' && formOfSetting.isCustomMiniIcon"
                   :label="$T('SETTINGS_CUSTOM_MINI_ICON_PATH')"
                 >
                   <el-button
@@ -336,7 +336,7 @@
                     teleported
                   >
                     <el-option
-                      v-for="item in picBed"
+                      v-for="item in picBedGlobal"
                       :key="item.type"
                       :label="item.name"
                       :value="item.type"
@@ -425,7 +425,7 @@
                   :label="$T('SETTINGS_AUTO_COPY_URL_AFTER_UPLOAD')"
                 >
                   <el-switch
-                    v-model="formOfSetting.autoCopyUrl"
+                    v-model="formOfSetting.autoCopy"
                     :active-text="$T('SETTINGS_OPEN')"
                     :inactive-text="$T('SETTINGS_CLOSE')"
                   />
@@ -563,11 +563,11 @@
                   :label="$T('CHOOSE_SHOWED_PICBED')"
                 >
                   <el-checkbox-group
-                    v-model="formOfSetting.showPicBedList"
+                    v-model="showPicBedList"
                     @change="handleShowPicBedListChange"
                   >
                     <el-checkbox
-                      v-for="item in picBed"
+                      v-for="item in picBedGlobal"
                       :key="item.name"
                       :label="item.name"
                       :value="item.name"
@@ -730,7 +730,7 @@
       <el-form
         ref="$customLink"
         label-position="top"
-        :model="formOfSetting.customLink"
+        :model="customLink"
         :rules="rules"
         size="small"
       >
@@ -745,7 +745,7 @@
             {{ $T('SETTINGS_TIPS_PLACEHOLDER_EXTNAME') }}
           </div>
           <el-input
-            v-model="formOfSetting.customLink"
+            v-model="customLink.value"
             class="align-center"
             :autofocus="true"
           />
@@ -781,7 +781,6 @@
     >
       <el-form
         label-position="right"
-        :model="formOfSetting.customLink"
         label-width="120px"
       >
         <el-form-item
@@ -825,7 +824,6 @@
     >
       <el-form
         label-position="right"
-        :model="formOfSetting.customLink"
         label-width="120px"
       >
         <el-form-item
@@ -1378,27 +1376,26 @@
 
 <script lang="ts" setup>
 import { compare } from 'compare-versions'
-import { ipcRenderer } from 'electron'
 import { ElForm, ElMessage as $message, ElMessage, ElMessageBox, FormRules } from 'element-plus'
 import { Reading, Close, Edit, InfoFilled } from '@element-plus/icons-vue'
 import { IConfig } from 'piclist'
-import { computed, onBeforeMount, onBeforeUnmount, reactive, ref, toRaw, watch } from 'vue'
+import { computed, onBeforeMount, reactive, ref, toRaw, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 import ImageProcessSetting from '@/components/ImageProcessSetting.vue'
 import { i18nManager, T as $T } from '@/i18n/index'
 import { buildInRenameFormatTable } from '@/manage/utils/common'
 import { SHORTKEY_PAGE } from '@/router/config'
-import { getConfig, saveConfig, sendRPC } from '@/utils/dataSender'
+import { getConfig, saveConfig } from '@/utils/dataSender'
+import { osGlobal, picBedGlobal, updatePicBedGlobal } from '@/utils/global'
 
-import { PICGO_OPEN_FILE, PICGO_OPEN_DIRECTORY, OPEN_URL, GET_PICBEDS, HIDE_DOCK } from '#/events/constants'
 import { II18nLanguage, IRPCActionType, ISartMode } from '#/types/enum'
 import { enforceNumber } from '#/utils/common'
 import { configPaths, ISartModeValues } from '#/utils/configPaths'
 import { getLatestVersion } from '#/utils/getLatestVersion'
 
 import pkg from 'root/package.json'
-import { invokeToMain, sendToMain } from '@/utils/common'
+import { invokeToMain, sendRPC, triggerRPC } from '@/utils/common'
 
 const $router = useRouter()
 const activeName = ref<'system' | 'syncAndConfigure' | 'upload' | 'advanced' | 'upadte'>('system')
@@ -1435,7 +1432,12 @@ const manualPageOpenList = [{
   value: 'browser'
 }]
 
-const picBed = ref<IPicBedType[]>([])
+const showPicBedList = computed(() => picBedGlobal.value.map(item => {
+  if (item.visible) {
+    return item.name
+  }
+  return null
+}).filter(item => item) as string[])
 
 const $customLink = ref<InstanceType<typeof ElForm> | null>(null)
 
@@ -1447,9 +1449,8 @@ const customLinkRule = (_: any, value: string, callback: (arg0?: Error) => void)
   }
 }
 
-const formOfSetting = ref<IStringKeyMap>({
+const formOfSetting = ref<ISettingForm>({
   showUpdateTip: true,
-  showPicBedList: [],
   autoStart: false,
   rename: false,
   autoRename: false,
@@ -1483,29 +1484,33 @@ const formOfSetting = ref<IStringKeyMap>({
   webServerHost: '0.0.0.0',
   webServerPort: 37777,
   webServerPath: '',
-  customLink: '![$fileName]($url)',
   registry: '',
   proxy: '',
   mainWindowWidth: 1200,
   mainWindowHeight: 800
 })
+
 const proxy = ref('')
 const formKeys = Object.keys(formOfSetting.value)
 const autoWatchKeys = ['showUpdateTip', 'autoImport', 'autoImportPicBed', 'useBuiltinClipboard', 'isAutoListenClipboard', 'deleteCloudFile', 'deleteLocalFile', 'rename', 'autoRename', 'enableWebServer', 'webServerHost', 'webServerPath', 'serverKey', 'uploadNotification', 'uploadResultNotification', 'autoCloseMainWindow', 'autoCloseMiniWindow', 'isCustomMiniIcon', 'c1nToken', 'yourlsDomain', 'yourlsSignature', 'cfWorkerHost', 'registry', 'proxy', 'autoCopy', 'encodeOutputURL', 'useShortUrl']
 
-autoWatchKeys.forEach(key => {
-  watch(() => formOfSetting.value[key], (value) => {
-    saveConfig({
-      [`settings.${key}`]: value
+const addWatch = () => {
+  autoWatchKeys.forEach(key => {
+    watch(() => formOfSetting.value[key as keyof ISettingForm], value => {
+      saveConfig({
+        [`settings.${key}`]: value
+      })
     })
   })
-})
+}
 
-watch(proxy, (value) => {
-  saveConfig({
-    'picBed.proxy': value
+const addProxyWatch = () => {
+  watch(proxy, (value) => {
+    saveConfig({
+      'picBed.proxy': value
+    })
   })
-})
+}
 
 const valueToOptionItem = (value: any, list: { label: string, value: any }[]) => {
   return list.find(item => item.value === value) || list[0]
@@ -1529,6 +1534,10 @@ const advancedRenameVisible = ref(false)
 const imageProcessDialogVisible = ref(false)
 
 const rawPicGoSize = ref(false)
+
+const customLink = reactive({
+  value: '![$fileName]($url)'
+})
 
 const rules = reactive<FormRules>({
   value: [
@@ -1592,7 +1601,6 @@ function confirmSyncSetting () {
 
 const version = pkg.version
 const latestVersion = ref('')
-const os = ref('')
 
 const needUpdate = computed(() => {
   if (latestVersion.value) {
@@ -1602,9 +1610,6 @@ const needUpdate = computed(() => {
 })
 
 onBeforeMount(() => {
-  os.value = process.platform
-  sendToMain(GET_PICBEDS)
-  ipcRenderer.on(GET_PICBEDS, getPicBeds)
   initData()
 })
 
@@ -1613,7 +1618,7 @@ async function initData () {
   const settings = config.settings || {}
   const picBed = config.picBed
   formKeys.forEach(key => {
-    formOfSetting.value[key] = settings[key] ?? formOfSetting.value[key]
+    (formOfSetting.value as any)[key as keyof ISettingForm] = settings[key] ?? formOfSetting.value[key as keyof ISettingForm]
   })
   formOfSetting.value.logLevel = initArray(settings.logLevel || [], ['all'])
   formOfSetting.value.autoImportPicBed = initArray(settings.autoImportPicBed || [], [])
@@ -1621,6 +1626,7 @@ async function initData () {
   currentStartMode.value = valueToOptionItem(settings.startMode || ISartMode.QUIET, startModeList)
   currentManualPageOpen.value = valueToOptionItem(settings.manualPageOpen || 'window', manualPageOpenList)
   currentShortUrlServer.value = valueToOptionItem(settings.shortUrlServer || 'c1n', shortUrlServerList)
+  customLink.value = settings.customLink || '![$fileName]($url)'
   proxy.value = picBed.proxy || ''
   server.value = settings.server || {
     port: 36677,
@@ -1648,6 +1654,8 @@ async function initData () {
     interval: 60
   }
   formOfSetting.value.logFileSizeLimit = enforceNumber(settings.logFileSizeLimit) || 10
+  addProxyWatch()
+  addWatch()
 }
 
 function initArray (arrayT: string | string[], defaultValue: string[]) {
@@ -1661,18 +1669,8 @@ function initArray (arrayT: string | string[], defaultValue: string[]) {
   return arrayT
 }
 
-function getPicBeds (_: Event, picBeds: IPicBedType[]) {
-  picBed.value = picBeds
-  formOfSetting.value.showPicBedList = picBed.value.map(item => {
-    if (item.visible) {
-      return item.name
-    }
-    return null
-  }).filter(item => item) as string[]
-}
-
 function openFile (file: string) {
-  sendToMain(PICGO_OPEN_FILE, file)
+  sendRPC(IRPCActionType.PICLIST_OPEN_FILE, file)
 }
 
 function handleManualPageOpenChange (val: string) {
@@ -1682,7 +1680,7 @@ function handleManualPageOpenChange (val: string) {
 }
 
 function openDirectory (directory?: string, inStorePath = true) {
-  sendToMain(PICGO_OPEN_DIRECTORY, directory, inStorePath)
+  sendRPC(IRPCActionType.PICLIST_OPEN_DIRECTORY, directory, inStorePath)
 }
 
 function openLogSetting () {
@@ -1691,13 +1689,13 @@ function openLogSetting () {
 
 async function cancelCustomLink () {
   customLinkVisible.value = false
-  formOfSetting.value.customLink = await getConfig<string>(configPaths.settings.customLink) || '![$fileName]($url)'
+  customLink.value = await getConfig<string>(configPaths.settings.customLink) || '![$fileName]($url)'
 }
 
 function confirmCustomLink () {
   $customLink.value?.validate((valid: boolean) => {
     if (valid) {
-      saveConfig(configPaths.settings.customLink, formOfSetting.value.customLink)
+      saveConfig(configPaths.settings.customLink, customLink.value)
       customLinkVisible.value = false
     }
   })
@@ -1721,17 +1719,21 @@ function handleSaveAdvancedRename () {
 }
 
 function handleMigrateFromPicGo () {
-  ElMessageBox.confirm($T('SETTINGS_MIGRATE_FROM_PICGO_CONTENT'), $T('SETTINGS_MIGRATE_FROM_PICGO_TITLE'), {
-    confirmButtonText: $T('CONFIRM'),
-    cancelButtonText: $T('CANCEL'),
-    type: 'warning',
-    center: true
-  }).then(() => {
-    ipcRenderer.invoke('migrateFromPicGo').then(() => {
-      ElMessage.success($T('SETTINGS_MIGRATE_FROM_PICGO_SUCCESS'))
-    }).catch(() => {
-      ElMessage.error($T('SETTINGS_MIGRATE_FROM_PICGO_FAILED'))
-    })
+  ElMessageBox.confirm(
+    $T('SETTINGS_MIGRATE_FROM_PICGO_CONTENT'),
+    $T('SETTINGS_MIGRATE_FROM_PICGO_TITLE'), {
+      confirmButtonText: $T('CONFIRM'),
+      cancelButtonText: $T('CANCEL'),
+      type: 'warning',
+      center: true
+    }).then(() => {
+    triggerRPC<boolean>(IRPCActionType.CONFIGURE_MIGRATE_FROM_PICGO)
+      .then(() => {
+        ElMessage.success($T('SETTINGS_MIGRATE_FROM_PICGO_SUCCESS'))
+      })
+      .catch(() => {
+        ElMessage.error($T('SETTINGS_MIGRATE_FROM_PICGO_FAILED'))
+      })
   }).catch(() => {
     return false
   })
@@ -1744,11 +1746,11 @@ function handleHideDockChange (val: ICheckBoxValueType) {
     return
   }
   saveConfig(configPaths.settings.isHideDock, val)
-  sendToMain(HIDE_DOCK, val)
+  sendRPC(IRPCActionType.HIDE_DOCK, val)
 }
 
 function handleShowPicBedListChange (val: ICheckBoxValueType[]) {
-  const list = picBed.value.map(item => {
+  const list = picBedGlobal.value.map(item => {
     if (!val.includes(item.name)) {
       item.visible = false
     } else {
@@ -1759,12 +1761,12 @@ function handleShowPicBedListChange (val: ICheckBoxValueType[]) {
   saveConfig({
     [configPaths.picBed.list]: list
   })
-  sendToMain(GET_PICBEDS)
+  updatePicBedGlobal()
 }
 
 function handleAutoStartChange (val: ICheckBoxValueType) {
   saveConfig(configPaths.settings.autoStart, val)
-  sendToMain('autoStart', val)
+  sendRPC(IRPCActionType.PICLIST_AUTO_START, val)
 }
 
 function compareVersion2Update (current: string, latest: string): boolean {
@@ -1793,9 +1795,9 @@ function handleWebServerPortChange (val?: number, _?: number) {
 
 function confirmWebServerSetting () {
   if (formOfSetting.value.enableWebServer) {
-    sendToMain('restartWebServer')
+    sendRPC(IRPCActionType.ADVANCED_RESTART_WEB_SERVER)
   } else {
-    sendToMain('stopWebServer')
+    sendRPC(IRPCActionType.ADVANCED_STOP_WEB_SERVER)
   }
 }
 
@@ -1822,7 +1824,7 @@ async function confirmWindowSize () {
 
 function handleMiniWindowOntop (val: ICheckBoxValueType) {
   saveConfig(configPaths.settings.miniWindowOntop, val)
-  ipcRenderer.send('miniWindowOntop', val)
+  sendRPC(IRPCActionType.MINI_WINDOW_ON_TOP, val)
 }
 
 async function handleMiniIconPath (_: Event) {
@@ -1830,7 +1832,7 @@ async function handleMiniIconPath (_: Event) {
   if (result && result[0]) {
     formOfSetting.value.customMiniIcon = result[0]
     saveConfig(configPaths.settings.customMiniIcon, formOfSetting.value.customMiniIcon)
-    ipcRenderer.send('updateMiniIcon', formOfSetting.value.customMiniIcon)
+    sendRPC(IRPCActionType.UPDATE_MINI_WINDOW_ICON, formOfSetting.value.customMiniIcon)
   }
 }
 
@@ -1879,40 +1881,40 @@ function syncMessage (failed: number, taskType: 'UPLOAD' | 'DOWNLOAD') {
 
 const syncTaskList = [
   {
-    task: 'uploadCommonConfig',
+    task: IRPCActionType.CONFIGURE_UPLOAD_COMMON_CONFIG,
     label: $T('SETTINGS_SYNC_COMMON_CONFIG'),
     number: 2
   },
   {
-    task: 'uploadManageConfig',
+    task: IRPCActionType.CONFIGURE_UPLOAD_MANAGE_CONFIG,
     label: $T('SETTINGS_SYNC_MANAGE_CONFIG'),
     number: 2
   },
   {
-    task: 'uploadAllConfig',
+    task: IRPCActionType.CONFIGURE_UPLOAD_ALL_CONFIG,
     label: $T('SETTINGS_SYNC_UPLOAD_ALL'),
     number: 4
   },
   {
-    task: 'downloadCommonConfig',
+    task: IRPCActionType.CONFIGURE_DOWNLOAD_COMMON_CONFIG,
     label: $T('SETTINGS_SYNC_COMMON_CONFIG'),
     number: 2
   },
   {
-    task: 'downloadManageConfig',
+    task: IRPCActionType.CONFIGURE_DOWNLOAD_MANAGE_CONFIG,
     label: $T('SETTINGS_SYNC_MANAGE_CONFIG'),
     number: 2
   },
   {
-    task: 'downloadAllConfig',
+    task: IRPCActionType.CONFIGURE_DOWNLOAD_ALL_CONFIG,
     label: $T('SETTINGS_SYNC_DOWNLOAD_ALL'),
     number: 4
   }
 ]
 
-async function syncTaskFn (task: string, number: number) {
-  const failed = number - await invokeToMain(task)
-  syncMessage(failed, task.includes('upload') ? 'UPLOAD' : 'DOWNLOAD')
+async function syncTaskFn (task: IRPCActionType, number: number) {
+  const failed = number - (await triggerRPC<number>(task) || 0)
+  syncMessage(failed, task.includes('UPLOAD') ? 'UPLOAD' : 'DOWNLOAD')
 }
 
 function confirmServerSetting () {
@@ -1921,7 +1923,7 @@ function confirmServerSetting () {
     [configPaths.settings.server]: server.value
   })
   serverVisible.value = false
-  sendToMain('updateServer')
+  sendRPC(IRPCActionType.ADVANCED_UPDATE_SERVER)
 }
 
 async function cancelServerSetting () {
@@ -1959,7 +1961,7 @@ function handleLanguageChange (val: string) {
   saveConfig({
     [configPaths.settings.language]: val
   })
-  sendToMain(GET_PICBEDS)
+  updatePicBedGlobal()
 }
 
 function handleStartModeChange (val: ISartModeValues) {
@@ -1981,7 +1983,7 @@ async function goConfigPage () {
   const url = lang === II18nLanguage.ZH_CN
     ? 'https://piclist.cn/configure.html'
     : 'https://piclist.cn/en/configure.html'
-  sendToMain(OPEN_URL, url)
+  sendRPC(IRPCActionType.OPEN_URL, url)
 }
 
 function goShortCutPage () {
@@ -1989,10 +1991,6 @@ function goShortCutPage () {
     name: SHORTKEY_PAGE
   })
 }
-
-onBeforeUnmount(() => {
-  ipcRenderer.removeListener(GET_PICBEDS, getPicBeds)
-})
 
 </script>
 <script lang="ts">

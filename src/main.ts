@@ -19,10 +19,9 @@ import db from '@/utils/db'
 import { T } from '@/i18n/index'
 import { store } from '@/store'
 import { initTalkingData } from '@/utils/analytic'
-import { getConfig, saveConfig, triggerRPC } from '@/utils/dataSender'
 import { mainMixin } from '@/utils/mainMixin'
 import { dragMixin } from '@/utils/mixin'
-import { sendToMain } from '@/utils/common'
+import { sendRPC, sendToMain, triggerRPC } from '@/utils/common'
 
 webFrame.setVisualZoomLevelLimits(1, 1)
 
@@ -30,16 +29,14 @@ const app = createApp(App)
 
 app.config.globalProperties.$$db = db
 app.config.globalProperties.$T = T
-app.config.globalProperties.getConfig = getConfig
 app.config.globalProperties.triggerRPC = triggerRPC
-app.config.globalProperties.saveConfig = saveConfig
+app.config.globalProperties.sendRPC = sendRPC
 app.config.globalProperties.sendToMain = sendToMain
 
 app.mixin(mainMixin)
 app.mixin(dragMixin)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
-
 app.use(VueLazyLoad, {
   error: `file://${__static.replace(/\\/g, '/')}/unknown-file-type.svg`
 })
@@ -52,5 +49,4 @@ console.log(hljsCommon.highlightAuto('<h1>Highlight.js has been registered succe
 app.use(hljsVuePlugin)
 app.use(VueVideoPlayer)
 app.mount('#app')
-
 initTalkingData()

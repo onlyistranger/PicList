@@ -103,9 +103,9 @@ import ToolboxStatusIcon from '@/components/ToolboxStatusIcon.vue'
 import ToolboxHandler from '@/components/ToolboxHandler.vue'
 import { useIPC } from '@/hooks/useIPC'
 import { T as $T } from '@/i18n'
-import { sendRPC, triggerRPC } from '@/utils/dataSender'
 
 import { IToolboxItemType, IToolboxItemCheckStatus, IRPCActionType } from '#/types/enum'
+import { sendRPC, triggerRPC } from '@/utils/common'
 
 const $confirm = ElMessageBox.confirm
 const defaultLogo = ref(`file://${__static.replace(/\\/g, '/')}/roundLogo.png`)

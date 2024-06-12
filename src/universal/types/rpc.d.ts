@@ -1,13 +1,5 @@
-type IGetUploaderConfigListArgs = [type: string]
-type IDeleteUploaderConfigArgs = [type: string, id: string]
-type ISelectUploaderConfigArgs = [type: string, id: string]
-type IUpdateUploaderConfigArgs = [type: string, id: string, config: IStringKeyMap]
-type IResetUploaderConfigArgs = [type: string, id: string]
-
 type IGetLatestVersionArgs = [isCheckBetaVersion: boolean]
 type IToolboxCheckArgs = [type: import('./enum').IToolboxItemType]
-type IOpenFileArgs = [filePath: string]
-type ICopyTextArgs = [text: string]
 type IShowDockIconArgs = [visible: boolean]
 
 interface IRPCServer {
@@ -16,12 +8,17 @@ interface IRPCServer {
   use: (routes: IRPCRoutes) => void
 }
 
-type IRPCRoutes = Map<import('./enum').IRPCActionType, IRPCHandler<any>>
+type IRPCRoutes = Map<import('./enum').IRPCActionType, {
+  handler: IRPCHandler<any>,
+  type: import('./enum').IRPCType
+}>
 
-type IRPCHandler<T> = (args: any[], event: import('electron').IpcMainEvent) => Promise<T>
+type IIPCEvent = import('electron').IpcMainEvent | import('electron').IpcMainInvokeEvent
+
+type IRPCHandler<T> = (event: IIPCEvent, args: any, ) => Promise<T>
 
 interface IRPCRouter {
-  add<T>(action: import('./enum').IRPCActionType, handler: IRPCHandler<T>): IRPCRouter
+  add<T>(action: import('./enum').IRPCActionType, handler: IRPCHandler<T>, type: import('./enum').IRPCType):IRPCRouter
   routes: () => IRPCRoutes
 }
 

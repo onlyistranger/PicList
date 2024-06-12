@@ -164,14 +164,13 @@ import ImageProcessSetting from '@/components/ImageProcessSetting.vue'
 import { T as $T } from '@/i18n'
 import { PICBEDS_PAGE } from '@/router/config'
 import $bus from '@/utils/bus'
-import { sendToMain } from '@/utils/common'
-import { getConfig, saveConfig, triggerRPC } from '@/utils/dataSender'
+import { sendRPC, triggerRPC } from '@/utils/common'
+import { getConfig, saveConfig } from '@/utils/dataSender'
+import { picBedGlobal, updatePicBedGlobal } from '@/utils/global'
 
 import {
   SHOW_INPUT_BOX,
-  SHOW_INPUT_BOX_RESPONSE,
-  SHOW_UPLOAD_PAGE_MENU,
-  GET_PICBEDS
+  SHOW_INPUT_BOX_RESPONSE
 } from '#/events/constants'
 import { IPasteStyle, IRPCActionType } from '#/types/enum'
 import {
@@ -188,7 +187,6 @@ const progress = ref(0)
 const showProgress = ref(false)
 const showError = ref(false)
 const pasteStyle = ref('')
-const picBed = ref<IPicBedType[]>([])
 const picBedName = ref('')
 const picBedConfigName = ref('')
 
@@ -200,7 +198,12 @@ const pasteFormatList = ref({
   [IPasteStyle.CUSTOM]: ''
 })
 
+watch(picBedGlobal, () => {
+  getDefaultPicBed()
+})
+
 onBeforeMount(() => {
+  updatePicBedGlobal()
   ipcRenderer.on('uploadProgress', (_event: IpcRendererEvent, _progress: number) => {
     if (_progress !== -1) {
       showProgress.value = true
@@ -216,8 +219,6 @@ onBeforeMount(() => {
   ipcRenderer.on('syncPicBed', () => {
     getDefaultPicBed()
   })
-  sendToMain(GET_PICBEDS)
-  ipcRenderer.on(GET_PICBEDS, getPicBeds)
   $bus.on(SHOW_INPUT_BOX_RESPONSE, handleInputBoxValue)
 })
 
@@ -243,7 +244,7 @@ async function handlePicBedNameClick (_picBedName: string, picBedConfigName: str
   const formatedpicBedConfigName = picBedConfigName || 'Default'
   const currentPicBed = await getConfig<string>(configPaths.picBed.current)
   const currentPicBedConfig = await getConfig<any[]>(`uploader.${currentPicBed}`) as any || {}
-  const configList = await triggerRPC<IUploaderConfigItem>(IRPCActionType.GET_PICBED_CONFIG_LIST, currentPicBed)
+  const configList = await triggerRPC<IUploaderConfigItem>(IRPCActionType.PICBED_GET_CONFIG_LIST, currentPicBed)
   const currentConfigList = configList?.configList ?? []
   const config = currentConfigList.find((item: any) => item._configName === formatedpicBedConfigName)
   $router.push({
@@ -262,7 +263,6 @@ onBeforeUnmount(() => {
   $bus.off(SHOW_INPUT_BOX_RESPONSE)
   ipcRenderer.removeAllListeners('uploadProgress')
   ipcRenderer.removeAllListeners('syncPicBed')
-  ipcRenderer.removeListener(GET_PICBEDS, getPicBeds)
 })
 
 function onDrop (e: DragEvent) {
@@ -279,7 +279,7 @@ function onDrop (e: DragEvent) {
     } else if (items[0].type === 'text/plain') {
       const str = e.dataTransfer!.getData(items[0].type)
       if (isUrl(str)) {
-        sendToMain('uploadChoosedFiles', [{ path: str }])
+        sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, [{ path: str }])
       } else {
         $message.error($T('TIPS_DRAG_VALID_PICTURE_OR_URL'))
       }
@@ -293,7 +293,7 @@ function handleURLDrag (items: DataTransferItemList, dataTransfer: DataTransfer)
   const urlString = dataTransfer.getData(items[1].type)
   const urlMatch = urlString.match(/<img.*src="(.*?)"/)
   if (urlMatch) {
-    sendToMain('uploadChoosedFiles', [
+    sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, [
       {
         path: urlMatch[1]
       }
@@ -321,7 +321,7 @@ function ipcSendFiles (files: FileList) {
     }
     sendFiles.push(obj)
   })
-  sendToMain('uploadChoosedFiles', sendFiles)
+  sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, sendFiles)
 }
 
 async function getPasteStyle () {
@@ -346,7 +346,7 @@ function handlePasteStyleChange (val: string | number | boolean | undefined) {
 }
 
 function uploadClipboardFiles () {
-  sendToMain('uploadClipboardFilesFromUploadPage')
+  sendRPC(IRPCActionType.UPLOAD_CLIPBOARD_FILES_FROM_UPLOAD_PAGE)
 }
 
 async function uploadURLFiles () {
@@ -361,7 +361,7 @@ async function uploadURLFiles () {
 function handleInputBoxValue (val: string) {
   if (val === '') return
   if (isUrl(val)) {
-    sendToMain('uploadChoosedFiles', [{
+    sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, [{
       path: val
     }])
   } else {
@@ -371,7 +371,7 @@ function handleInputBoxValue (val: string) {
 
 async function getDefaultPicBed () {
   const currentPicBed = await getConfig<string>(configPaths.picBed.current)
-  picBed.value.forEach(item => {
+  picBedGlobal.value.forEach(item => {
     if (item.type === currentPicBed) {
       picBedName.value = item.name
     }
@@ -379,20 +379,17 @@ async function getDefaultPicBed () {
   picBedConfigName.value = await getConfig<string>(`picBed.${currentPicBed}._configName`) || ''
 }
 
-function getPicBeds (_event: Event, picBeds: IPicBedType[]) {
-  picBed.value = picBeds
-  getDefaultPicBed()
-}
-
 async function handleChangePicBed () {
-  sendToMain(SHOW_UPLOAD_PAGE_MENU)
+  sendRPC(IRPCActionType.SHOW_UPLOAD_PAGE_MENU)
 }
 </script>
+
 <script lang="ts">
 export default {
   name: 'UploadPage'
 }
 </script>
+
 <style lang='stylus'>
 .view-title
   display flex

@@ -94,11 +94,10 @@
 
 <script lang="ts" setup>
 import dayjs from 'dayjs'
-import { ipcRenderer } from 'electron'
 import { Edit, Delete, Plus } from '@element-plus/icons-vue'
 import { onBeforeMount, ref } from 'vue'
 import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
-import { saveConfig, triggerRPC } from '@/utils/dataSender'
+import { saveConfig } from '@/utils/dataSender'
 
 import { T as $T } from '@/i18n/index'
 import { useStore } from '@/hooks/useStore'
@@ -106,6 +105,7 @@ import { PICBEDS_PAGE, UPLOADER_CONFIG_PAGE } from '@/router/config'
 
 import { IRPCActionType } from '#/types/enum'
 import { configPaths } from '#/utils/configPaths'
+import { sendRPC, triggerRPC } from '@/utils/common'
 
 const $router = useRouter()
 const $route = useRoute()
@@ -116,8 +116,10 @@ const defaultConfigId = ref('')
 const store = useStore()
 
 async function selectItem (id: string) {
-  await triggerRPC<void>(IRPCActionType.SELECT_UPLOADER, type.value, id)
-  ipcRenderer.send('setTrayToolTip', `${type.value} ${curConfigList.value.find(item => item._id === id)?._configName || ''}`)
+  await triggerRPC<void>(IRPCActionType.UPLOADER_SELECT, type.value, id)
+  if (store?.state.defaultPicBed === type.value) {
+    sendRPC(IRPCActionType.TRAY_SET_TOOL_TIP, `${type.value} ${curConfigList.value.find(item => item._id === id)?._configName || ''}`)
+  }
   defaultConfigId.value = id
 }
 
@@ -135,7 +137,7 @@ onBeforeMount(() => {
 })
 
 async function getCurrentConfigList () {
-  const configList = await triggerRPC<IUploaderConfigItem>(IRPCActionType.GET_PICBED_CONFIG_LIST, type.value)
+  const configList = await triggerRPC<IUploaderConfigItem>(IRPCActionType.PICBED_GET_CONFIG_LIST, type.value)
   curConfigList.value = configList?.configList ?? []
   defaultConfigId.value = configList?.defaultId ?? ''
 }
@@ -158,7 +160,7 @@ function formatTime (time: number): string {
 }
 
 async function deleteConfig (id: string) {
-  const res = await triggerRPC<IUploaderConfigItem | undefined>(IRPCActionType.DELETE_PICBED_CONFIG, type.value, id)
+  const res = await triggerRPC<IUploaderConfigItem>(IRPCActionType.PICBED_DELETE_CONFIG, type.value, id)
   if (!res) return
   curConfigList.value = res.configList
   defaultConfigId.value = res.defaultId
@@ -182,7 +184,7 @@ function setDefaultPicBed (type: string) {
 
   store?.setDefaultPicBed(type)
   const currentConfigName = curConfigList.value.find(item => item._id === defaultConfigId.value)?._configName
-  ipcRenderer.send('setTrayToolTip', `${type} ${currentConfigName || ''}`)
+  sendRPC(IRPCActionType.TRAY_SET_TOOL_TIP, `${type} ${currentConfigName || ''}`)
   const successNotification = new Notification($T('SETTINGS_DEFAULT_PICBED'), {
     body: $T('TIPS_SET_SUCCEED')
   })

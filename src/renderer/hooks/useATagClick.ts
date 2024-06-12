@@ -1,13 +1,14 @@
 import { onMounted, onUnmounted } from 'vue'
 
-import { openURL } from '@/utils/common'
+import { sendRPC } from '@/utils/common'
+import { IRPCActionType } from 'root/src/universal/types/enum'
 
 export function useATagClick () {
   const handleATagClick = (e: MouseEvent) => {
     if (e.target instanceof HTMLAnchorElement) {
       if (e.target.href) {
         e.preventDefault()
-        openURL(e.target.href)
+        sendRPC(IRPCActionType.OPEN_URL, e.target.href)
       }
     }
   }

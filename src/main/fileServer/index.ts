@@ -10,8 +10,10 @@ fs.ensureDirSync(imgFilePath)
 
 const serverPort = 36699
 
+let server: http.Server
+
 export function startFileServer () {
-  const server = http.createServer((req, res) => {
+  server = http.createServer((req, res) => {
     const requestPath = req.url?.split('?')[0]
     const filePath = path.join(imgFilePath, decodeURIComponent(requestPath as string))
 
@@ -29,5 +31,11 @@ export function startFileServer () {
     logger.info(`File server is running, http://localhost:${serverPort}`)
   }).on('error', (err) => {
     logger.error(err)
+  })
+}
+
+export function stopFileServer () {
+  server.close(() => {
+    logger.info('File server is stopped')
   })
 }

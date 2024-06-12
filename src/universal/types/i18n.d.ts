@@ -3,6 +3,7 @@ interface ILocales {
   ABOUT: string
   OPEN_MAIN_WINDOW: string
   OPEN_MINI_WINDOW: string
+  HIDE_MINI_WINDOW: string
   CHOOSE_DEFAULT_PICBED: string
   OPEN_UPDATE_HELPER: string
   RELOAD_APP: string

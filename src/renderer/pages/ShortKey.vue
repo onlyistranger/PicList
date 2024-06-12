@@ -118,16 +118,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ipcRenderer, IpcRendererEvent } from 'electron'
 import { onBeforeUnmount, onBeforeMount, ref, watch } from 'vue'
 
 import { T as $T } from '@/i18n'
-import { sendToMain } from '@/utils/common'
+import { sendRPC, triggerRPC } from '@/utils/common'
 import { getConfig } from '@/utils/dataSender'
 import keyBinding from '@/utils/key-binding'
 
-import { TOGGLE_SHORTKEY_MODIFIED_MODE } from '#/events/constants'
 import { configPaths } from '#/utils/configPaths'
+import { IRPCActionType } from '#/types/enum'
 
 const list = ref<IShortKeyConfig[]>([])
 const keyBindingVisible = ref(false)
@@ -146,7 +145,7 @@ onBeforeMount(async () => {
 })
 
 watch(keyBindingVisible, (val: boolean) => {
-  sendToMain(TOGGLE_SHORTKEY_MODIFIED_MODE, val)
+  sendRPC(IRPCActionType.SHORTKEY_TOGGLE_SHORTKEY_MODIFIED_MODE, val)
 })
 
 function calcOrigin (item: string) {
@@ -161,7 +160,7 @@ function calcOriginShowName (item: string) {
 function toggleEnable (item: IShortKeyConfig) {
   const status = !item.enable
   item.enable = status
-  sendToMain('bindOrUnbindShortKey', item, item.from)
+  sendRPC(IRPCActionType.SHORTKEY_BIND_OR_UNBIND, item, item.from)
 }
 
 function keyDetect (event: KeyboardEvent) {
@@ -184,24 +183,24 @@ async function confirmKeyBinding () {
   const oldKey = await getConfig<string>(`settings.shortKey.${command.value}.key`)
   const config = Object.assign({}, list.value[currentIndex.value])
   config.key = shortKey.value
-  sendToMain('updateShortKey', config, oldKey, config.from)
-  ipcRenderer.once('updateShortKeyResponse', (_: IpcRendererEvent, result) => {
-    if (result) {
-      keyBindingVisible.value = false
-      list.value[currentIndex.value].key = shortKey.value
-    }
-  })
+  const result = await triggerRPC<boolean>(IRPCActionType.SHORTKEY_UPDATE, config, oldKey, config.from)
+  if (result) {
+    keyBindingVisible.value = false
+    list.value[currentIndex.value].key = shortKey.value
+  }
 }
 
 onBeforeUnmount(() => {
-  sendToMain(TOGGLE_SHORTKEY_MODIFIED_MODE, false)
+  sendRPC(IRPCActionType.SHORTKEY_TOGGLE_SHORTKEY_MODIFIED_MODE, false)
 })
 </script>
+
 <script lang="ts">
 export default {
   name: 'ShortkeyPage'
 }
 </script>
+
 <style lang='stylus'>
 #shortcut-page
   .shortcut-page-table-border

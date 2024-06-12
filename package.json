@@ -60,7 +60,6 @@
     "got": "^12.6.0",
     "highlight.js": "^11.9.0",
     "hpagent": "^1.2.0",
-    "keycode": "^2.2.0",
     "lowdb": "^1.0.0",
     "marked": "^9.1.5",
     "mime-types": "^2.1.35",

@@ -1,63 +1,43 @@
-import { ipcRenderer, IpcRendererEvent } from 'electron'
-import { v4 as uuid } from 'uuid'
 import { IObject, IResult, IGetResult, IFilter } from '@picgo/store/dist/types'
 
-import { getRawData } from '@/utils/common'
+import { triggerRPC } from '@/utils/common'
 
-import {
-  PICGO_GET_DB,
-  PICGO_INSERT_DB,
-  PICGO_INSERT_MANY_DB,
-  PICGO_UPDATE_BY_ID_DB,
-  PICGO_GET_BY_ID_DB,
-  PICGO_REMOVE_BY_ID_DB
-} from '#/events/constants'
+import { IRPCActionType } from '#/types/enum'
 import { IGalleryDB } from '#/types/extra-vue'
 
 export class GalleryDB implements IGalleryDB {
-  async get<T> (filter?: IFilter): Promise<IGetResult<T>> {
-    const res = await this.#msgHandler<IGetResult<T>>(PICGO_GET_DB, filter)
+  async get<T> (filter?: IFilter): Promise<IGetResult<T> | undefined> {
+    const res = await this.#msgHandler<IGetResult<T>>(IRPCActionType.GALLERY_GET_DB, filter)
     return res
   }
 
-  async insert<T> (value: T): Promise<IResult<T>> {
-    const res = await this.#msgHandler<IResult<T>>(PICGO_INSERT_DB, value)
+  async insert<T> (value: T): Promise<IResult<T> | undefined> {
+    const res = await this.#msgHandler<IResult<T>>(IRPCActionType.GALLERY_INSERT_DB, value)
     return res
   }
 
-  async insertMany<T> (value: T[]): Promise<IResult<T>[]> {
-    const res = await this.#msgHandler<IResult<T>[]>(PICGO_INSERT_MANY_DB, value)
+  async insertMany<T> (value: T[]): Promise<IResult<T>[] | undefined> {
+    const res = await this.#msgHandler<IResult<T>[]>(IRPCActionType.GALLERY_INSERT_DB_BATCH, value)
     return res
   }
 
   async updateById (id: string, value: IObject): Promise<boolean> {
-    const res = await this.#msgHandler<boolean>(PICGO_UPDATE_BY_ID_DB, id, value)
+    const res = await this.#msgHandler<boolean>(IRPCActionType.GALLERY_UPDATE_BY_ID_DB, id, value) || false
     return res
   }
 
   async getById<T> (id: string): Promise<IResult<T> | undefined> {
-    const res = await this.#msgHandler<IResult<T> | undefined>(PICGO_GET_BY_ID_DB, id)
+    const res = await this.#msgHandler<IResult<T> | undefined>(IRPCActionType.GALLERY_GET_BY_ID_DB, id)
     return res
   }
 
   async removeById (id: string): Promise<void> {
-    const res = await this.#msgHandler<void>(PICGO_REMOVE_BY_ID_DB, id)
+    const res = await this.#msgHandler<void>(IRPCActionType.GALLERY_REMOVE_BY_ID_DB, id)
     return res
   }
 
-  #msgHandler<T> (method: string, ...args: any[]): Promise<T> {
-    return new Promise((resolve) => {
-      const callbackId = uuid()
-      const callback = (_: IpcRendererEvent, data: T, returnCallbackId: string) => {
-        if (returnCallbackId === callbackId) {
-          resolve(data)
-          ipcRenderer.removeListener(method, callback)
-        }
-      }
-      const data = getRawData(args)
-      ipcRenderer.on(method, callback)
-      ipcRenderer.send(method, ...data, callbackId)
-    })
+  async #msgHandler<T> (method: IRPCActionType, ...args: any[]): Promise<T | undefined> {
+    return await triggerRPC<T>(method, ...args)
   }
 }
 

@@ -1,45 +1,62 @@
-import { ipcMain, IpcMainEvent } from 'electron'
+import { ipcMain, IpcMainEvent, IpcMainInvokeEvent } from 'electron'
 
-import { configRouter } from '~/events/rpc/routes/config'
-import { toolboxRouter } from '~/events/rpc/routes/toolbox'
+import logger from '@core/picgo/logger'
+
+import { galleryRouter } from '~/events/rpc/routes/gallery'
+import { picbedRouter } from '~/events/rpc/routes/picbed'
+import { pluginRouter } from '~/events/rpc/routes/plugin'
+import { settingRouter } from '~/events/rpc/routes/setting'
 import { systemRouter } from '~/events/rpc/routes/system'
+import { toolboxRouter } from '~/events/rpc/routes/toolbox'
+import { trayRouter } from '~/events/rpc/routes/tray'
+import { uploadRouter } from '~/events/rpc/routes/upload'
 
-import { IRPCActionType } from '#/types/enum'
-import { RPC_ACTIONS } from '#/events/constants'
+import { IRPCActionType, IRPCType } from '#/types/enum'
+import { RPC_ACTIONS, RPC_ACTIONS_INVOKE } from '#/events/constants'
+
+const isDevelopment = process.env.NODE_ENV !== 'production'
 
 class RPCServer implements IRPCServer {
   private routes: IRPCRoutes = new Map()
+  private routesWithResponse: IRPCRoutes = new Map()
 
-  private rpcEventHandler = async (event: IpcMainEvent, action: IRPCActionType, args: any[], callbackId: string) => {
+  private rpcEventHandler = async (event: IpcMainEvent, action: IRPCActionType, args: any[]) => {
     try {
-      const handler = this.routes.get(action)
-      if (!handler) {
-        return this.sendBack(event, action, null, callbackId)
+      if (isDevelopment) {
+        console.log(`action: ${action} args: ${JSON.stringify(args)}`)
       }
-      const res = await handler?.(args, event)
-      this.sendBack(event, action, res, callbackId)
-    } catch (e) {
-      this.sendBack(event, action, null, callbackId)
+      const route = this.routes.get(action)
+      await route?.handler?.(event, args)
+    } catch (e: any) {
+      logger.error(e)
     }
   }
 
-  /**
-   * if sendback data is null, then it means that the action is not supported or error occurs
-   * if there is no callbackId, then do not send back
-   */
-  private sendBack (event: IpcMainEvent, action: IRPCActionType, data: any, callbackId: string) {
-    if (callbackId) {
-      event.sender.send(RPC_ACTIONS, data, action, callbackId)
+  private rpcEventHandlerWithResponse = async (event: IpcMainInvokeEvent, action: IRPCActionType, args: any[]) => {
+    try {
+      if (isDevelopment) {
+        console.log(`action: ${action} args: ${JSON.stringify(args)}`)
+      }
+      const route = this.routesWithResponse.get(action)
+      return await route?.handler?.(event, args)
+    } catch (e: any) {
+      logger.error(e)
+      return undefined
     }
   }
 
   start () {
     ipcMain.on(RPC_ACTIONS, this.rpcEventHandler)
+    ipcMain.handle(RPC_ACTIONS_INVOKE, this.rpcEventHandlerWithResponse)
   }
 
   use (routes: IRPCRoutes) {
-    for (const [action, handler] of routes) {
-      this.routes.set(action, handler)
+    for (const [action, route] of routes) {
+      if (route.type === IRPCType.SEND) {
+        this.routes.set(action, route)
+      } else {
+        this.routesWithResponse.set(action, route)
+      }
     }
   }
 
@@ -50,9 +67,20 @@ class RPCServer implements IRPCServer {
 
 const rpcServer = new RPCServer()
 
-rpcServer.use(configRouter.routes())
-rpcServer.use(toolboxRouter.routes())
-rpcServer.use(systemRouter.routes())
+const routes = [
+  galleryRouter.routes(),
+  picbedRouter.routes(),
+  pluginRouter.routes(),
+  settingRouter.routes(),
+  systemRouter.routes(),
+  toolboxRouter.routes(),
+  trayRouter.routes(),
+  uploadRouter.routes()
+]
+
+for (const route of routes) {
+  rpcServer.use(route)
+}
 
 export {
   rpcServer

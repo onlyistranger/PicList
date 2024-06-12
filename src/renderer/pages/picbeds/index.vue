@@ -99,21 +99,18 @@
 <script lang="ts" setup>
 import dayjs from 'dayjs'
 import {
-  clipboard,
-  ipcRenderer,
-  IpcRendererEvent
+  clipboard
 } from 'electron'
 import { ElDropdown, ElMessage } from 'element-plus'
 import { Link } from '@element-plus/icons-vue'
-import { ref, onBeforeUnmount, onBeforeMount } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import ConfigForm from '@/components/ConfigForm.vue'
 import { T as $T } from '@/i18n/index'
-import { sendToMain } from '@/utils/common'
-import { getConfig, triggerRPC } from '@/utils/dataSender'
+import { sendRPC, triggerRPC } from '@/utils/common'
+import { getConfig } from '@/utils/dataSender'
 
-import { OPEN_URL } from '#/events/constants'
 import { II18nLanguage, IRPCActionType } from '#/types/enum'
 import { configPaths } from '#/utils/configPaths'
 import { picBedManualUrlList } from '#/utils/static'
@@ -129,15 +126,14 @@ const $dropdown = ref<InstanceType<typeof ElDropdown> | null>(null)
 type.value = $route.params.type as string
 
 onBeforeMount(async () => {
-  sendToMain('getPicBedConfig', $route.params.type)
-  ipcRenderer.on('getPicBedConfig', getPicBeds)
+  await getPicBeds()
   await getPicBedConfigList()
 })
 
 const handleConfirm = async () => {
   const result = (await $configForm.value?.validate()) || false
   if (result !== false) {
-    await triggerRPC<void>(IRPCActionType.UPDATE_UPLOADER_CONFIG, type.value, result?._id, result)
+    await triggerRPC<void>(IRPCActionType.UPLOADER_UPDATE_CONFIG, type.value, result?._id, result)
     const successNotification = new Notification($T('SETTINGS_RESULT'), {
       body: $T('TIPS_SET_SUCCEED')
     })
@@ -156,8 +152,14 @@ function handleMouseLeave () {
   $dropdown.value?.handleClose()
 }
 
+async function getPicBeds () {
+  const result = await triggerRPC<any>(IRPCActionType.PICBED_GET_PICBED_CONFIG, $route.params.type)
+  config.value = result.config
+  picBedName.value = result.name
+}
+
 async function getPicBedConfigList () {
-  const res = await triggerRPC<IUploaderConfigItem>(IRPCActionType.GET_PICBED_CONFIG_LIST, type.value) || undefined
+  const res = await triggerRPC<IUploaderConfigItem>(IRPCActionType.PICBED_GET_CONFIG_LIST, type.value) || undefined
   const configList = res?.configList || []
   picBedConfigList.value = configList.filter((item) => item._id !== $route.params.configId)
 }
@@ -174,7 +176,7 @@ async function handleConfigImport (configItem: IUploaderConfigListItem) {
 }
 
 const handleReset = async () => {
-  await triggerRPC<void>(IRPCActionType.RESET_UPLOADER_CONFIG, type.value, $route.params.configId)
+  await triggerRPC<void>(IRPCActionType.UPLOADER_RESET_CONFIG, type.value, $route.params.configId)
   const successNotification = new Notification($T('SETTINGS_RESULT'), {
     body: $T('TIPS_RESET_SUCCEED')
   })
@@ -188,7 +190,7 @@ async function handleNameClick () {
   const lang = await getConfig(configPaths.settings.language) || II18nLanguage.ZH_CN
   const url = picBedManualUrlList[lang === II18nLanguage.EN ? 'en' : 'zh_cn'][$route.params.type as string]
   if (url) {
-    sendToMain(OPEN_URL, url)
+    sendRPC(IRPCActionType.OPEN_URL, url)
   }
 }
 
@@ -211,22 +213,14 @@ async function handleCopyApi () {
     ElMessage.error('Copy failed')
   }
 }
-
-function getPicBeds (_event: IpcRendererEvent, _config: IPicGoPluginConfig[], name: string) {
-  config.value = _config
-  picBedName.value = name
-}
-
-onBeforeUnmount(() => {
-  ipcRenderer.removeListener('getPicBedConfig', getPicBeds)
-})
-
 </script>
+
 <script lang="ts">
 export default {
   name: 'PicbedsPage'
 }
 </script>
+
 <style lang='stylus'>
 #picbeds-page
   height 100%

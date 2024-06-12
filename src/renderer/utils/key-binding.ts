@@ -1,18 +1,10 @@
-import keycode from 'keycode'
+const isSpecialKey = (key: string) => {
+  const keyArr = ['Shift', 'Control', 'Alt', 'Meta']
 
-const isSpecialKey = (keyCode: number) => {
-  const keyArr = [
-    16, // Shift
-    17, // Ctrl
-    18, // Alt
-    91, // Left Meta
-    93 // Right Meta
-  ]
-
-  return keyArr.includes(keyCode)
+  return keyArr.includes(key)
 }
 
-const keyDetect = (event: KeyboardEvent) => {
+const keyBinding = (event: KeyboardEvent) => {
   const meta = process.platform === 'darwin' ? 'Cmd' : 'Super'
   const specialKey = {
     Ctrl: event.ctrlKey,
@@ -29,10 +21,10 @@ const keyDetect = (event: KeyboardEvent) => {
     }
   }
 
-  if (!isSpecialKey(event.keyCode)) {
-    pressKey.push(keycode(event.keyCode).toUpperCase())
+  if (!isSpecialKey(event.key)) {
+    pressKey.push(event.key.toUpperCase())
   }
   return pressKey
 }
 
-export default keyDetect
+export default keyBinding

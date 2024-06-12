@@ -2,6 +2,7 @@ LANG_DISPLAY_LABEL: 'English'
 ABOUT: About
 OPEN_MAIN_WINDOW: Open Main Window
 OPEN_MINI_WINDOW: Open Mini Window
+HIDE_MINI_WINDOW: Hide Mini Window
 CHOOSE_DEFAULT_PICBED: Choose Default Picbed
 OPEN_UPDATE_HELPER: Open Update Helper
 RELOAD_APP: Reload App
@@ -311,7 +312,7 @@ SETTINGS_SYNC_MANAGE_CONFIG: Manage configuration
 SETTINGS_AUTO_IMPORT: Auto import config in manage page
 SETTINGS_AUTO_IMPORT_SELECT_PICBED: Select picbed
 SETTINGS_TAB_SYSTEM: System
-SETTINGS_TAB_SYNC_CONFIG: Sync and Configuration
+SETTINGS_TAB_SYNC_CONFIG: Configuration
 SETTINGS_TAB_UPLOAD: Upload
 SETTINGS_TAB_ADVANCED: Advanced
 SETTINGS_TAB_UPDATE: Update

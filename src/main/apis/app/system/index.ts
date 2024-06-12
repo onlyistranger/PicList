@@ -3,9 +3,10 @@ import {
   clipboard,
   dialog,
   Menu,
+  MenuItem,
+  MenuItemConstructorOptions,
   nativeTheme,
   Notification,
-  screen,
   Tray
 } from 'electron'
 import fs from 'fs-extra'
@@ -29,23 +30,16 @@ import { configPaths } from '#/utils/configPaths'
 import { IPasteStyle, IWindowList } from '#/types/enum'
 
 import pkg from 'root/package.json'
+import { hideMiniWindow, openMainWindow, openMiniWindow } from '~/utils/windowHelper'
 
 let contextMenu: Menu | null
 
 export function setDockMenu () {
   const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
-  const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
   const dockMenu = Menu.buildFromTemplate([
     {
       label: T('OPEN_MAIN_WINDOW'),
-      click () {
-        const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)
-        settingWindow!.show()
-        settingWindow!.focus()
-        if (windowManager.has(IWindowList.MINI_WINDOW) && autoCloseMiniWindow) {
-          windowManager.get(IWindowList.MINI_WINDOW)!.hide()
-        }
-      }
+      click: openMainWindow
     },
     {
       label: T('START_WATCH_CLIPBOARD'),
@@ -58,7 +52,7 @@ export function setDockMenu () {
         })
         setDockMenu()
       },
-      enabled: !isListeningClipboard
+      visible: !isListeningClipboard
     },
     {
       label: T('STOP_WATCH_CLIPBOARD'),
@@ -68,7 +62,7 @@ export function setDockMenu () {
         clipboardPoll.removeAllListeners()
         setDockMenu()
       },
-      enabled: isListeningClipboard
+      visible: isListeningClipboard
     }
   ])
   app.dock.setMenu(dockMenu)
@@ -80,59 +74,27 @@ export function createMenu () {
     {
       label: 'PicList',
       submenu: [
-        {
-          label: T('OPEN_MAIN_WINDOW'),
-          click () {
-            const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)
-            const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
-            settingWindow!.show()
-            settingWindow!.focus()
-            if (windowManager.has(IWindowList.MINI_WINDOW) && autoCloseMiniWindow) {
-              windowManager.get(IWindowList.MINI_WINDOW)!.hide()
-            }
-          }
-        },
-        {
-          label: T('RELOAD_APP'),
-          click () {
-            app.relaunch()
-            app.exit(0)
-          }
-        }
+        { label: T('OPEN_MAIN_WINDOW'), click: openMainWindow },
+        { label: T('RELOAD_APP'), click () { app.relaunch(); app.exit(0) } }
       ]
     },
-    {
-      label: T('CHOOSE_DEFAULT_PICBED'),
-      type: 'submenu',
-      // @ts-ignore
-      submenu
-    },
+    { label: T('CHOOSE_DEFAULT_PICBED'), type: 'submenu', submenu },
     {
       label: 'Edit',
-      // @ts-ignore
       submenu: [
-        // @ts-ignore
-        { label: 'Undo', accelerator: 'CmdOrCtrl+Z', selector: 'undo:' },
-        // @ts-ignore
-        { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', selector: 'redo:' },
+        { label: 'Undo', accelerator: 'CmdOrCtrl+Z', role: 'undo' },
+        { label: 'Redo', accelerator: 'Shift+CmdOrCtrl+Z', role: 'redo' },
         { type: 'separator' },
-        // @ts-ignore
-        { label: 'Cut', accelerator: 'CmdOrCtrl+X', selector: 'cut:' },
-        // @ts-ignore
-        { label: 'Copy', accelerator: 'CmdOrCtrl+C', selector: 'copy:' },
-        // @ts-ignore
-        { label: 'Paste', accelerator: 'CmdOrCtrl+V', selector: 'paste:' },
-        // @ts-ignore
-        { label: 'Select All', accelerator: 'CmdOrCtrl+A', selector: 'selectAll:' }
+        { label: 'Cut', accelerator: 'CmdOrCtrl+X', role: 'cut' },
+        { label: 'Copy', accelerator: 'CmdOrCtrl+C', role: 'copy' },
+        { label: 'Paste', accelerator: 'CmdOrCtrl+V', role: 'paste' },
+        { label: 'Select All', accelerator: 'CmdOrCtrl+A', role: 'selectAll' }
       ]
     },
     {
       label: T('QUIT'),
       submenu: [
-        {
-          label: T('QUIT'),
-          role: 'quit'
-        }
+        { label: T('QUIT'), role: 'quit' }
       ]
     }
   ])
@@ -142,94 +104,39 @@ export function createMenu () {
 export function createContextMenu () {
   const ClipboardWatcher = clipboardPoll
   const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
+  const isMiniWindowVisible = windowManager.has(IWindowList.MINI_WINDOW) && windowManager.get(IWindowList.MINI_WINDOW)!.isVisible()
+
+  const startWatchClipboard = () => {
+    db.set(configPaths.settings.isListeningClipboard, true)
+    ClipboardWatcher.startListening()
+    ClipboardWatcher.on('change', () => {
+      picgo.log.info('clipboard changed')
+      uploadClipboardFiles()
+    })
+    createContextMenu()
+  }
+
+  const stopWatchClipboard = () => {
+    db.set(configPaths.settings.isListeningClipboard, false)
+    ClipboardWatcher.stopListening()
+    ClipboardWatcher.removeAllListeners()
+    createContextMenu()
+  }
+
   if (process.platform === 'darwin' || process.platform === 'win32') {
     const submenu = buildPicBedListMenu()
-    const template = [
-      {
-        label: T('OPEN_MAIN_WINDOW'),
-        click () {
-          const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)
-          const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
-          settingWindow!.show()
-          settingWindow!.focus()
-          if (windowManager.has(IWindowList.MINI_WINDOW) && autoCloseMiniWindow) {
-            windowManager.get(IWindowList.MINI_WINDOW)!.hide()
-          }
-        }
-      },
-      {
-        label: T('CHOOSE_DEFAULT_PICBED'),
-        type: 'submenu',
-        // @ts-ignore
-        submenu
-      },
-      {
-        label: T('START_WATCH_CLIPBOARD'),
-        click () {
-          db.set(configPaths.settings.isListeningClipboard, true)
-          ClipboardWatcher.startListening()
-          ClipboardWatcher.on('change', () => {
-            picgo.log.info('clipboard changed')
-            uploadClipboardFiles()
-          })
-          createContextMenu()
-        },
-        enabled: !isListeningClipboard
-      },
-      {
-        label: T('STOP_WATCH_CLIPBOARD'),
-        click () {
-          db.set(configPaths.settings.isListeningClipboard, false)
-          ClipboardWatcher.stopListening()
-          ClipboardWatcher.removeAllListeners()
-          createContextMenu()
-        },
-        enabled: isListeningClipboard
-      },
-      {
-        label: T('RELOAD_APP'),
-        click () {
-          app.relaunch()
-          app.exit(0)
-        }
-      },
-      // @ts-ignore
-      {
-        role: 'quit',
-        label: T('QUIT')
-      }
-    ] as any
+    const template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [
+      { label: T('OPEN_MAIN_WINDOW'), click: openMainWindow },
+      { label: T('CHOOSE_DEFAULT_PICBED'), type: 'submenu', submenu },
+      { label: T('START_WATCH_CLIPBOARD'), click: startWatchClipboard, visible: !isListeningClipboard },
+      { label: T('STOP_WATCH_CLIPBOARD'), click: stopWatchClipboard, visible: isListeningClipboard },
+      { label: T('RELOAD_APP'), click () { app.relaunch(); app.exit(0) } },
+      { label: T('QUIT'), role: 'quit' }
+    ]
     if (process.platform === 'win32') {
       template.splice(2, 0,
-        {
-          label: T('OPEN_MINI_WINDOW'),
-          click () {
-            const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
-            miniWindow.removeAllListeners()
-            if (db.get(configPaths.settings.miniWindowOntop)) {
-              miniWindow.setAlwaysOnTop(true)
-            }
-            const { width, height } = screen.getPrimaryDisplay().workAreaSize
-            const lastPosition = db.get(configPaths.settings.miniWindowPosition)
-            if (lastPosition) {
-              miniWindow.setPosition(lastPosition[0], lastPosition[1])
-            } else {
-              miniWindow.setPosition(width - 100, height - 100)
-            }
-            const setPositionFunc = () => {
-              const position = miniWindow.getPosition()
-              db.set(configPaths.settings.miniWindowPosition, position)
-            }
-            miniWindow.on('close', setPositionFunc)
-            miniWindow.on('move', setPositionFunc)
-            miniWindow.show()
-            miniWindow.focus()
-            const autoCloseMainWindow = db.get(configPaths.settings.autoCloseMainWindow) || false
-            if (windowManager.has(IWindowList.SETTING_WINDOW) && autoCloseMainWindow) {
-              windowManager.get(IWindowList.SETTING_WINDOW)!.hide()
-            }
-          }
-        }
+        { label: T('OPEN_MINI_WINDOW'), click () { openMiniWindow(false) }, visible: !isMiniWindowVisible },
+        { label: T('HIDE_MINI_WINDOW'), click: hideMiniWindow, visible: isMiniWindowVisible }
       )
     }
     contextMenu = Menu.buildFromTemplate(template)
@@ -242,70 +149,11 @@ export function createContextMenu () {
     // 目前的实现无法正常工作
 
     contextMenu = Menu.buildFromTemplate([
-      {
-        label: T('OPEN_MAIN_WINDOW'),
-        click () {
-          const settingWindow = windowManager.get(IWindowList.SETTING_WINDOW)
-          const autoCloseMiniWindow = db.get(configPaths.settings.autoCloseMiniWindow) || false
-          settingWindow!.show()
-          settingWindow!.focus()
-          if (windowManager.has(IWindowList.MINI_WINDOW) && autoCloseMiniWindow) {
-            windowManager.get(IWindowList.MINI_WINDOW)!.hide()
-          }
-        }
-      },
-      {
-        label: T('OPEN_MINI_WINDOW'),
-        click () {
-          const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
-          miniWindow.removeAllListeners()
-          if (db.get(configPaths.settings.miniWindowOntop)) {
-            miniWindow.setAlwaysOnTop(true)
-          }
-          const { width, height } = screen.getPrimaryDisplay().workAreaSize
-          const lastPosition = db.get(configPaths.settings.miniWindowPosition)
-          if (lastPosition) {
-            miniWindow.setPosition(lastPosition[0], lastPosition[1])
-          } else {
-            miniWindow.setPosition(width - 100, height - 100)
-          }
-          const setPositionFunc = () => {
-            const position = miniWindow.getPosition()
-            db.set(configPaths.settings.miniWindowPosition, position)
-          }
-          miniWindow.on('close', setPositionFunc)
-          miniWindow.on('move', setPositionFunc)
-          miniWindow.show()
-          miniWindow.focus()
-          const autoCloseMainWindow = db.get(configPaths.settings.autoCloseMainWindow) || false
-          if (windowManager.has(IWindowList.SETTING_WINDOW) && autoCloseMainWindow) {
-            windowManager.get(IWindowList.SETTING_WINDOW)!.hide()
-          }
-        }
-      },
-      {
-        label: T('START_WATCH_CLIPBOARD'),
-        click () {
-          db.set(configPaths.settings.isListeningClipboard, true)
-          ClipboardWatcher.startListening()
-          ClipboardWatcher.on('change', () => {
-            picgo.log.info('clipboard changed')
-            uploadClipboardFiles()
-          })
-          createContextMenu()
-        },
-        enabled: !isListeningClipboard
-      },
-      {
-        label: T('STOP_WATCH_CLIPBOARD'),
-        click () {
-          db.set(configPaths.settings.isListeningClipboard, false)
-          ClipboardWatcher.stopListening()
-          ClipboardWatcher.removeAllListeners()
-          createContextMenu()
-        },
-        enabled: isListeningClipboard
-      },
+      { label: T('OPEN_MAIN_WINDOW'), click: openMainWindow },
+      { label: T('OPEN_MINI_WINDOW'), click () { openMiniWindow(false) }, visible: !isMiniWindowVisible },
+      { label: T('HIDE_MINI_WINDOW'), click: hideMiniWindow, visible: isMiniWindowVisible },
+      { label: T('START_WATCH_CLIPBOARD'), click: startWatchClipboard, visible: !isListeningClipboard },
+      { label: T('STOP_WATCH_CLIPBOARD'), click: stopWatchClipboard, visible: isListeningClipboard },
       {
         label: T('ABOUT'),
         click () {
@@ -317,11 +165,7 @@ export function createContextMenu () {
           })
         }
       },
-      // @ts-ignore
-      {
-        role: 'quit',
-        label: T('QUIT')
-      }
+      { label: T('QUIT'), role: 'quit' }
     ])
   }
 }

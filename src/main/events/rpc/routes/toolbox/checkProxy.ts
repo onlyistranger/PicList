@@ -11,7 +11,7 @@ import { T } from '~/i18n'
 
 import { IToolboxItemCheckStatus, IToolboxItemType } from '#/types/enum'
 
-const getProxy = (proxyStr: string): AxiosRequestConfig['proxy'] | false => {
+function getProxy (proxyStr: string): AxiosRequestConfig['proxy'] | null {
   if (proxyStr) {
     try {
       const proxyOptions = new URL(proxyStr)
@@ -20,10 +20,9 @@ const getProxy = (proxyStr: string): AxiosRequestConfig['proxy'] | false => {
         port: parseInt(proxyOptions.port || '0', 10),
         protocol: proxyOptions.protocol
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
-  return false
+  return null
 }
 
 const sendToolboxRes = sendToolboxResWithType(IToolboxItemType.HAS_PROBLEM_WITH_PROXY)

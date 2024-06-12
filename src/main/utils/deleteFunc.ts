@@ -2,10 +2,13 @@ import axios from 'axios'
 import crypto from 'crypto'
 import http, { AgentOptions } from 'http'
 import https from 'https'
+import path from 'path'
+import { ISftpPlistConfig } from 'piclist'
 import querystring from 'querystring'
 import { S3Client, DeleteObjectCommand, S3ClientConfig } from '@aws-sdk/client-s3'
 import { NodeHttpHandler } from '@smithy/node-http-handler'
 
+import SSHClient from '~/utils/sshClient'
 import { getAgent } from '~/manage/utils/common'
 
 interface DogecloudTokenFull {
@@ -216,6 +219,21 @@ export async function removeFileFromHuaweiInMain (configMap: IStringKeyMap) {
     return res.status === 204
   } catch (error) {
     console.log(error)
+    return false
+  }
+}
+
+export async function removeFileFromSFTPInMain (config: ISftpPlistConfig, fileName: string) {
+  try {
+    const client = SSHClient.instance
+    await client.connect(config)
+    const uploadPath = `/${(config.uploadPath || '')}/`.replace(/\/+/g, '/')
+    const remote = path.join(uploadPath, fileName)
+    const deleteResult = await client.deleteFileSFTP(config, remote)
+    client.close()
+    return deleteResult
+  } catch (err: any) {
+    console.log(err)
     return false
   }
 }

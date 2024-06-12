@@ -67,13 +67,12 @@ import { reactive, ref, onBeforeUnmount, onBeforeMount } from 'vue'
 import { IResult } from '@picgo/store/dist/types'
 
 import { T as $T } from '@/i18n/index'
-import { sendToMain } from '@/utils/common'
+import { sendRPC, triggerRPC } from '@/utils/common'
 import { getConfig } from '@/utils/dataSender'
 
 import $$db from '@/utils/db'
 
-import { IPasteStyle, IWindowList } from '#/types/enum'
-import { OPEN_WINDOW } from '#/events/constants'
+import { IPasteStyle, IRPCActionType, IWindowList } from '#/types/enum'
 import { handleUrlEncode } from '#/utils/common'
 import { configPaths } from '#/utils/configPaths'
 
@@ -87,11 +86,11 @@ const clipboardFiles = ref<ImgInfo[]>([])
 const uploadFlag = ref(false)
 
 function openSettingWindow () {
-  sendToMain(OPEN_WINDOW, IWindowList.SETTING_WINDOW)
+  sendRPC(IRPCActionType.OPEN_WINDOW, IWindowList.SETTING_WINDOW)
 }
 
 async function getData () {
-  files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 })).data
+  files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 }))!.data
 }
 
 const formatCustomLink = (customLink: string, item: ImgInfo) => {
@@ -134,7 +133,7 @@ async function pasteTemplate (style: IPasteStyle, item: ImgInfo, customLink: str
   }
   const useShortUrl = await getConfig(configPaths.settings.useShortUrl) || false
   if (useShortUrl) {
-    url = await ipcRenderer.invoke('getShortUrl', url)
+    url = await triggerRPC<string>(IRPCActionType.TRAY_GET_SHORT_URL, url) || url
   }
   notification.body = url
   const _customLink = customLink || '![$fileName]($url)'
@@ -167,7 +166,7 @@ function uploadClipboardFiles () {
     return
   }
   uploadFlag.value = true
-  sendToMain('uploadClipboardFiles')
+  sendRPC(IRPCActionType.TRAY_UPLOAD_CLIPBOARD_FILES)
 }
 
 onBeforeMount(() => {
@@ -178,13 +177,13 @@ onBeforeMount(() => {
       const item = _files[i]
       await $$db.insert(item)
     }
-    files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 })).data
+    files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 }))!.data
   })
   ipcRenderer.on('clipboardFiles', (_: Event, files: ImgInfo[]) => {
     clipboardFiles.value = files
   })
   ipcRenderer.on('uploadFiles', async () => {
-    files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 })).data
+    files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 }))!.data
     uploadFlag.value = false
   })
   ipcRenderer.on('updateFiles', () => {

@@ -1,9 +1,8 @@
-import { ipcRenderer } from 'electron'
 import { ComponentOptions } from 'vue'
 
 import bus from '@/utils/bus'
 
-import { FORCE_UPDATE, GET_PICBEDS } from '#/events/constants'
+import { FORCE_UPDATE } from '#/events/constants'
 
 export const mainMixin: ComponentOptions = {
   inject: ['forceUpdateTime'],
@@ -20,9 +19,6 @@ export const mainMixin: ComponentOptions = {
   methods: {
     forceUpdate () {
       bus.emit(FORCE_UPDATE)
-    },
-    getPicBeds () {
-      ipcRenderer.send(GET_PICBEDS)
     }
   }
 }

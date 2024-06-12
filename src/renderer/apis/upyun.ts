@@ -1,6 +1,6 @@
 import Upyun from 'upyun'
 
-import { deleteFailedLog, deleteLog } from '@/utils/common'
+import { deleteFailedLog, deleteLog } from '#/utils/deleteLog'
 
 interface IConfigMap {
   fileName: string

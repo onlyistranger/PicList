@@ -1,6 +1,6 @@
 import COS from 'cos-nodejs-sdk-v5'
 
-import { deleteFailedLog, deleteLog } from '@/utils/common'
+import { deleteFailedLog, deleteLog } from '#/utils/deleteLog'
 
 interface IConfigMap {
   fileName: string

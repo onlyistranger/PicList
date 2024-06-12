@@ -11,12 +11,13 @@ import logger from '@core/picgo/logger'
 import { AESHelper } from '~/utils/aesHelper'
 import { changeCurrentUploader } from '~/utils/handleUploaderConfig'
 
-import { uploadChoosedFiles, uploadClipboardFiles, deleteChoosedFiles } from 'apis/app/uploader/apis'
+import { uploadChoosedFiles, uploadClipboardFiles } from 'apis/app/uploader/apis'
 import windowManager from 'apis/app/window/windowManager'
 
 import { markdownContent } from '~/server/apiDoc'
 import router from '~/server/router'
 import {
+  deleteChoosedFiles,
   handleResponse
 } from '~/server/utils'
 
