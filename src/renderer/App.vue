@@ -1,19 +1,20 @@
 <template>
-  <div id="app">
+  <div
+    id="app"
+    :key="pageReloadCount"
+  >
     <router-view />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useStore } from '@/hooks/useStore'
 import type { IConfig } from 'piclist'
-import { onBeforeMount, onMounted, onUnmounted } from 'vue'
+import { onBeforeMount } from 'vue'
 
+import { useStore } from '@/hooks/useStore'
 import { useATagClick } from '@/hooks/useATagClick'
-import bus from '@/utils/bus'
 import { getConfig } from '@/utils/dataSender'
-
-import { FORCE_UPDATE } from '#/events/constants'
+import { pageReloadCount } from '@/utils/global'
 
 useATagClick()
 const store = useStore()
@@ -23,16 +24,6 @@ onBeforeMount(async () => {
   if (config) {
     store?.setDefaultPicBed(config?.picBed?.uploader || config?.picBed?.current || 'smms')
   }
-})
-
-onMounted(() => {
-  bus.on(FORCE_UPDATE, () => {
-    store?.updateForceUpdateTime()
-  })
-})
-
-onUnmounted(() => {
-  bus.off(FORCE_UPDATE)
 })
 
 </script>

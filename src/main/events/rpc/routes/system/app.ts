@@ -6,7 +6,7 @@ import windowManager from 'apis/app/window/windowManager'
 import { i18nManager } from '~/i18n'
 
 import { IRPCActionType, IWindowList } from '#/types/enum'
-import { GET_CURRENT_LANGUAGE, GET_LANGUAGE_LIST, SET_CURRENT_LANGUAGE } from '#/events/constants'
+import { SET_CURRENT_LANGUAGE } from '#/events/constants'
 
 export default [
   {
@@ -31,14 +31,14 @@ export default [
   {
     action: IRPCActionType.GET_LANGUAGE_LIST,
     handler: async (event: IIPCEvent) => {
-      event.sender.send(GET_LANGUAGE_LIST, i18nManager.languageList)
+      event.returnValue = i18nManager.languageList
     }
   },
   {
     action: IRPCActionType.GET_CURRENT_LANGUAGE,
     handler: async (event: IIPCEvent) => {
       const { lang, locales } = i18nManager.getCurrentLocales()
-      event.sender.send(GET_CURRENT_LANGUAGE, lang, locales)
+      event.returnValue = [lang, locales]
     }
   },
   {

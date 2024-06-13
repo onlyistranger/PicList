@@ -22,7 +22,6 @@ declare module 'vue' {
     triggerRPC<T> (action: import('#/types/enum').IRPCActionType, ...args: any[]): Promise<T | undefined>
     sendRPC (action: import('#/types/enum').IRPCActionType, ...args: any[]): void
     defaultPicBed: string
-    forceUpdate(): void
     sendToMain(channel: string, ...args: any[]): void
   }
   interface GlobalComponents {

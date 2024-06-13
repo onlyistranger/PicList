@@ -51,6 +51,11 @@ export function sendRPC (action: IRPCActionType, ...args: any[]): void {
   ipcRenderer.send(RPC_ACTIONS, action, data)
 }
 
+export function sendRpcSync (action: IRPCActionType, ...args: any[]) {
+  const data = getRawData(args)
+  return ipcRenderer.sendSync(RPC_ACTIONS, action, data)
+}
+
 export function invokeToMain (channel: string, ...args: any[]) {
   const data = getRawData(args)
   return ipcRenderer.invoke(channel, ...data)

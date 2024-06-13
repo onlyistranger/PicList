@@ -1,8 +1,7 @@
 import mitt from 'mitt'
 import {
   SHOW_INPUT_BOX,
-  SHOW_INPUT_BOX_RESPONSE,
-  FORCE_UPDATE
+  SHOW_INPUT_BOX_RESPONSE
 } from '#/events/constants'
 
 type IEvent ={
@@ -11,8 +10,7 @@ type IEvent ={
     value: string
     title: string
     placeholder: string
-  },
-  [FORCE_UPDATE]: void
+  }
 }
 
 const emitter = mitt<IEvent>()

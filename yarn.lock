@@ -2070,10 +2070,10 @@
   dependencies:
     "@hapi/hoek" "^9.0.0"
 
-"@highlightjs/vue-plugin@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.npmjs.org/@highlightjs/vue-plugin/-/vue-plugin-2.1.0.tgz#b7c41e3597a46975665b10cad57882cbde1d1594"
-  integrity sha512-E+bmk4ncca+hBEYRV2a+1aIzIV0VSY/e5ArjpuSN9IO7wBJrzUE2u4ESCwrbQD7sAy+jWQjkV5qCCWgc+pu7CQ==
+"@highlightjs/vue-plugin@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@highlightjs/vue-plugin/-/vue-plugin-2.1.2.tgz#b7deaaa03452da659a39859437ae0c4bca037600"
+  integrity sha512-P7s9DLBGpBsbltk3ZKuYUu9lwDCEfpttjJ5ErI6Wco6GQWIsjcSCJzCoMHgXhRUNkFDtZo7ZgeF8M10POPbDLw==
 
 "@humanwhocodes/config-array@^0.11.14":
   version "0.11.14"
