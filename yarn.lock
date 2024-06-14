@@ -6650,10 +6650,10 @@ dateformat@^2.0.0:
   resolved "https://registry.npmmirror.com/dateformat/-/dateformat-2.2.0.tgz#4065e2013cf9fb916ddfd82efb506ad4c6769062"
   integrity sha512-GODcnWq3YGoTnygPfi02ygEiRxqUxpJwuRHjdhJYuxpcZmDq4rjBiXYmbCCzStxo176ixfLT6i4NPwQooRySnw==
 
-dayjs@^1.11.10:
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.10.tgz#68acea85317a6e164457d6d6947564029a6a16a0"
-  integrity sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==
+dayjs@^1.11.11:
+  version "1.11.11"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.11.tgz#dfe0e9d54c5f8b68ccf8ca5f72ac603e7e5ed59e"
+  integrity sha512-okzr3f11N6WuqYtZSvm+F776mB41wRZMhKP+hc34YdW+KmtYYK9iqvHSwo2k9FEH3fhGXvOPV6yz2IcSrfRUDg==
 
 dayjs@^1.11.3:
   version "1.11.7"
@@ -11597,10 +11597,10 @@ node-releases@^2.0.6:
   resolved "https://registry.npmjs.org/node-releases/-/node-releases-2.0.8.tgz#0f349cdc8fcfa39a92ac0be9bc48b7706292b9ae"
   integrity sha512-dFSmB8fFHEH/s81Xi+Y/15DQY6VHW81nXRj86EMSL3lmuTmK1e+aT4wrFCkTbm+gSwkw4KpX+rT/pMM2c1mF+A==
 
-node-ssh-no-cpu-features@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/node-ssh-no-cpu-features/-/node-ssh-no-cpu-features-1.0.1.tgz#e0a54fa16d34f44dfa307b1c52d592d4b891e65c"
-  integrity sha512-dfxNdHpeB2Yapskc5PBZCnhRmL1bdOYZX/N9PECR0d1I8U2PlPB4VfshmNJIw/l3BuGNhFquu5Tu6z/1lnWmIA==
+node-ssh-no-cpu-features@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/node-ssh-no-cpu-features/-/node-ssh-no-cpu-features-2.0.0.tgz#79299f47d29debf2c7b9742029bf15e8ac0641fa"
+  integrity sha512-/X0Oq5YSB953MTamAwDOIhh+QdkLK1cTKl23VmkJg5XBDY8kx2yn72OvBsrjqR+2Aw7MN+GydAhHdXW2PMMvgQ==
   dependencies:
     "@types/ssh2" "^1.11.10"
     is-stream "^2.0.0"
@@ -11608,7 +11608,7 @@ node-ssh-no-cpu-features@^1.0.1:
     sb-promise-queue "^2.1.0"
     sb-scandir "^3.1.0"
     shell-escape "^0.2.0"
-    ssh2-no-cpu-features "^1.0.0"
+    ssh2-no-cpu-features "^2.0.0"
 
 nodejs-file-downloader@^4.12.1:
   version "4.12.1"
@@ -12411,10 +12411,10 @@ performance-now@^2.1.0:
   resolved "https://registry.npmmirror.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==
 
-piclist@^1.8.9:
-  version "1.8.9"
-  resolved "https://registry.yarnpkg.com/piclist/-/piclist-1.8.9.tgz#36924ccc5433b8adaee850dd771fc4a961744416"
-  integrity sha512-AWVId4A+hIg8Niba5o49IxO8Q4FADkFMHFk+wryLJIoMlDx5nl4drHVojpCvAfMJ3Kz7zFJBU8mhS5TeO5bXKg==
+piclist@^1.8.10:
+  version "1.8.10"
+  resolved "https://registry.yarnpkg.com/piclist/-/piclist-1.8.10.tgz#00e4ff785d9b2a43139926401ee31c927fcac5b7"
+  integrity sha512-SdS/WM7gT66s1/Y1MCjjaAMr89/Dz4ope08S9ynbXHWbETuA7aLPK9XV9x+8VG1FC71Sb3AKQLNsAy9LZJmIOg==
   dependencies:
     "@aws-sdk/client-s3" "3.421.0"
     "@aws-sdk/lib-storage" "3.421.0"
@@ -12426,7 +12426,7 @@ piclist@^1.8.9:
     chalk "^2.4.1"
     commander "^8.1.0"
     cross-spawn "^7.0.3"
-    dayjs "^1.11.10"
+    dayjs "^1.11.11"
     download-git-repo "^3.0.2"
     ejs "^2.6.1"
     file-type "16.2.0"
@@ -12445,7 +12445,7 @@ piclist@^1.8.9:
     minimatch "^3.0.4"
     minimist "^1.2.8"
     multer "^1.4.5-lts.1"
-    node-ssh-no-cpu-features "^1.0.1"
+    node-ssh-no-cpu-features "^2.0.0"
     qiniu "7.9.0"
     resolve "^1.8.1"
     rimraf "^5.0.1"
@@ -14357,10 +14357,10 @@ sprintf-js@~1.0.2:
   resolved "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
-ssh2-no-cpu-features@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ssh2-no-cpu-features/-/ssh2-no-cpu-features-1.0.0.tgz#641a8ea5331638ea9bfdee9e53f38ebfc46bf8cf"
-  integrity sha512-94HbS6PbjOvGYnWQ0OFlGLWp3yw6BfSAmpVlCRvsqqyfWa86gCorpnXFJLLJklnfCbp6UiZhEKzm3W+8vKCHqw==
+ssh2-no-cpu-features@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ssh2-no-cpu-features/-/ssh2-no-cpu-features-2.0.0.tgz#5ae1358979e57e7c72c4c1c71b826908496d4a60"
+  integrity sha512-8Y2srJtr9sNwcUpTglgwAtjMWa+zr8RxtfIo4TK4O99ZxbxXqkBfecOsfw3TJTqrakETWNFLrwQibDJoumt82w==
   dependencies:
     asn1 "^0.2.6"
     bcrypt-pbkdf "^1.0.2"
