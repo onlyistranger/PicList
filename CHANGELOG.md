@@ -1,3 +1,31 @@
+# :tada: 2.9.0 (2024-06-14)
+
+
+### :sparkles: Features
+
+* **custom:** add tray tooltip ([8a565c1](https://github.com/Kuingsmile/piclist/commit/8a565c1))
+* **custom:** optimize get config speed ([106290f](https://github.com/Kuingsmile/piclist/commit/106290f))
+* **custom:** refactor all main ipc event ([5ddc182](https://github.com/Kuingsmile/piclist/commit/5ddc182))
+* **custom:** smms delete for repeat file ([07e7a26](https://github.com/Kuingsmile/piclist/commit/07e7a26))
+* **custom:** support create bucket for s3 ([226f170](https://github.com/Kuingsmile/piclist/commit/226f170))
+* **custom:** update i18n force update ([e9c386d](https://github.com/Kuingsmile/piclist/commit/e9c386d))
+* **custom:** use new ssh2 and node-ssh ([2290e4e](https://github.com/Kuingsmile/piclist/commit/2290e4e))
+
+
+### :bug: Bug Fixes
+
+* **custom:** change manage file name ([d7028fc](https://github.com/Kuingsmile/piclist/commit/d7028fc))
+* **custom:** fix bug while using webp plugin ([30341d4](https://github.com/Kuingsmile/piclist/commit/30341d4)), closes [#205](https://github.com/Kuingsmile/piclist/issues/205)
+* **custom:** fix css error ([0c241bc](https://github.com/Kuingsmile/piclist/commit/0c241bc))
+* **custom:** fix url copy error for dirs ([f1a7a13](https://github.com/Kuingsmile/piclist/commit/f1a7a13))
+
+
+### :pencil: Documentation
+
+* **custom:** v2.9.0 changelog ([7226cc8](https://github.com/Kuingsmile/piclist/commit/7226cc8))
+
+
+
 ## :tada: 2.8.6 (2024-05-26)
 
 
