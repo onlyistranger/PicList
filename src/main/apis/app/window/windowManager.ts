@@ -7,7 +7,7 @@ class WindowManager implements IWindowManager {
   #windowMap: Map<IWindowList | string, BrowserWindow> = new Map()
   #windowIdMap: Map<number, IWindowList | string> = new Map()
 
-  create (name: IWindowList) {
+  create(name: IWindowList) {
     const windowConfig: IWindowListItem = windowList.get(name)!
     if (windowConfig.isValid) {
       if (!windowConfig.multiple) {
@@ -32,7 +32,7 @@ class WindowManager implements IWindowManager {
     }
   }
 
-  get (name: IWindowList) {
+  get(name: IWindowList) {
     if (this.has(name)) {
       return this.#windowMap.get(name)!
     } else {
@@ -41,7 +41,7 @@ class WindowManager implements IWindowManager {
     }
   }
 
-  has (name: IWindowList) {
+  has(name: IWindowList) {
     return this.#windowMap.has(name)
   }
 
@@ -53,7 +53,7 @@ class WindowManager implements IWindowManager {
     }
   }
 
-  getAvailableWindow (isSkipMiniWindow = false) {
+  getAvailableWindow(isSkipMiniWindow = false) {
     const miniWindow = this.#windowMap.get(IWindowList.MINI_WINDOW)
     if (miniWindow && miniWindow.isVisible() && !isSkipMiniWindow) {
       return miniWindow

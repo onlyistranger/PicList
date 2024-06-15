@@ -1,6 +1,4 @@
-import {
-  Notification
-} from 'electron'
+import { Notification } from 'electron'
 
 import picgo from '@core/picgo'
 import logger from '@core/picgo/logger'
@@ -28,10 +26,10 @@ export const handleResponse = ({
   body = {
     success: false
   }
-} : {
-  response: IHttpResponse,
-  statusCode?: number,
-  header?: IObj,
+}: {
+  response: IHttpResponse
+  statusCode?: number
+  header?: IObj
   body?: any
 }) => {
   if (body?.success === false) {
@@ -43,9 +41,7 @@ export const handleResponse = ({
 }
 
 export const ensureHTTPLink = (url: string): string => {
-  return url.startsWith('http')
-    ? url
-    : `http://${url}`
+  return url.startsWith('http') ? url : `http://${url}`
 }
 
 export const deleteChoosedFiles = async (list: ImgInfo[]): Promise<boolean[]> => {
@@ -61,10 +57,7 @@ export const deleteChoosedFiles = async (list: ImgInfo[]): Promise<boolean[]> =>
             const noteFunc = (value: boolean) => {
               const notification = new Notification({
                 title: T('MANAGE_BUCKET_BATCH_DELETE_ERROR_MSG_MSG2'),
-                body: T(value
-                  ? 'GALLERY_SYNC_DELETE_NOTICE_SUCCEED'
-                  : 'GALLERY_SYNC_DELETE_NOTICE_FAILED'
-                )
+                body: T(value ? 'GALLERY_SYNC_DELETE_NOTICE_SUCCEED' : 'GALLERY_SYNC_DELETE_NOTICE_FAILED')
               })
               notification.show()
             }

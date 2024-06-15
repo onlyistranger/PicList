@@ -23,7 +23,7 @@ const errorMsg = {
 /** ensure notification list */
 if (!global.notificationList) global.notificationList = []
 
-function manageDbChecker () {
+function manageDbChecker() {
   if (process.type !== 'renderer') {
     const manageConfigFilePath = managePathChecker()
     if (!fs.existsSync(manageConfigFilePath)) {
@@ -42,9 +42,13 @@ function manageDbChecker () {
       fs.unlinkSync(manageConfigFilePath)
       if (fs.existsSync(manageConfigFileBackupPath)) {
         try {
-          configFile = fs.readFileSync(manageConfigFileBackupPath, { encoding: 'utf-8' })
+          configFile = fs.readFileSync(manageConfigFileBackupPath, {
+            encoding: 'utf-8'
+          })
           JSON.parse(configFile)
-          writeFile.sync(manageConfigFilePath, configFile, { encoding: 'utf-8' })
+          writeFile.sync(manageConfigFilePath, configFile, {
+            encoding: 'utf-8'
+          })
           const stats = fs.statSync(manageConfigFileBackupPath)
           optionsTpl.body = `${errorMsg.brokenButBackup}\n${T('TIPS_PICGO_BACKUP_FILE_VERSION', {
             v: dayjs(stats.mtime).format('YYYY-MM-DD HH:mm:ss')
@@ -61,14 +65,16 @@ function manageDbChecker () {
       global.notificationList.push(optionsTpl)
       return
     }
-    writeFile.sync(manageConfigFileBackupPath, configFile, { encoding: 'utf-8' })
+    writeFile.sync(manageConfigFileBackupPath, configFile, {
+      encoding: 'utf-8'
+    })
   }
 }
 
 /**
  * Get manage config path
  */
-function managePathChecker (): string {
+function managePathChecker(): string {
   if (_configFilePath) {
     return _configFilePath
   }
@@ -80,7 +86,9 @@ function managePathChecker (): string {
     return _configFilePath
   }
   try {
-    const configString = fs.readFileSync(defaultManageConfigPath, { encoding: 'utf-8' })
+    const configString = fs.readFileSync(defaultManageConfigPath, {
+      encoding: 'utf-8'
+    })
     const config = JSON.parse(configString)
     const userConfigPath: string = config.configPath || ''
     if (userConfigPath) {
@@ -107,12 +115,8 @@ function managePathChecker (): string {
   }
 }
 
-function managePathDir () {
+function managePathDir() {
   return path.dirname(managePathChecker())
 }
 
-export {
-  managePathChecker,
-  managePathDir,
-  manageDbChecker
-}
+export { managePathChecker, managePathDir, manageDbChecker }

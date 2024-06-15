@@ -8,13 +8,13 @@ class ClipboardWatcher extends EventEmitter {
   timer: NodeJS.Timeout | null
   lastImageHash: string | null
 
-  constructor () {
+  constructor() {
     super()
     this.lastImageHash = null
     this.timer = null
   }
 
-  startListening (watchDelay = 500) {
+  startListening(watchDelay = 500) {
     this.stopListening(false)
 
     this.timer = setInterval(() => {
@@ -33,7 +33,7 @@ class ClipboardWatcher extends EventEmitter {
     logger.info('Start to watch clipboard')
   }
 
-  stopListening (isLog = true) {
+  stopListening(isLog = true) {
     if (this.timer) {
       clearInterval(this.timer)
       this.timer = null
@@ -42,7 +42,7 @@ class ClipboardWatcher extends EventEmitter {
     isLog && logger.info('Stop to watch clipboard')
   }
 
-  getImageHash (image: Electron.NativeImage): string {
+  getImageHash(image: Electron.NativeImage): string {
     const buffer = image.toBitmap()
     return crypto.createHash('md5').update(buffer).digest('hex')
   }

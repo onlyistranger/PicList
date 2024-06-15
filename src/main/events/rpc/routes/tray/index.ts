@@ -1,6 +1,4 @@
-import {
-  Notification
-} from 'electron'
+import { Notification } from 'electron'
 
 import { RPCRouter } from '~/events/rpc/router'
 import { generateShortUrl, setTrayToolTip, handleCopyUrl } from '~/utils/common'
@@ -42,8 +40,11 @@ const trayRoutes = [
       const img = await uploader.setWebContents(trayWindow.webContents).uploadWithBuildInClipboard()
       if (img !== false) {
         const pasteStyle = db.get(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
-        handleCopyUrl(await (pasteTemplate(pasteStyle, img[0], db.get(configPaths.settings.customLink))))
-        const isShowResultNotification = db.get(configPaths.settings.uploadResultNotification) === undefined ? true : !!db.get(configPaths.settings.uploadResultNotification)
+        handleCopyUrl(await pasteTemplate(pasteStyle, img[0], db.get(configPaths.settings.customLink)))
+        const isShowResultNotification =
+          db.get(configPaths.settings.uploadResultNotification) === undefined
+            ? true
+            : !!db.get(configPaths.settings.uploadResultNotification)
         if (isShowResultNotification) {
           const notification = new Notification({
             title: T('UPLOAD_SUCCEED'),
@@ -66,6 +67,4 @@ const trayRoutes = [
 
 trayRouter.addBatch(trayRoutes)
 
-export {
-  trayRouter
-}
+export { trayRouter }

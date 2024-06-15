@@ -2,12 +2,7 @@ import { app, BrowserWindow } from 'electron'
 
 import windowManager from 'apis/app/window/windowManager'
 
-import {
-  buildMainPageMenu,
-  buildMiniPageMenu,
-  buildPicBedListMenu,
-  buildPluginPageMenu
-} from '~/events/remotes/menu'
+import { buildMainPageMenu, buildMiniPageMenu, buildPicBedListMenu, buildPluginPageMenu } from '~/events/remotes/menu'
 import { openMiniWindow } from '~/utils/windowHelper'
 
 import { IRPCActionType, IWindowList } from '#/types/enum'

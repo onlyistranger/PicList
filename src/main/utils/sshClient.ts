@@ -1,4 +1,3 @@
-// @ts-nocheck
 import fs from 'fs-extra'
 import { NodeSSH, Config, SSHExecCommandResponse } from 'node-ssh-no-cpu-features'
 import path from 'path'
@@ -11,22 +10,26 @@ class SSHClient {
   private static _client: NodeSSH
   private _isConnected = false
 
-  static get instance (): SSHClient {
+  static get instance(): SSHClient {
     return this._instance || (this._instance = new this())
   }
 
-  static get client (): NodeSSH {
+  static get client(): NodeSSH {
     return this._client || (this._client = new NodeSSH())
   }
 
-  private changeWinStylePathToUnix (path: string): string {
+  private changeWinStylePathToUnix(path: string): string {
     return path.replace(/\\/g, '/')
   }
 
-  async connect (config: ISftpPlistConfig): Promise<boolean> {
+  async connect(config: ISftpPlistConfig): Promise<boolean> {
     const { username, password, privateKey, passphrase } = config
     const loginInfo: Config = privateKey
-      ? { username, privateKeyPath: privateKey, passphrase: passphrase || undefined }
+      ? {
+          username,
+          privateKeyPath: privateKey,
+          passphrase: passphrase || undefined
+        }
       : { username, password }
     try {
       await SSHClient.client.connect({
@@ -41,52 +44,64 @@ class SSHClient {
     }
   }
 
-  async deleteFileSFTP (config: ISftpPlistConfig, remote: string): Promise<boolean> {
+  async deleteFileSFTP(config: ISftpPlistConfig, remote: string): Promise<boolean> {
     try {
       const client = new Client()
       const { username, password, privateKey, passphrase } = config
       const loginInfo: Config = privateKey
-        ? { username, privateKey: fs.readFileSync(privateKey), passphrase: passphrase || undefined }
+        ? {
+            username,
+            privateKey: fs.readFileSync(privateKey),
+            passphrase: passphrase || undefined
+          }
         : { username, password }
       remote = this.changeWinStylePathToUnix(remote)
       if (remote === '/' || remote.includes('*')) return false
       const promise = new Promise((resolve, reject) => {
-        client.on('ready', () => {
-          client.sftp((err, sftp) => {
-            // eslint-disable-next-line prefer-promise-reject-errors
-            if (err) reject(false)
-            sftp.unlink(remote, (err) => {
-              // eslint-disable-next-line prefer-promise-reject-errors
-              if (err) reject(false)
-              client.end()
-              resolve(true)
-            })
+        client
+          .on('ready', () => {
+            client.sftp(
+              (
+                err: any,
+                sftp: {
+                  unlink: (arg0: string, arg1: (err: any) => void) => void
+                }
+              ) => {
+                // eslint-disable-next-line prefer-promise-reject-errors
+                if (err) reject(false)
+                sftp.unlink(remote, (err: any) => {
+                  // eslint-disable-next-line prefer-promise-reject-errors
+                  if (err) reject(false)
+                  client.end()
+                  resolve(true)
+                })
+              }
+            )
           })
-        }).connect({
-          host: config.host,
-          port: Number(config.port) || 22,
-          ...loginInfo
-        })
-      }
-      )
-      return await promise
+          .connect({
+            host: config.host,
+            port: Number(config.port) || 22,
+            ...loginInfo
+          })
+      })
+      return (await promise) as boolean
     } catch (err: any) {
       console.log(err)
       return false
     }
   }
 
-  private async exec (script: string): Promise<boolean> {
+  private async exec(script: string): Promise<boolean> {
     const execResult = await SSHClient.client.execCommand(script)
     return execResult.code === 0
   }
 
-  async execCommand (script: string): Promise<SSHExecCommandResponse> {
+  async execCommand(script: string): Promise<SSHExecCommandResponse> {
     const execResult = await SSHClient.client.execCommand(script)
     return execResult || { code: 1, stdout: '', stderr: '' }
   }
 
-  async getFile (local: string, remote: string): Promise<boolean> {
+  async getFile(local: string, remote: string): Promise<boolean> {
     if (!this._isConnected) {
       throw new Error('SSH 未连接')
     }
@@ -103,10 +118,14 @@ class SSHClient {
     }
   }
 
-  async putFile (local: string, remote: string, config: {
-    fileMode?: string
-    dirMode?: string
-  } = {}): Promise<boolean> {
+  async putFile(
+    local: string,
+    remote: string,
+    config: {
+      fileMode?: string
+      dirMode?: string
+    } = {}
+  ): Promise<boolean> {
     if (!this._isConnected) {
       throw new Error('SSH 未连接')
     }
@@ -126,9 +145,12 @@ class SSHClient {
     }
   }
 
-  async mkdir (dirPath: string, config: {
-    dirMode?: string
-  } = {}): Promise<boolean> {
+  async mkdir(
+    dirPath: string,
+    config: {
+      dirMode?: string
+    } = {}
+  ): Promise<boolean> {
     if (!this._isConnected) {
       throw new Error('SSH 未连接')
     }
@@ -158,11 +180,11 @@ class SSHClient {
     }
   }
 
-  get isConnected (): boolean {
+  get isConnected(): boolean {
     return SSHClient.client.isConnected()
   }
 
-  close (): void {
+  close(): void {
     SSHClient.client.dispose()
     this._isConnected = false
   }

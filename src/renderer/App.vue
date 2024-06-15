@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="app"
-    :key="pageReloadCount"
-  >
+  <div id="app" :key="pageReloadCount">
     <router-view />
   </div>
 </template>
@@ -25,7 +22,6 @@ onBeforeMount(async () => {
     store?.setDefaultPicBed(config?.picBed?.uploader || config?.picBed?.current || 'smms')
   }
 })
-
 </script>
 
 <script lang="ts">
@@ -35,18 +31,18 @@ export default {
 </script>
 
 <style lang="stylus">
-  body,
-  html
-    padding 0
-    margin 0
-    height 100%
-    font-family "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif
-  #app
-    height 100%
-    user-select none
-    overflow hidden
-  .el-button-group
-    width 100%
-    .el-button
-      width 50%
+body,
+html
+  padding 0
+  margin 0
+  height 100%
+  font-family "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif
+#app
+  height 100%
+  user-select none
+  overflow hidden
+.el-button-group
+  width 100%
+  .el-button
+    width 50%
 </style>

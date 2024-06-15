@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 import { ipcMain, IpcMainEvent } from 'electron'
 import path from 'path'
@@ -7,7 +6,13 @@ import qiniu from 'qiniu/index'
 import windowManager from 'apis/app/window/windowManager'
 
 import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
-import { hmacSha1Base64, getFileMimeType, NewDownloader, formatError, ConcurrencyPromisePool } from '~/manage/utils/common'
+import {
+  hmacSha1Base64,
+  getFileMimeType,
+  NewDownloader,
+  formatError,
+  ConcurrencyPromisePool
+} from '~/manage/utils/common'
 import { ManageLogger } from '~/manage/utils/logger'
 
 import { commonTaskStatus, IWindowList, uploadTaskSpecialStatus } from '#/types/enum'
@@ -28,14 +33,14 @@ class QiniuApi {
     getBucketDomain: 'https://uc.qiniuapi.com/v2/domains'
   }
 
-  constructor (accessKey: string, secretKey: string, logger: ManageLogger) {
+  constructor(accessKey: string, secretKey: string, logger: ManageLogger) {
     this.mac = new qiniu.auth.digest.Mac(accessKey, secretKey)
     this.accessKey = accessKey
     this.secretKey = secretKey
     this.logger = logger
   }
 
-  formatFolder (item: string, slicedPrefix: string, urlPrefix: string) {
+  formatFolder(item: string, slicedPrefix: string, urlPrefix: string) {
     return {
       Key: item,
       key: item,
@@ -49,7 +54,7 @@ class QiniuApi {
     }
   }
 
-  formatFile (item: any, slicedPrefix: string, urlPrefix: string) {
+  formatFile(item: any, slicedPrefix: string, urlPrefix: string) {
     const fileName = item.key.replace(slicedPrefix, '')
     return {
       ...item,
@@ -64,7 +69,7 @@ class QiniuApi {
     }
   }
 
-  authorization (
+  authorization(
     method: string,
     urlPath: string,
     host: string,
@@ -79,7 +84,7 @@ class QiniuApi {
     if (xQiniuHeaders) {
       const xQiniuHeaderStr = Object.keys(xQiniuHeaders)
         .sort()
-        .map((key) => `\n${key}:${xQiniuHeaders[key]}`)
+        .map(key => `\n${key}:${xQiniuHeaders[key]}`)
         .join('')
       signStr += xQiniuHeaderStr
     }
@@ -92,8 +97,8 @@ class QiniuApi {
 
   /**
    * 获取存储桶列表
-  */
-  async getBucketList (): Promise<any> {
+   */
+  async getBucketList(): Promise<any> {
     const host = this.hostList.getBucketList
     const authorization = qiniu.util.generateAccessToken(this.mac, host, undefined)
     const res = await axios.get(host, {
@@ -122,8 +127,8 @@ class QiniuApi {
 
   /**
    * 获取存储桶详细信息
-  */
-  async getBucketInfo (param: IStringKeyMap): Promise<any> {
+   */
+  async getBucketInfo(param: IStringKeyMap): Promise<any> {
     const { bucketName } = param
     const urlPath = `/v2/bucketInfo?bucket=${bucketName}&fs=true`
     const authorization = this.authorization('POST', urlPath, this.host, '', '', 'application/json')
@@ -143,19 +148,19 @@ class QiniuApi {
     })
     return res?.status === 200
       ? {
-        success: true,
-        private: res.data.private,
-        zone: res.data.zone
-      }
+          success: true,
+          private: res.data.private,
+          zone: res.data.zone
+        }
       : {
-        success: false
-      }
+          success: false
+        }
   }
 
   /**
    * 获取自定义域名
    */
-  async getBucketDomain (param: IStringKeyMap): Promise<any> {
+  async getBucketDomain(param: IStringKeyMap): Promise<any> {
     const { bucketName } = param
     const host = this.hostList.getBucketDomain
     const authorization = qiniu.util.generateAccessToken(this.mac, `${host}?tbl=${bucketName}`, undefined)
@@ -175,7 +180,7 @@ class QiniuApi {
   /**
    * 修改存储桶权限
    */
-  async setBucketAclPolicy (param: IStringKeyMap): Promise<boolean> {
+  async setBucketAclPolicy(param: IStringKeyMap): Promise<boolean> {
     // 0: 公开访问 1: 私有访问
     const { bucketName } = param
     let { isPrivate } = param
@@ -207,8 +212,8 @@ class QiniuApi {
    * region: string,
    * acl: boolean // 是否公开访问
    * }
-  */
-  async createBucket (configMap: IStringKeyMap): Promise<boolean> {
+   */
+  async createBucket(configMap: IStringKeyMap): Promise<boolean> {
     const { BucketName, region, acl } = configMap
     const urlPath = `/mkbucketv3/${BucketName}/region/${region}`
     const authorization = this.authorization('POST', urlPath, this.host, '', '', 'application/json')
@@ -224,13 +229,13 @@ class QiniuApi {
     })
     return res?.status === 200
       ? await this.setBucketAclPolicy({
-        bucketName: BucketName,
-        isPrivate: !acl
-      })
+          bucketName: BucketName,
+          isPrivate: !acl
+        })
       : false
   }
 
-  async getBucketListRecursively (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListRecursively(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
     const { bucketName: bucket, prefix, cancelToken, customUrl: urlPrefix } = configMap
     let marker = undefined as any
@@ -252,25 +257,31 @@ class QiniuApi {
     const bucketManager = new qiniu.rs.BucketManager(this.mac, config)
     do {
       res = await new Promise((resolve, reject) => {
-        bucketManager.listPrefix(bucket, {
-          prefix: slicedPrefix === '' ? undefined : slicedPrefix,
-          marker,
-          limit: 1000
-        }, (err: any, respBody: any, respInfo: any) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve({
-              respBody,
-              respInfo
-            })
+        bucketManager.listPrefix(
+          bucket,
+          {
+            prefix: slicedPrefix === '' ? undefined : slicedPrefix,
+            marker,
+            limit: 1000
+          },
+          (err: any, respBody: any, respInfo: any) => {
+            if (err) {
+              reject(err)
+            } else {
+              resolve({
+                respBody,
+                respInfo
+              })
+            }
           }
-        })
+        )
       })
       if (res && res.respInfo.statusCode === 200) {
-        res.respBody && res.respBody.items && res.respBody.items.forEach((item: any) => {
-          item.fsize !== 0 && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
-        })
+        res.respBody &&
+          res.respBody.items &&
+          res.respBody.items.forEach((item: any) => {
+            item.fsize !== 0 && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
+          })
         window.webContents.send(refreshDownloadFileTransferList, result)
       } else {
         result.finished = true
@@ -286,7 +297,7 @@ class QiniuApi {
     ipcMain.removeAllListeners(cancelDownloadLoadingFileList)
   }
 
-  async getBucketListBackstage (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListBackstage(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
     const { bucketName: bucket, prefix, cancelToken, customUrl: urlPrefix } = configMap
     let marker = undefined as any
@@ -308,29 +319,37 @@ class QiniuApi {
     const bucketManager = new qiniu.rs.BucketManager(this.mac, config)
     do {
       res = await new Promise((resolve, reject) => {
-        bucketManager.listPrefix(bucket, {
-          prefix: slicedPrefix === '' ? undefined : slicedPrefix,
-          delimiter: '/',
-          marker,
-          limit: 1000
-        }, (err: any, respBody: any, respInfo: any) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve({
-              respBody,
-              respInfo
-            })
+        bucketManager.listPrefix(
+          bucket,
+          {
+            prefix: slicedPrefix === '' ? undefined : slicedPrefix,
+            delimiter: '/',
+            marker,
+            limit: 1000
+          },
+          (err: any, respBody: any, respInfo: any) => {
+            if (err) {
+              reject(err)
+            } else {
+              resolve({
+                respBody,
+                respInfo
+              })
+            }
           }
-        })
+        )
       })
       if (res && res.respInfo.statusCode === 200) {
-        res.respBody && res.respBody.commonPrefixes && res.respBody.commonPrefixes.forEach((item: any) => {
-          result.fullList.push(this.formatFolder(item, slicedPrefix, urlPrefix))
-        })
-        res.respBody && res.respBody.items && res.respBody.items.forEach((item: any) => {
-          item.fsize !== 0 && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
-        })
+        res.respBody &&
+          res.respBody.commonPrefixes &&
+          res.respBody.commonPrefixes.forEach((item: any) => {
+            result.fullList.push(this.formatFolder(item, slicedPrefix, urlPrefix))
+          })
+        res.respBody &&
+          res.respBody.items &&
+          res.respBody.items.forEach((item: any) => {
+            item.fsize !== 0 && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
+          })
         window.webContents.send('refreshFileTransferList', result)
       } else {
         result.finished = true
@@ -360,8 +379,8 @@ class QiniuApi {
    *  itemsPerPage: number,
    *  customUrl: string
    * }
-  */
-  async getBucketFileList (configMap: IStringKeyMap): Promise<any> {
+   */
+  async getBucketFileList(configMap: IStringKeyMap): Promise<any> {
     const { bucketName: bucket, prefix, marker, itemsPerPage, customUrl: urlPrefix } = configMap
     const slicedPrefix = prefix.slice(1)
     const config = new qiniu.conf.Config()
@@ -374,21 +393,25 @@ class QiniuApi {
       success: false
     }
     res = await new Promise((resolve, reject) => {
-      bucketManager.listPrefix(bucket, {
-        limit: itemsPerPage,
-        prefix: slicedPrefix === '' ? undefined : slicedPrefix,
-        marker,
-        delimiter: '/'
-      }, (err, respBody, respInfo) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve({
-            respBody,
-            respInfo
-          })
+      bucketManager.listPrefix(
+        bucket,
+        {
+          limit: itemsPerPage,
+          prefix: slicedPrefix === '' ? undefined : slicedPrefix,
+          marker,
+          delimiter: '/'
+        },
+        (err, respBody, respInfo) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve({
+              respBody,
+              respInfo
+            })
+          }
         }
-      })
+      )
     })
     if (res?.respInfo?.statusCode === 200) {
       if (res.respBody?.commonPrefixes) {
@@ -401,7 +424,7 @@ class QiniuApi {
           item.fsize !== 0 && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
         })
       }
-      result.isTruncated = !!(res.respBody?.marker)
+      result.isTruncated = !!res.respBody?.marker
       result.nextMarker = res.respBody?.marker ? res.respBody.marker : ''
       result.success = true
     }
@@ -409,19 +432,19 @@ class QiniuApi {
   }
 
   /**
-  * 删除文件
-  * @param configMap
-  * configMap = {
-  * bucketName: string,
-  * region: string,
-  * key: string
-  * }
-  */
-  async deleteBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+   * 删除文件
+   * @param configMap
+   * configMap = {
+   * bucketName: string,
+   * region: string,
+   * key: string
+   * }
+   */
+  async deleteBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, key } = configMap
     const config = new qiniu.conf.Config()
     const bucketManager = new qiniu.rs.BucketManager(this.mac, config)
-    const res = await new Promise((resolve, reject) => {
+    const res = (await new Promise((resolve, reject) => {
       bucketManager.delete(bucketName, key, (err, respBody, respInfo) => {
         if (err) {
           reject(err)
@@ -432,7 +455,7 @@ class QiniuApi {
           })
         }
       })
-    }) as any
+    })) as any
     return res?.respInfo?.statusCode === 200
   }
 
@@ -440,7 +463,7 @@ class QiniuApi {
    * 删除文件夹
    * @param configMap
    */
-  async deleteBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+  async deleteBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, key } = configMap
     const config = new qiniu.conf.Config()
     const bucketManager = new qiniu.rs.BucketManager(this.mac, config)
@@ -450,27 +473,31 @@ class QiniuApi {
       Contents: [] as any[]
     }
     do {
-      const res = await new Promise((resolve, reject) => {
-        bucketManager.listPrefix(bucketName, {
-          prefix: key,
-          marker,
-          limit: 1000
-        }, (err, respBody, respInfo) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve({
-              respBody,
-              respInfo
-            })
+      const res = (await new Promise((resolve, reject) => {
+        bucketManager.listPrefix(
+          bucketName,
+          {
+            prefix: key,
+            marker,
+            limit: 1000
+          },
+          (err, respBody, respInfo) => {
+            if (err) {
+              reject(err)
+            } else {
+              resolve({
+                respBody,
+                respInfo
+              })
+            }
           }
-        })
-      }) as any
+        )
+      })) as any
       if (res?.respInfo?.statusCode === 200) {
         if (res.respBody?.items) {
           allFileList.Contents = allFileList.Contents.concat(res.respBody.items)
         }
-        isTruncated = !!(res.respBody?.marker)
+        isTruncated = !!res.respBody?.marker
         marker = res.respBody?.marker ? res.respBody.marker : ''
       } else {
         return false
@@ -481,7 +508,7 @@ class QiniuApi {
       const deleteOps = allFileList.Contents.slice(i * 1000, (i + 1) * 1000).map((item: any) => {
         return qiniu.rs.deleteOp(bucketName, item.key)
       })
-      const res = await new Promise((resolve, reject) => {
+      const res = (await new Promise((resolve, reject) => {
         bucketManager.batch(deleteOps, (err, respBody, respInfo) => {
           if (err) {
             reject(err)
@@ -492,40 +519,47 @@ class QiniuApi {
             })
           }
         })
-      }) as any
+      })) as any
       if (res?.respInfo?.statusCode !== 200) return false
     }
     return true
   }
 
   /**
-  * 重命名文件
-  * @param configMap
-  * configMap = {
-  * bucketName: string,
-  * region: string,
-  * oldKey: string,
-  * newKey: string
-  * }
-  */
-  async renameBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+   * 重命名文件
+   * @param configMap
+   * configMap = {
+   * bucketName: string,
+   * region: string,
+   * oldKey: string,
+   * newKey: string
+   * }
+   */
+  async renameBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, oldKey, newKey } = configMap
     const config = new qiniu.conf.Config()
     const bucketManager = new qiniu.rs.BucketManager(this.mac, config)
-    const res = await new Promise((resolve, reject) => {
-      bucketManager.move(bucketName, oldKey, bucketName, newKey, {
-        force: true
-      }, (err, respBody, respInfo) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve({
-            respBody,
-            respInfo
-          })
+    const res = (await new Promise((resolve, reject) => {
+      bucketManager.move(
+        bucketName,
+        oldKey,
+        bucketName,
+        newKey,
+        {
+          force: true
+        },
+        (err, respBody, respInfo) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve({
+              respBody,
+              respInfo
+            })
+          }
         }
-      })
-    }) as any
+      )
+    })) as any
     return res?.respInfo?.statusCode === 200
   }
 
@@ -540,7 +574,7 @@ class QiniuApi {
    * customUrl: string
    * }
    */
-  async getPreSignedUrl (configMap: IStringKeyMap): Promise<string> {
+  async getPreSignedUrl(configMap: IStringKeyMap): Promise<string> {
     const { key, expires, customUrl } = configMap
     const config = new qiniu.conf.Config()
     const bucketManager = new qiniu.rs.BucketManager(this.mac, config)
@@ -554,7 +588,7 @@ class QiniuApi {
    * 上传文件
    * @param configMap
    */
-  async uploadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async uploadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { fileArray } = configMap
     const instance = UpDownTaskQueue.getInstance()
     fileArray.forEach((item: any) => {
@@ -585,7 +619,7 @@ class QiniuApi {
       putExtra.version = 'v2'
       putExtra.partSize = 4 * 1024 * 1024
       putExtra.progressCallback = (uploadBytes, totalBytes) => {
-        const progress = Math.floor(uploadBytes / totalBytes * 100)
+        const progress = Math.floor((uploadBytes / totalBytes) * 100)
         instance.updateUploadTask({
           id: `${bucketName}-${region}-${key}-${filePath}`,
           progress,
@@ -594,7 +628,12 @@ class QiniuApi {
       }
       resumeUploader.putFile(uploadToken, key, filePath, putExtra, (respErr, respBody, respInfo) => {
         if (respErr) {
-          this.logger.error(formatError(respErr, { class: 'Qiniu', method: 'uploadBucketFile' }))
+          this.logger.error(
+            formatError(respErr, {
+              class: 'Qiniu',
+              method: 'uploadBucketFile'
+            })
+          )
           instance.updateUploadTask({
             id: `${bucketName}-${region}-${key}-${filePath}`,
             progress: 0,
@@ -628,7 +667,7 @@ class QiniuApi {
    * 新建文件夹
    * @param configMap
    */
-  async createBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+  async createBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, key } = configMap
     const putPolicy = new qiniu.rs.PutPolicy({
       scope: `${bucketName}:${key}`
@@ -636,7 +675,7 @@ class QiniuApi {
     const uploadToken = putPolicy.uploadToken(this.mac)
     const FormUploader = new qiniu.form_up.FormUploader()
     const putExtra = new qiniu.form_up.PutExtra()
-    const res = await new Promise((resolve, reject) => {
+    const res = (await new Promise((resolve, reject) => {
       FormUploader.put(uploadToken, key, '', putExtra, (err, respBody, respInfo) => {
         if (err) {
           reject(err)
@@ -647,7 +686,7 @@ class QiniuApi {
           })
         }
       })
-    }) as any
+    })) as any
     return res?.respInfo?.statusCode === 200
   }
 
@@ -655,7 +694,7 @@ class QiniuApi {
    * 下载文件
    * @param configMap
    */
-  async downloadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async downloadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { downloadPath, fileArray, maxDownloadFileCount } = configMap
     const instance = UpDownTaskQueue.getInstance()
     const promises = [] as any
@@ -673,20 +712,26 @@ class QiniuApi {
         sourceFileName: fileName,
         targetFilePath: savedFilePath
       })
-      const preSignedUrl = await this.getPreSignedUrl({ key, expires: 36000, customUrl })
-      promises.push(() => new Promise((resolve, reject) => {
-        NewDownloader(instance, preSignedUrl, id, savedFilePath, this.logger)
-          .then((res: boolean) => {
-            if (res) {
-              resolve(res)
-            } else {
-              reject(res)
-            }
+      const preSignedUrl = await this.getPreSignedUrl({
+        key,
+        expires: 36000,
+        customUrl
+      })
+      promises.push(
+        () =>
+          new Promise((resolve, reject) => {
+            NewDownloader(instance, preSignedUrl, id, savedFilePath, this.logger).then((res: boolean) => {
+              if (res) {
+                resolve(res)
+              } else {
+                reject(res)
+              }
+            })
           })
-      }))
+      )
     }
     const pool = new ConcurrencyPromisePool(maxDownloadFileCount)
-    pool.all(promises).catch((error) => {
+    pool.all(promises).catch(error => {
       this.logger.error(formatError(error, { class: 'QiniuApi', method: 'downloadBucketFile' }))
     })
     return true

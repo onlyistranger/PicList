@@ -1,4 +1,3 @@
-
 import { clipboard } from 'electron'
 
 import { GalleryDB } from '@core/datastore'
@@ -8,7 +7,12 @@ import { IFilter, IObject } from '@picgo/store/dist/types'
 import GuiApi from 'apis/gui'
 
 import { RPCRouter } from '~/events/rpc/router'
-import { removeFileFromDogeInMain, removeFileFromHuaweiInMain, removeFileFromS3InMain, removeFileFromSFTPInMain } from '~/utils/deleteFunc'
+import {
+  removeFileFromDogeInMain,
+  removeFileFromHuaweiInMain,
+  removeFileFromS3InMain,
+  removeFileFromSFTPInMain
+} from '~/utils/deleteFunc'
 import pasteTemplate from '~/utils/pasteTemplate'
 
 import { ICOREBuildInEvent, IPasteStyle, IRPCActionType, IRPCType } from '#/types/enum'
@@ -19,7 +23,7 @@ const galleryRouter = new RPCRouter()
 const galleryRoutes = [
   {
     action: IRPCActionType.GALLERY_PASTE_TEXT,
-    handler: async (_: IIPCEvent, args: [ item: ImgInfo, copy?: boolean]) => {
+    handler: async (_: IIPCEvent, args: [item: ImgInfo, copy?: boolean]) => {
       const [item, copy = true] = args
       const pasteStyle = picgo.getConfig<IPasteStyle>(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
       const customLink = picgo.getConfig<string>(configPaths.settings.customLink)
@@ -128,6 +132,4 @@ const galleryRoutes = [
 
 galleryRouter.addBatch(galleryRoutes)
 
-export {
-  galleryRouter
-}
+export { galleryRouter }

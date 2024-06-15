@@ -1,20 +1,10 @@
-import {
-  app,
-  dialog,
-  BrowserWindow,
-  Menu,
-  shell,
-  MenuItemConstructorOptions,
-  MenuItem
-} from 'electron'
+import { app, dialog, BrowserWindow, Menu, shell, MenuItemConstructorOptions, MenuItem } from 'electron'
 import { PicGo as PicGoCore } from 'piclist'
 
 import db from '@core/datastore'
 import picgo from '@core/picgo'
 
-import {
-  uploadClipboardFiles
-} from 'apis/app/uploader/apis'
+import { uploadClipboardFiles } from 'apis/app/uploader/apis'
 import windowManager from 'apis/app/window/windowManager'
 import GuiApi from 'apis/gui'
 
@@ -47,7 +37,7 @@ const buildMiniPageMenu = () => {
   const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
   const ClipboardWatcher = clipboardPoll
   const submenu = buildPicBedListMenu()
-  const template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [
+  const template: Array<MenuItemConstructorOptions | MenuItem> = [
     {
       label: T('OPEN_MAIN_WINDOW'),
       click: openMainWindow
@@ -59,19 +49,19 @@ const buildMiniPageMenu = () => {
     },
     {
       label: T('UPLOAD_BY_CLIPBOARD'),
-      click () {
+      click() {
         uploadClipboardFiles()
       }
     },
     {
       label: T('HIDE_MINI_WINDOW'),
-      click () {
+      click() {
         BrowserWindow.getFocusedWindow()!.hide()
       }
     },
     {
       label: T('START_WATCH_CLIPBOARD'),
-      click () {
+      click() {
         db.set(configPaths.settings.isListeningClipboard, true)
         ClipboardWatcher.startListening()
         ClipboardWatcher.on('change', () => {
@@ -84,7 +74,7 @@ const buildMiniPageMenu = () => {
     },
     {
       label: T('STOP_WATCH_CLIPBOARD'),
-      click () {
+      click() {
         db.set(configPaths.settings.isListeningClipboard, false)
         ClipboardWatcher.stopListening()
         ClipboardWatcher.removeAllListeners()
@@ -94,7 +84,7 @@ const buildMiniPageMenu = () => {
     },
     {
       label: T('RELOAD_APP'),
-      click () {
+      click() {
         app.relaunch()
         app.exit(0)
       }
@@ -111,7 +101,7 @@ const buildMainPageMenu = (win: BrowserWindow) => {
   const template = [
     {
       label: T('ABOUT'),
-      click () {
+      click() {
         dialog.showMessageBox({
           title: 'PicList',
           message: 'PicList',
@@ -121,32 +111,31 @@ const buildMainPageMenu = (win: BrowserWindow) => {
     },
     {
       label: T('SHOW_PICBED_QRCODE'),
-      click () {
+      click() {
         win?.webContents?.send(SHOW_MAIN_PAGE_QRCODE)
       }
     },
     {
       label: T('OPEN_TOOLBOX'),
-      click () {
+      click() {
         const window = windowManager.create(IWindowList.TOOLBOX_WINDOW)
         window?.show()
       }
     },
     {
       label: T('SHOW_DEVTOOLS'),
-      click () {
+      click() {
         win?.webContents?.openDevTools({ mode: 'detach' })
       }
     },
     {
       label: T('FEEDBACK'),
-      click () {
+      click() {
         const url = 'https://github.com/Kuingsmile/PicList/issues'
         shell.openExternal(url)
       }
     }
-  ]
-  // @ts-ignore
+  ] as Array<MenuItemConstructorOptions | MenuItem>
   return Menu.buildFromTemplate(template)
 }
 
@@ -155,55 +144,60 @@ const buildPicBedListMenu = () => {
   const currentPicBed = picgo.getConfig(configPaths.picBed.uploader)
   const currentPicBedName = picBeds.find(item => item.type === currentPicBed)?.name
   const picBedConfigList = picgo.getConfig<IUploaderConfig>('uploader')
-  const currentPicBedMenuItem = [{
-    label: `${T('CURRENT_PICBED')} - ${currentPicBedName}`,
-    enabled: false
-  }, {
-    type: 'separator'
-  }]
-  let submenu = picBeds.filter(item => item.visible).map(item => {
-    const configList = picBedConfigList?.[item.type]?.configList
-    const defaultId = picBedConfigList?.[item.type]?.defaultId
-    const hasSubmenu = !!configList
-    return {
-      label: item.name,
-      type: !hasSubmenu ? 'checkbox' : undefined,
-      checked: !hasSubmenu ? (currentPicBed === item.type) : undefined,
-      submenu: hasSubmenu
-        ? configList.map((config) => {
-          return {
-            label: config._configName || 'Default',
-            // if only one config, use checkbox, or radio will checked as default
-            // see: https://github.com/electron/electron/issues/21292
-            type: 'checkbox',
-            checked: config._id === defaultId && (item.type === currentPicBed),
-            click: function () {
-              changeCurrentUploader(item.type, config, config._id)
+  const currentPicBedMenuItem = [
+    {
+      label: `${T('CURRENT_PICBED')} - ${currentPicBedName}`,
+      enabled: false
+    },
+    {
+      type: 'separator'
+    }
+  ]
+  let submenu = picBeds
+    .filter(item => item.visible)
+    .map(item => {
+      const configList = picBedConfigList?.[item.type]?.configList
+      const defaultId = picBedConfigList?.[item.type]?.defaultId
+      const hasSubmenu = !!configList
+      return {
+        label: item.name,
+        type: !hasSubmenu ? 'checkbox' : undefined,
+        checked: !hasSubmenu ? currentPicBed === item.type : undefined,
+        submenu: hasSubmenu
+          ? configList.map(config => {
+              return {
+                label: config._configName || 'Default',
+                // if only one config, use checkbox, or radio will checked as default
+                // see: https://github.com/electron/electron/issues/21292
+                type: 'checkbox',
+                checked: config._id === defaultId && item.type === currentPicBed,
+                click: function () {
+                  changeCurrentUploader(item.type, config, config._id)
+                  if (windowManager.has(IWindowList.SETTING_WINDOW)) {
+                    windowManager.get(IWindowList.SETTING_WINDOW)!.webContents.send('syncPicBed')
+                  }
+                  setTrayToolTip(`${item.type} ${config._configName || 'Default'}`)
+                }
+              }
+            })
+          : undefined,
+        click: !hasSubmenu
+          ? function () {
+              picgo.saveConfig({
+                [configPaths.picBed.current]: item.type,
+                [configPaths.picBed.uploader]: item.type
+              })
               if (windowManager.has(IWindowList.SETTING_WINDOW)) {
                 windowManager.get(IWindowList.SETTING_WINDOW)!.webContents.send('syncPicBed')
               }
-              setTrayToolTip(`${item.type} ${config._configName || 'Default'}`)
+              setTrayToolTip(item.type)
             }
-          }
-        })
-        : undefined,
-      click: !hasSubmenu
-        ? function () {
-          picgo.saveConfig({
-            [configPaths.picBed.current]: item.type,
-            [configPaths.picBed.uploader]: item.type
-          })
-          if (windowManager.has(IWindowList.SETTING_WINDOW)) {
-            windowManager.get(IWindowList.SETTING_WINDOW)!.webContents.send('syncPicBed')
-          }
-          setTrayToolTip(item.type)
-        }
-        : undefined
-    }
-  })
-  // @ts-ignore
+          : undefined
+      }
+    })
+  // @ts-expect-error submenu type
   submenu = currentPicBedMenuItem.concat(submenu)
-  // @ts-ignore
+  // @ts-expect-error submenu type
   return Menu.buildFromTemplate(submenu)
 }
 
@@ -230,56 +224,61 @@ const handleRestoreState = (item: string, name: string): void => {
 }
 
 const buildPluginPageMenu = (plugin: IPicGoPlugin) => {
-  const menu = [{
-    label: T('ENABLE_PLUGIN'),
-    enabled: !plugin.enabled,
-    click () {
-      picgo.saveConfig({
-        [`picgoPlugins.${plugin.fullName}`]: true
-      })
-      const window = windowManager.get(IWindowList.SETTING_WINDOW)!
-      window.webContents.send(PICGO_TOGGLE_PLUGIN, plugin.fullName, true)
-    }
-  }, {
-    label: T('DISABLE_PLUGIN'),
-    enabled: plugin.enabled,
-    click () {
-      picgo.saveConfig({
-        [`picgoPlugins.${plugin.fullName}`]: false
-      })
-      const window = windowManager.get(IWindowList.SETTING_WINDOW)!
-      window.webContents.send(PICGO_HANDLE_PLUGIN_ING, plugin.fullName)
-      window.webContents.send(PICGO_TOGGLE_PLUGIN, plugin.fullName, false)
-      window.webContents.send(PICGO_HANDLE_PLUGIN_DONE, plugin.fullName)
-      if (plugin.config.transformer.name) {
-        handleRestoreState('transformer', plugin.config.transformer.name)
+  const menu = [
+    {
+      label: T('ENABLE_PLUGIN'),
+      enabled: !plugin.enabled,
+      click() {
+        picgo.saveConfig({
+          [`picgoPlugins.${plugin.fullName}`]: true
+        })
+        const window = windowManager.get(IWindowList.SETTING_WINDOW)!
+        window.webContents.send(PICGO_TOGGLE_PLUGIN, plugin.fullName, true)
       }
-      if (plugin.config.uploader.name) {
-        handleRestoreState('uploader', plugin.config.uploader.name)
+    },
+    {
+      label: T('DISABLE_PLUGIN'),
+      enabled: plugin.enabled,
+      click() {
+        picgo.saveConfig({
+          [`picgoPlugins.${plugin.fullName}`]: false
+        })
+        const window = windowManager.get(IWindowList.SETTING_WINDOW)!
+        window.webContents.send(PICGO_HANDLE_PLUGIN_ING, plugin.fullName)
+        window.webContents.send(PICGO_TOGGLE_PLUGIN, plugin.fullName, false)
+        window.webContents.send(PICGO_HANDLE_PLUGIN_DONE, plugin.fullName)
+        if (plugin.config.transformer.name) {
+          handleRestoreState('transformer', plugin.config.transformer.name)
+        }
+        if (plugin.config.uploader.name) {
+          handleRestoreState('uploader', plugin.config.uploader.name)
+        }
+      }
+    },
+    {
+      label: T('UNINSTALL_PLUGIN'),
+      click() {
+        const window = windowManager.get(IWindowList.SETTING_WINDOW)!
+        window.webContents.send(PICGO_HANDLE_PLUGIN_ING, plugin.fullName)
+        handlePluginUninstall(plugin.fullName)
+      }
+    },
+    {
+      label: T('UPDATE_PLUGIN'),
+      click() {
+        const window = windowManager.get(IWindowList.SETTING_WINDOW)!
+        window.webContents.send(PICGO_HANDLE_PLUGIN_ING, plugin.fullName)
+        handlePluginUpdate(plugin.fullName)
       }
     }
-  }, {
-    label: T('UNINSTALL_PLUGIN'),
-    click () {
-      const window = windowManager.get(IWindowList.SETTING_WINDOW)!
-      window.webContents.send(PICGO_HANDLE_PLUGIN_ING, plugin.fullName)
-      handlePluginUninstall(plugin.fullName)
-    }
-  }, {
-    label: T('UPDATE_PLUGIN'),
-    click () {
-      const window = windowManager.get(IWindowList.SETTING_WINDOW)!
-      window.webContents.send(PICGO_HANDLE_PLUGIN_ING, plugin.fullName)
-      handlePluginUpdate(plugin.fullName)
-    }
-  }]
+  ] as Array<MenuItemConstructorOptions | MenuItem>
   for (const i in plugin.config) {
     if (plugin.config[i].config.length > 0) {
       const obj = {
         label: T('CONFIG_THING', {
           c: `${i} - ${plugin.config[i].fullName || plugin.config[i].name}`
         }),
-        click () {
+        click() {
           const window = windowManager.get(IWindowList.SETTING_WINDOW)!
           const currentType = i
           const configName = plugin.config[i].fullName || plugin.config[i].name
@@ -297,7 +296,7 @@ const buildPluginPageMenu = (plugin: IPicGoPlugin) => {
     const pluginTransformer = plugin.config.transformer.name
     const obj = {
       label: `${currentTransformer === pluginTransformer ? T('DISABLE') : T('ENABLE')}transformer - ${plugin.config.transformer.name}`,
-      click () {
+      click() {
         const transformer = plugin.config.transformer.name
         const currentTransformer = picgo.getConfig<string>(configPaths.picBed.transformer) || 'path'
         if (currentTransformer === transformer) {
@@ -317,13 +316,12 @@ const buildPluginPageMenu = (plugin: IPicGoPlugin) => {
   // plugin custom menus
   if (plugin.guiMenu) {
     menu.push({
-      // @ts-ignore
       type: 'separator'
     })
     for (const i of plugin.guiMenu) {
       menu.push({
         label: i.label,
-        click () {
+        click() {
           const picgPlugin = picgo.pluginLoader.getPlugin(plugin.fullName)
           if (picgPlugin?.guiMenu?.(picgo)?.length) {
             const menu: GuiMenuItem[] = picgPlugin.guiMenu(picgo)
@@ -338,13 +336,7 @@ const buildPluginPageMenu = (plugin: IPicGoPlugin) => {
     }
   }
 
-  // @ts-ignore
   return Menu.buildFromTemplate(menu)
 }
 
-export {
-  buildMiniPageMenu,
-  buildMainPageMenu,
-  buildPicBedListMenu,
-  buildPluginPageMenu
-}
+export { buildMiniPageMenu, buildMainPageMenu, buildPicBedListMenu, buildPluginPageMenu }

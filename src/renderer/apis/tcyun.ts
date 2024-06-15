@@ -8,15 +8,18 @@ interface IConfigMap {
 }
 
 export default class TcyunApi {
-  static #createCOS (SecretId: string, SecretKey: string): COS {
+  static #createCOS(SecretId: string, SecretKey: string): COS {
     return new COS({
       SecretId,
       SecretKey
     })
   }
 
-  static async delete (configMap: IConfigMap): Promise<boolean> {
-    const { fileName, config: { secretId, secretKey, bucket, area, path } } = configMap
+  static async delete(configMap: IConfigMap): Promise<boolean> {
+    const {
+      fileName,
+      config: { secretId, secretKey, bucket, area, path }
+    } = configMap
     try {
       const cos = TcyunApi.#createCOS(secretId, secretKey)
       let key

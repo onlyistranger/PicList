@@ -1,4 +1,3 @@
-
 import { ipcMain } from 'electron'
 import { EventEmitter } from 'events'
 import fs from 'fs-extra'
@@ -15,12 +14,7 @@ import { isInputConfigValid, formatError } from '~/manage/utils/common'
 import { ManageLogger } from '~/manage/utils/logger'
 
 import { IWindowList } from '#/types/enum'
-import {
-  IManageApiType,
-  IManageConfigType,
-  IManageError,
-  IPicBedMangeConfig
-} from '#/types/manage'
+import { IManageApiType, IManageConfigType, IManageError, IPicBedMangeConfig } from '#/types/manage'
 import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 
 export class ManageApi extends EventEmitter implements IManageApiType {
@@ -32,7 +26,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
   logger: ManageLogger
   currentPicBedConfig: IPicBedMangeConfig
 
-  constructor (currentPicBed: string = '') {
+  constructor(currentPicBed: string = '') {
     super()
     this.currentPicBed = currentPicBed || 'placeholder'
     this.configPath = managePathChecker()
@@ -42,7 +36,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     this.currentPicBedConfig = this.getPicBedConfig(this.currentPicBed)
   }
 
-  getMsgParam (method: string) {
+  getMsgParam(method: string) {
     return {
       class: 'ManageApi',
       method,
@@ -50,19 +44,33 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  errorMsg (err: any, param: IStringKeyMap) {
+  errorMsg(err: any, param: IStringKeyMap) {
     this.logger.error(formatError(err, param))
   }
 
-  createClient () {
+  createClient() {
     const name = this.currentPicBedConfig.picBedName
     switch (name) {
       case 'aliyun':
-        return new API.AliyunApi(this.currentPicBedConfig.accessKeyId, this.currentPicBedConfig.accessKeySecret, this.logger)
+        return new API.AliyunApi(
+          this.currentPicBedConfig.accessKeyId,
+          this.currentPicBedConfig.accessKeySecret,
+          this.logger
+        )
       case 'github':
-        return new API.GithubApi(this.currentPicBedConfig.token, this.currentPicBedConfig.githubUsername, this.currentPicBedConfig.proxy, this.logger)
+        return new API.GithubApi(
+          this.currentPicBedConfig.token,
+          this.currentPicBedConfig.githubUsername,
+          this.currentPicBedConfig.proxy,
+          this.logger
+        )
       case 'imgur':
-        return new API.ImgurApi(this.currentPicBedConfig.imgurUserName, this.currentPicBedConfig.accessToken, this.currentPicBedConfig.proxy, this.logger)
+        return new API.ImgurApi(
+          this.currentPicBedConfig.imgurUserName,
+          this.currentPicBedConfig.accessToken,
+          this.currentPicBedConfig.proxy,
+          this.logger
+        )
       case 'local':
         return new API.LocalApi(this.logger)
       case 'qiniu':
@@ -70,25 +78,60 @@ export class ManageApi extends EventEmitter implements IManageApiType {
       case 'smms':
         return new API.SmmsApi(this.currentPicBedConfig.token, this.logger)
       case 's3plist':
-        return new API.S3plistApi(this.currentPicBedConfig.accessKeyId, this.currentPicBedConfig.secretAccessKey, this.currentPicBedConfig.endpoint, this.currentPicBedConfig.sslEnabled, this.currentPicBedConfig.s3ForcePathStyle, this.currentPicBedConfig.proxy, this.logger, this.currentPicBedConfig.dogeCloudSupport || false, this.currentPicBedConfig.bucketName || '')
+        return new API.S3plistApi(
+          this.currentPicBedConfig.accessKeyId,
+          this.currentPicBedConfig.secretAccessKey,
+          this.currentPicBedConfig.endpoint,
+          this.currentPicBedConfig.sslEnabled,
+          this.currentPicBedConfig.s3ForcePathStyle,
+          this.currentPicBedConfig.proxy,
+          this.logger,
+          this.currentPicBedConfig.dogeCloudSupport || false,
+          this.currentPicBedConfig.bucketName || ''
+        )
       case 'sftp':
-        return new API.SftpApi(this.currentPicBedConfig.host, this.currentPicBedConfig.port, this.currentPicBedConfig.username, this.currentPicBedConfig.password, this.currentPicBedConfig.privateKey, this.currentPicBedConfig.passphrase, this.currentPicBedConfig.fileMode, this.currentPicBedConfig.dirMode, this.logger)
+        return new API.SftpApi(
+          this.currentPicBedConfig.host,
+          this.currentPicBedConfig.port,
+          this.currentPicBedConfig.username,
+          this.currentPicBedConfig.password,
+          this.currentPicBedConfig.privateKey,
+          this.currentPicBedConfig.passphrase,
+          this.currentPicBedConfig.fileMode,
+          this.currentPicBedConfig.dirMode,
+          this.logger
+        )
       case 'tcyun':
         return new API.TcyunApi(this.currentPicBedConfig.secretId, this.currentPicBedConfig.secretKey, this.logger)
       case 'upyun':
-        return new API.UpyunApi(this.currentPicBedConfig.bucketName, this.currentPicBedConfig.operator, this.currentPicBedConfig.password, this.logger, this.currentPicBedConfig.antiLeechToken, this.currentPicBedConfig.expireTime)
+        return new API.UpyunApi(
+          this.currentPicBedConfig.bucketName,
+          this.currentPicBedConfig.operator,
+          this.currentPicBedConfig.password,
+          this.logger,
+          this.currentPicBedConfig.antiLeechToken,
+          this.currentPicBedConfig.expireTime
+        )
       case 'webdavplist':
-        return new API.WebdavplistApi(this.currentPicBedConfig.endpoint, this.currentPicBedConfig.username, this.currentPicBedConfig.password, this.currentPicBedConfig.sslEnabled, this.currentPicBedConfig.proxy, this.currentPicBedConfig.authType, this.logger)
+        return new API.WebdavplistApi(
+          this.currentPicBedConfig.endpoint,
+          this.currentPicBedConfig.username,
+          this.currentPicBedConfig.password,
+          this.currentPicBedConfig.sslEnabled,
+          this.currentPicBedConfig.proxy,
+          this.currentPicBedConfig.authType,
+          this.logger
+        )
       default:
         return {} as any
     }
   }
 
-  private getPicBedConfig (picBedName: string): IPicBedMangeConfig {
+  private getPicBedConfig(picBedName: string): IPicBedMangeConfig {
     return this.getConfig<IPicBedMangeConfig>(`picBed.${picBedName}`)
   }
 
-  private initConfigPath (): void {
+  private initConfigPath(): void {
     if (this.configPath === '') {
       this.configPath = `${homedir()}/.piclist/manage.json`
     }
@@ -103,30 +146,28 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  private initconfig (): void {
+  private initconfig(): void {
     this.db = new ManageDB(this)
     this._config = this.db.read(true) as IManageConfigType
   }
 
-  getConfig<T> (name?: string): T {
+  getConfig<T>(name?: string): T {
     if (!name) {
       return this._config as unknown as T
     }
     return get(this._config, name)
   }
 
-  saveConfig (config: IStringKeyMap): void {
+  saveConfig(config: IStringKeyMap): void {
     if (!isInputConfigValid(config)) {
-      this.logger.warn(
-        'the format of config is invalid, please provide object'
-      )
+      this.logger.warn('the format of config is invalid, please provide object')
       return
     }
     this.setConfig(config)
     this.db.saveConfig(config)
   }
 
-  removeConfig (key: string, propName: string): void {
+  removeConfig(key: string, propName: string): void {
     if (!key || !propName) {
       return
     }
@@ -134,11 +175,9 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     this.db.unset(key, propName)
   }
 
-  setConfig (config: IStringKeyMap): void {
+  setConfig(config: IStringKeyMap): void {
     if (!isInputConfigValid(config)) {
-      this.logger.warn(
-        'the format of config is invalid, please provide object'
-      )
+      this.logger.warn('the format of config is invalid, please provide object')
       return
     }
     Object.keys(config).forEach((name: string) => {
@@ -146,14 +185,12 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     })
   }
 
-  unsetConfig (key: string, propName: string): void {
+  unsetConfig(key: string, propName: string): void {
     if (!key || !propName) return
     unset(this.getConfig(key), propName)
   }
 
-  async getBucketList (
-    param?: IStringKeyMap | undefined
-  ): Promise<any> {
+  async getBucketList(param?: IStringKeyMap | undefined): Promise<any> {
     let client
     const name = this.currentPicBedConfig.picBedName.replace('plist', '')
     switch (this.currentPicBedConfig.picBedName) {
@@ -171,36 +208,36 @@ export class ManageApi extends EventEmitter implements IManageApiType {
           return []
         }
       case 'upyun':
-        return [{
-          Name: this.currentPicBedConfig.bucketName,
-          Location: 'upyun',
-          CreationDate: new Date().toISOString()
-        }]
+        return [
+          {
+            Name: this.currentPicBedConfig.bucketName,
+            Location: 'upyun',
+            CreationDate: new Date().toISOString()
+          }
+        ]
       case 'smms':
       case 'webdavplist':
       case 'local':
       case 'sftp':
-        return [{
-          Name: name,
-          Location: name,
-          CreationDate: new Date().toISOString()
-        }]
+        return [
+          {
+            Name: name,
+            Location: name,
+            CreationDate: new Date().toISOString()
+          }
+        ]
       default:
         console.log(param)
         return []
     }
   }
 
-  async getBucketInfo (
-    param?: IStringKeyMap | undefined
-  ): Promise<IStringKeyMap | IManageError> {
+  async getBucketInfo(param?: IStringKeyMap | undefined): Promise<IStringKeyMap | IManageError> {
     console.log(param)
     return {}
   }
 
-  async getBucketDomain (
-    param: IStringKeyMap
-  ): Promise<IStringKeyMap | IManageError> {
+  async getBucketDomain(param: IStringKeyMap): Promise<IStringKeyMap | IManageError> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':
@@ -225,9 +262,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async createBucket (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async createBucket(param?: IStringKeyMap): Promise<boolean> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':
@@ -246,44 +281,32 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async deleteBucket (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async deleteBucket(param?: IStringKeyMap): Promise<boolean> {
     console.log(param)
     return false
   }
 
-  async getOperatorList (
-    param?: IStringKeyMap
-  ): Promise<string[] | IManageError> {
+  async getOperatorList(param?: IStringKeyMap): Promise<string[] | IManageError> {
     console.log(param)
     return []
   }
 
-  async addOperator (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async addOperator(param?: IStringKeyMap): Promise<boolean> {
     console.log(param)
     return false
   }
 
-  async deleteOperator (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async deleteOperator(param?: IStringKeyMap): Promise<boolean> {
     console.log(param)
     return false
   }
 
-  async getBucketAclPolicy (
-    param?: IStringKeyMap
-  ): Promise<IStringKeyMap | IManageError> {
+  async getBucketAclPolicy(param?: IStringKeyMap): Promise<IStringKeyMap | IManageError> {
     console.log(param)
     return {}
   }
 
-  async setBucketAclPolicy (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async setBucketAclPolicy(param?: IStringKeyMap): Promise<boolean> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'qiniu':
@@ -299,9 +322,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async getBucketListRecursively (
-    param?: IStringKeyMap
-  ): Promise<IStringKeyMap | IManageError> {
+  async getBucketListRecursively(param?: IStringKeyMap): Promise<IStringKeyMap | IManageError> {
     let client
     let window
     const defaultResult = {
@@ -344,9 +365,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
    * @param param
    * @returns
    */
-  async getBucketListBackstage (
-    param?: IStringKeyMap
-  ): Promise<IStringKeyMap | IManageError> {
+  async getBucketListBackstage(param?: IStringKeyMap): Promise<IStringKeyMap | IManageError> {
     let client
     let window
     const defaultResult = {
@@ -385,17 +404,15 @@ export class ManageApi extends EventEmitter implements IManageApiType {
   }
 
   /**
-  * 获取文件夹列表
-  * 结果统一进行格式化 文件夹提取到最前
-  * key: 完整路径
-  * fileName: 文件名
-  * formatedTime: 格式化时间
-  * isDir: 是否是文件夹
-  * fileSize: 文件大小
-  **/
-  async getBucketFileList (
-    param?: IStringKeyMap
-  ): Promise<IStringKeyMap | IManageError> {
+   * 获取文件夹列表
+   * 结果统一进行格式化 文件夹提取到最前
+   * key: 完整路径
+   * fileName: 文件名
+   * formatedTime: 格式化时间
+   * isDir: 是否是文件夹
+   * fileSize: 文件大小
+   **/
+  async getBucketFileList(param?: IStringKeyMap): Promise<IStringKeyMap | IManageError> {
     const defaultResponse = {
       fullList: <any>[],
       isTruncated: false,
@@ -422,9 +439,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async deleteBucketFile (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async deleteBucketFile(param?: IStringKeyMap): Promise<boolean> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':
@@ -451,9 +466,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async deleteBucketFolder (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async deleteBucketFolder(param?: IStringKeyMap): Promise<boolean> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':
@@ -477,9 +490,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async renameBucketFile (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async renameBucketFile(param?: IStringKeyMap): Promise<boolean> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':
@@ -502,9 +513,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async downloadBucketFile (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async downloadBucketFile(param?: IStringKeyMap): Promise<boolean> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':
@@ -531,16 +540,12 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async copyMoveBucketFile (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async copyMoveBucketFile(param?: IStringKeyMap): Promise<boolean> {
     console.log(param)
     return false
   }
 
-  async createBucketFolder (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async createBucketFolder(param?: IStringKeyMap): Promise<boolean> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':
@@ -564,9 +569,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async uploadBucketFile (
-    param?: IStringKeyMap
-  ): Promise<boolean> {
+  async uploadBucketFile(param?: IStringKeyMap): Promise<boolean> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':
@@ -592,9 +595,7 @@ export class ManageApi extends EventEmitter implements IManageApiType {
     }
   }
 
-  async getPreSignedUrl (
-    param?: IStringKeyMap
-  ): Promise<string> {
+  async getPreSignedUrl(param?: IStringKeyMap): Promise<string> {
     let client
     switch (this.currentPicBedConfig.picBedName) {
       case 'tcyun':

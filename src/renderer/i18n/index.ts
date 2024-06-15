@@ -12,7 +12,7 @@ export class I18nManager {
   #i18n: I18n | null = null
   #i18nFileList: II18nItem[] = builtinI18nList
 
-  constructor () {
+  constructor() {
     this.#getCurrentLanguage()
     this.#getLanguageList()
     ipcRenderer.on(SET_CURRENT_LANGUAGE, (_, lang: string, locales: ILocales) => {
@@ -21,16 +21,16 @@ export class I18nManager {
     })
   }
 
-  #getLanguageList () {
+  #getLanguageList() {
     this.#i18nFileList = sendRpcSync(IRPCActionType.GET_LANGUAGE_LIST)
   }
 
-  #getCurrentLanguage () {
+  #getCurrentLanguage() {
     const [lang, locales] = sendRpcSync(IRPCActionType.GET_CURRENT_LANGUAGE)
     this.#setLocales(lang, locales)
   }
 
-  #setLocales (lang: string, locales: ILocales) {
+  #setLocales(lang: string, locales: ILocales) {
     const objectAdapter = new ObjectAdapter({
       [lang]: locales
     })
@@ -40,15 +40,15 @@ export class I18nManager {
     })
   }
 
-  T (key: ILocalesKey, args: IStringKeyMap = {}): string {
+  T(key: ILocalesKey, args: IStringKeyMap = {}): string {
     return this.#i18n?.translate(key, args) || key
   }
 
-  setCurrentLanguage (lang: string) {
+  setCurrentLanguage(lang: string) {
     sendRPC(IRPCActionType.SET_CURRENT_LANGUAGE, lang)
   }
 
-  get languageList () {
+  get languageList() {
     return this.#i18nFileList
   }
 }
@@ -59,7 +59,4 @@ const T = (key: ILocalesKey, args: IStringKeyMap = {}): string => {
   return i18nManager.T(key, args)
 }
 
-export {
-  i18nManager,
-  T
-}
+export { i18nManager, T }

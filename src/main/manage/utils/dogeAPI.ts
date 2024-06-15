@@ -10,7 +10,7 @@ export interface DogecloudToken {
   sessionToken: string
 }
 
-export async function dogecloudApi (
+export async function dogecloudApi(
   apiPath: string,
   data = {},
   jsonMode: boolean = false,
@@ -18,7 +18,10 @@ export async function dogecloudApi (
   secretKey: string
 ) {
   const body = jsonMode ? JSON.stringify(data) : querystring.encode(data)
-  const sign = crypto.createHmac('sha1', secretKey).update(Buffer.from(apiPath + '\n' + body, 'utf8')).digest('hex')
+  const sign = crypto
+    .createHmac('sha1', secretKey)
+    .update(Buffer.from(apiPath + '\n' + body, 'utf8'))
+    .digest('hex')
   const authorization = `TOKEN ${accessKey}:${sign}`
   try {
     const res = await axios.request({
@@ -40,16 +43,22 @@ export async function dogecloudApi (
   }
 }
 
-export async function getTempToken (accessKey: string, secretKey: string): Promise<{} | DogecloudToken> {
-  const dogeTempToken = await picgo.getConfig('Credentials.doge-token') || {} as any
+export async function getTempToken(accessKey: string, secretKey: string): Promise<IObj | DogecloudToken> {
+  const dogeTempToken = (await picgo.getConfig('Credentials.doge-token')) || ({} as any)
   if (dogeTempToken.token && dogeTempToken.expires > Date.now() + 7200000) {
     return dogeTempToken.token
   }
   try {
-    const data = await dogecloudApi('/auth/tmp_token.json', {
-      channel: 'OSS_FULL',
-      scopes: ['*']
-    }, true, accessKey, secretKey)
+    const data = await dogecloudApi(
+      '/auth/tmp_token.json',
+      {
+        channel: 'OSS_FULL',
+        scopes: ['*']
+      },
+      true,
+      accessKey,
+      secretKey
+    )
     const token = data.Credentials
     picgo.saveConfig({
       Credentials: {

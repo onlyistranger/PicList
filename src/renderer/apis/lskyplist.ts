@@ -4,7 +4,7 @@ import https from 'https'
 import { deleteFailedLog, deleteLog } from '#/utils/deleteLog'
 
 export default class LskyplistApi {
-  static async delete (configMap: IStringKeyMap): Promise<boolean> {
+  static async delete(configMap: IStringKeyMap): Promise<boolean> {
     const { hash, config } = configMap
     if (!hash || !config || !config.token) {
       deleteLog(hash, 'Lskyplist', false, 'LskyplistApi.delete: invalid params')
@@ -26,12 +26,11 @@ export default class LskyplistApi {
       rejectUnauthorized: false
     })
     try {
-      const response: AxiosResponse = await axios.delete(
-        `${host}/api/v1/images/${hash}`, {
-          headers: v2Headers,
-          timeout: 30000,
-          httpsAgent: requestAgent
-        })
+      const response: AxiosResponse = await axios.delete(`${host}/api/v1/images/${hash}`, {
+        headers: v2Headers,
+        timeout: 30000,
+        httpsAgent: requestAgent
+      })
       if (response.status === 200 && response.data.status === true) {
         deleteLog(hash, 'Lskyplist')
         return true

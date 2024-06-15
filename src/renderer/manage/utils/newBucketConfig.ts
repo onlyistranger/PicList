@@ -1,7 +1,7 @@
 import { AliyunAreaCodeName, QiniuAreaCodeName, TencentAreaCodeName } from '~/manage/utils/constants'
 import { T as $T } from '@/i18n'
 
-export const newBucketConfig:IStringKeyMap = {
+export const newBucketConfig: IStringKeyMap = {
   tcyun: {
     name: $T('MANAGE_NEW_BUCKET_TCYUN_NAME'),
     icon: 'tcyun',

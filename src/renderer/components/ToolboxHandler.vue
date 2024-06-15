@@ -1,10 +1,6 @@
 <template>
   <div class="toolbox-handler">
-    <ElButton
-      type="primary"
-      :link="true"
-      @click="() => props.handler(value)"
-    >
+    <ElButton type="primary" :link="true" @click="() => props.handler(value)">
       {{ props.handlerText }}
     </ElButton>
   </div>
@@ -21,12 +17,10 @@ interface IProps {
 }
 
 const props = defineProps<IProps>()
-
 </script>
 <script lang="ts">
 export default {
   name: 'ToolboxHandler'
 }
 </script>
-<style lang='stylus'>
-</style>
+<style lang="stylus"></style>

@@ -10,7 +10,7 @@ interface IConfigMap {
 export default class SmmsApi {
   static readonly #baseUrl = 'https://smms.app/api/v2'
 
-  static async delete (configMap: IConfigMap): Promise<boolean> {
+  static async delete(configMap: IConfigMap): Promise<boolean> {
     const { hash, config } = configMap
     if (!hash || !config || !config.token) {
       deleteLog(hash, 'Smms', false, 'SmmsApi.delete: invalid params')
@@ -20,17 +20,16 @@ export default class SmmsApi {
     const { token } = config
 
     try {
-      const response: AxiosResponse = await axios.get(
-        `${SmmsApi.#baseUrl}/delete/${hash}`, {
-          headers: {
-            Authorization: token
-          },
-          params: {
-            hash,
-            format: 'json'
-          },
-          timeout: 30000
-        })
+      const response: AxiosResponse = await axios.get(`${SmmsApi.#baseUrl}/delete/${hash}`, {
+        headers: {
+          Authorization: token
+        },
+        params: {
+          hash,
+          format: 'json'
+        },
+        timeout: 30000
+      })
       if (response.status === 200) {
         deleteLog(hash, 'Smms')
         return true

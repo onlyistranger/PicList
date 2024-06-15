@@ -2,25 +2,16 @@
   <div class="layout">
     <div class="layout__menu">
       <div class="layout__menu__button">
-        <span
-          class="layout__menu__button__item"
-          @click="openPicBedUrl"
-        >
+        <span class="layout__menu__button__item" @click="openPicBedUrl">
           <img
             :src="require(`./assets/${currentPagePicBedConfig.picBedName}.webp`)"
             class="layout__menu__button__item__icon"
-          >
+          />
           {{ supportedPicBedList[currentPagePicBedConfig.picBedName].name }}
         </span>
       </div>
-      <el-divider
-        content-position="left"
-        class="layout__menu__button__divider"
-        border-style="none"
-      >
-        <span
-          style="font-size: 14px;color: #909399;"
-        >
+      <el-divider content-position="left" class="layout__menu__button__divider" border-style="none">
+        <span style="font-size: 14px; color: #909399">
           {{ menuTitleMap[currentPicBedName] }}
           <el-tooltip
             v-if="showNewIconList.includes(currentPicBedName)"
@@ -34,7 +25,7 @@
             <el-icon
               class="layout__menu__button__divider__icon"
               color="red"
-              style="top: 2px;"
+              style="top: 2px"
               @click="openNewBucketDrawer()"
             >
               <CirclePlus />
@@ -47,24 +38,22 @@
         v-loading="isLoadingBucketList"
         class="layout__menu__list"
         :default-active="getCurrentActiveBucket"
-        style="width: 120px;"
+        style="width: 120px"
         active-text-color="#409EFF"
         @select="handleSelectMenu"
       >
-        <el-menu-item
-          v-for="item of bucketNameList"
-          :key="item"
-          :index="item"
-        >
+        <el-menu-item v-for="item of bucketNameList" :key="item" :index="item">
           <span
             class="layout__menu__list__item"
-            :style="{ color: item === currentSelectedBucket ? '#409EFF' : '#606266'}"
+            :style="{
+              color: item === currentSelectedBucket ? '#409EFF' : '#606266'
+            }"
           >
             <el-icon
               v-if="currentSelectedBucket === item && currentPicBedName !== 'github'"
               class="layout__menu__list__item__icon"
               color="#409EFF"
-              style="top: 2px;"
+              style="top: 2px"
             >
               <FolderOpened />
             </el-icon>
@@ -72,63 +61,42 @@
               v-else-if="currentPicBedName !== 'github'"
               class="layout__menu__list__item__icon"
               color="#606266"
-              style="top: 2px;"
+              style="top: 2px"
             >
               <Folder />
             </el-icon>
-            {{ currentPicBedName === 'tcyun' ? item.slice(0, item.length - 11)
-              : currentPicBedName === 'github'? item.length > 10 ? `${item.slice(0, 5)}..${item.slice(-5)}` : item
-                : item }}
+            {{
+              currentPicBedName === 'tcyun'
+                ? item.slice(0, item.length - 11)
+                : currentPicBedName === 'github'
+                  ? item.length > 10
+                    ? `${item.slice(0, 5)}..${item.slice(-5)}`
+                    : item
+                  : item
+            }}
           </span>
         </el-menu-item>
       </el-menu>
-      <el-menu
-        class="layout__menu__setting"
-        style="width: 120px;"
-      >
-        <el-menu-item
-          index="changePicBed"
-          style="height: 40px;"
-          @click="switchPicBed('main')"
-        >
-          <span
-            class="layout__menu__setting__item"
-          >
-            <el-icon
-              class="layout__menu__setting__item__icon"
-            >
+      <el-menu class="layout__menu__setting" style="width: 120px">
+        <el-menu-item index="changePicBed" style="height: 40px" @click="switchPicBed('main')">
+          <span class="layout__menu__setting__item">
+            <el-icon class="layout__menu__setting__item__icon">
               <HomeFilled />
             </el-icon>
             {{ $T('MANAGE_MAIN_PAGE_BACK_TO_HOME') }}
           </span>
         </el-menu-item>
-        <el-menu-item
-          index="changePicBed"
-          style="height: 40px;"
-          @click="changePicBed"
-        >
-          <span
-            class="layout__menu__setting__item"
-          >
-            <el-icon
-              class="layout__menu__setting__item__icon"
-            >
+        <el-menu-item index="changePicBed" style="height: 40px" @click="changePicBed">
+          <span class="layout__menu__setting__item">
+            <el-icon class="layout__menu__setting__item__icon">
               <Switch />
             </el-icon>
             {{ $T('MANAGE_MAIN_PAGE_SWITCH_PICBED') }}
           </span>
         </el-menu-item>
-        <el-menu-item
-          index="bucketPageSetting"
-          style="height: 40px;"
-          @click="openBucketPageSetting"
-        >
-          <span
-            class="layout__menu__setting__item"
-          >
-            <el-icon
-              class="layout__menu__setting__item__icon"
-            >
+        <el-menu-item index="bucketPageSetting" style="height: 40px" @click="openBucketPageSetting">
+          <span class="layout__menu__setting__item">
+            <el-icon class="layout__menu__setting__item__icon">
               <Tools />
             </el-icon>
             {{ $T('MANAGE_MAIN_PAGE_SETTING') }}
@@ -136,70 +104,39 @@
         </el-menu-item>
       </el-menu>
     </div>
-    <div
-      class="layout__content"
-      style="height: 100%;background-color: transparent;flex: 1;width: 0;"
-    >
+    <div class="layout__content" style="height: 100%; background-color: transparent; flex: 1; width: 0">
       <router-view />
     </div>
-    <el-dialog
-      v-model="picBedSwitchDialogVisible"
-      top="30vh"
-      append-to-body
-    >
+    <el-dialog v-model="picBedSwitchDialogVisible" top="30vh" append-to-body>
       <div
         class="choice-cos"
-        style="display: flex;flex-direction: row;flex-wrap: wrap;justify-content: space-around;"
+        style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-around"
       >
-        <el-card
-          shadow="hover"
-        >
-          <div
-            style="text-align: center;display: flex;flex-direction: column;"
-            @click="switchPicBed('main')"
-          >
-            <el-icon
-              color="red"
-              size="25px"
-              style="margin: 0 auto;"
-            >
+        <el-card shadow="hover">
+          <div style="text-align: center; display: flex; flex-direction: column" @click="switchPicBed('main')">
+            <el-icon color="red" size="25px" style="margin: 0 auto">
               <ChromeFilled />
             </el-icon>
-            <span
-              style="font-size: 13px;margin-top: 5px;color: red;"
-            >
+            <span style="font-size: 13px; margin-top: 5px; color: red">
               {{ $T('MANAGE_MAIN_PAGE_BACK_TO_HOME') }}
             </span>
           </div>
         </el-card>
-        <el-card
-          v-for="item in allPicBedConfigure"
-          :key="item"
-          shadow="hover"
-        >
-          <div
-            style="text-align: center;display: flex;flex-direction: column;"
-            @click="switchPicBed(item.alias)"
-          >
+        <el-card v-for="item in allPicBedConfigure" :key="item" shadow="hover">
+          <div style="text-align: center; display: flex; flex-direction: column" @click="switchPicBed(item.alias)">
             <el-image
               :src="require(`./assets/${item.picBedName}.webp`)"
               class="layout__addNewBucket__icon"
-              style="width: 25px;height: 25px;margin: 0 auto;"
+              style="width: 25px; height: 25px; margin: 0 auto"
             />
-            <span
-              style="font-size: 13px;margin-top: 5px;color: cornflowerblue;"
-            >
+            <span style="font-size: 13px; margin-top: 5px; color: cornflowerblue">
               {{ item.alias }}
             </span>
           </div>
         </el-card>
       </div>
     </el-dialog>
-    <el-drawer
-      v-model="nweBucketDrawerVisible"
-      class="layout__addNewBucket"
-      append-to-body
-    >
+    <el-drawer v-model="nweBucketDrawerVisible" class="layout__addNewBucket" append-to-body>
       <el-form
         label-position="top"
         require-asterisk-position="right"
@@ -208,18 +145,14 @@
         :model="newBucketConfigResult"
         :rules="rules"
       >
-        <div
-          style="position: relative;height: 10vh;width: 100%;"
-        >
+        <div style="position: relative; height: 10vh; width: 100%">
           <el-image
             :src="require(`./assets/${currentPicBedName}.webp`)"
             class="layout__addNewBucket__icon"
-            style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);"
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"
           />
         </div>
-        <el-divider
-          border-style="none"
-        />
+        <el-divider border-style="none" />
         <el-form-item
           v-for="option in newBucketConfig[currentPicBedName].options"
           :key="option"
@@ -227,13 +160,19 @@
           :label="newBucketConfig[currentPicBedName].configOptions[option].description"
         >
           <el-input
-            v-if="newBucketConfig[currentPicBedName].configOptions[option].component === 'input' && currentPicBedName !== 'tcyun'"
-            v-model.trim="newBucketConfigResult[currentPicBedName+'.'+option]"
+            v-if="
+              newBucketConfig[currentPicBedName].configOptions[option].component === 'input' &&
+              currentPicBedName !== 'tcyun'
+            "
+            v-model.trim="newBucketConfigResult[currentPicBedName + '.' + option]"
             :placeholder="newBucketConfig[currentPicBedName].configOptions[option].placeholder"
           />
           <el-input
-            v-if="currentPicBedName === 'tcyun' && newBucketConfig[currentPicBedName].configOptions[option].component === 'input'"
-            v-model.trim="newBucketConfigResult[currentPicBedName+'.'+option]"
+            v-if="
+              currentPicBedName === 'tcyun' &&
+              newBucketConfig[currentPicBedName].configOptions[option].component === 'input'
+            "
+            v-model.trim="newBucketConfigResult[currentPicBedName + '.' + option]"
             :placeholder="newBucketConfig[currentPicBedName].configOptions[option].placeholder"
           >
             <template #append>
@@ -242,7 +181,7 @@
           </el-input>
           <el-select
             v-if="newBucketConfig[currentPicBedName].configOptions[option].component === 'select'"
-            v-model="newBucketConfigResult[currentPicBedName+'.'+option]"
+            v-model="newBucketConfigResult[currentPicBedName + '.' + option]"
             size="large"
             :persistent="false"
             teleported
@@ -256,18 +195,16 @@
           </el-select>
           <el-switch
             v-if="newBucketConfig[currentPicBedName].configOptions[option].component === 'switch'"
-            v-model="newBucketConfigResult[currentPicBedName+'.'+option]"
+            v-model="newBucketConfigResult[currentPicBedName + '.' + option]"
             :active-value="true"
             :inactive-value="false"
           />
         </el-form-item>
-        <div
-          style="position: relative;height: 10vh;width: 100%;z-index: 1;"
-        >
+        <div style="position: relative; height: 10vh; width: 100%; z-index: 1">
           <el-button
             :icon="SuccessFilled"
             type="primary"
-            style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);"
+            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%)"
             @click="createNewBucket(currentPicBedName)"
           >
             {{ $T('MANAGE_MAIN_PAGE_SUBMIT') }}
@@ -281,7 +218,16 @@
 <script lang="ts" setup>
 import { shell } from 'electron'
 import { ElNotification } from 'element-plus'
-import { CirclePlus, SuccessFilled, Folder, Switch, Tools, ChromeFilled, HomeFilled, FolderOpened } from '@element-plus/icons-vue'
+import {
+  CirclePlus,
+  SuccessFilled,
+  Folder,
+  Switch,
+  Tools,
+  ChromeFilled,
+  HomeFilled,
+  FolderOpened
+} from '@element-plus/icons-vue'
 import path from 'path'
 import { ref, reactive, computed, onBeforeMount, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -312,7 +258,7 @@ const isLoadingBucketList = ref(false)
 const nweBucketDrawerVisible = ref(false)
 const picBedSwitchDialogVisible = ref(false)
 
-watch(route, async (newRoute) => {
+watch(route, async newRoute => {
   if (newRoute.fullPath.split('?')[0] === '/main-page/manage-main-page') {
     currentAlias.value = newRoute.query.alias as string
     currentPicBedName.value = newRoute.query.picBedName as string
@@ -322,9 +268,9 @@ watch(route, async (newRoute) => {
   }
 })
 
-const getCurrentActiveBucket = computed(() => bucketNameList.value.length === 0 ? '' : bucketNameList.value[0])
+const getCurrentActiveBucket = computed(() => (bucketNameList.value.length === 0 ? '' : bucketNameList.value[0]))
 
-const urlMap : IStringKeyMap = {
+const urlMap: IStringKeyMap = {
   aliyun: 'https://oss.console.aliyun.com',
   github: 'https://github.com',
   imgur: 'https://imgur.com',
@@ -344,7 +290,7 @@ const bucketT = $T('MANAGE_MAIN_PAGE_BUCKET')
 const galleryT = $T('MANAGE_MAIN_PAGE_GALLERY')
 const repositoryT = $T('MANAGE_MAIN_PAGE_REPOSITORY')
 
-const menuTitleMap:IStringKeyMap = {
+const menuTitleMap: IStringKeyMap = {
   aliyun: bucketT,
   qiniu: bucketT,
   tcyun: bucketT,
@@ -362,7 +308,7 @@ const rules = ruleMap(newBucketConfig)
 
 const openPicBedUrl = () => shell.openExternal(urlMap[currentPagePicBedConfig.picBedName])
 
-function ruleMap (options: IStringKeyMap) {
+function ruleMap(options: IStringKeyMap) {
   return Object.keys(options).reduce((result, key) => {
     options[key].options.forEach((option: string) => {
       const keyName = `${key}.${option}`
@@ -378,20 +324,23 @@ function ruleMap (options: IStringKeyMap) {
   }, {} as IStringKeyMap)
 }
 
-function openNewBucketDrawer () {
+function openNewBucketDrawer() {
   nweBucketDrawerVisible.value = true
 }
 
-function createNewBucket (picBedName: string) {
+function createNewBucket(picBedName: string) {
   const configOptions = newBucketConfig[picBedName].configOptions
   const resultMap: IStringKeyMap = Object.keys(configOptions).reduce((result, key) => {
     const resultKey = `${picBedName}.${key}`
     const defaultValue = configOptions[key].default
     const resultValue = newBucketConfigResult[resultKey]
 
-    result[key] = resultValue === '' && defaultValue !== undefined
-      ? defaultValue
-      : resultValue === undefined ? defaultValue ?? '' : resultValue
+    result[key] =
+      resultValue === '' && defaultValue !== undefined
+        ? defaultValue
+        : resultValue === undefined
+          ? defaultValue ?? ''
+          : resultValue
 
     return result
   }, {} as IStringKeyMap)
@@ -420,7 +369,7 @@ function createNewBucket (picBedName: string) {
   })
 }
 
-async function getBucketList () {
+async function getBucketList() {
   bucketList.value = {}
   bucketNameList.value = []
   isLoadingBucketList.value = true
@@ -436,12 +385,17 @@ async function getBucketList () {
   }
 }
 
-function transPathToUnix (filePath: string | undefined) {
+function transPathToUnix(filePath: string | undefined) {
   if (!filePath) return ''
-  return process.platform === 'win32' ? filePath.split(path.sep).join(path.posix.sep).replace(/^\/+|\/+$/g, '') : filePath.replace(/^\/+|\/+$/g, '')
+  return process.platform === 'win32'
+    ? filePath
+        .split(path.sep)
+        .join(path.posix.sep)
+        .replace(/^\/+|\/+$/g, '')
+    : filePath.replace(/^\/+|\/+$/g, '')
 }
 
-function handleSelectMenu (bucketName: string) {
+function handleSelectMenu(bucketName: string) {
   const currentPicBedConfig = manageStore.config.picBed[currentAlias.value]
   const transformedConfig = JSON.parse(currentPicBedConfig.transformedConfig ?? '{}')
 
@@ -474,14 +428,16 @@ function handleSelectMenu (bucketName: string) {
   })
 }
 
-function switchPicBed (picBedAlias:string) {
+function switchPicBed(picBedAlias: string) {
   if (picBedAlias === 'main') {
     router.push({
       path: '/main-page/manage-login-page'
     })
     return
   }
-  if (route.fullPath.startsWith('/main-page/manage-main-page/manage-bucket-page') || route.fullPath.startsWith('/main-page/manage-main-page/manage-setting-page')
+  if (
+    route.fullPath.startsWith('/main-page/manage-main-page/manage-bucket-page') ||
+    route.fullPath.startsWith('/main-page/manage-main-page/manage-setting-page')
   ) {
     picBedSwitchDialogVisible.value = false
     router.push({
@@ -503,11 +459,11 @@ function switchPicBed (picBedAlias:string) {
   }
 }
 
-function changePicBed () {
+function changePicBed() {
   picBedSwitchDialogVisible.value = true
 }
 
-function openBucketPageSetting () {
+function openBucketPageSetting() {
   router.push({
     path: '/main-page/manage-main-page/manage-setting-page'
   })

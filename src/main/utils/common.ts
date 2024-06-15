@@ -12,11 +12,13 @@ import { configPaths } from '#/utils/configPaths'
 
 export let tray: Tray
 
-export const setTray = (t: Tray) => { tray = t }
+export const setTray = (t: Tray) => {
+  tray = t
+}
 
 export const getTray = () => tray
 
-export function setTrayToolTip (title: string): void {
+export function setTrayToolTip(title: string): void {
   if (tray) {
     tray.setToolTip(title)
   }
@@ -32,13 +34,15 @@ export const handleCopyUrl = (str: string): void => {
  * show notification
  * @param options
  */
-export const showNotification = (options: IPrivateShowNotificationOption = {
-  title: '',
-  body: '',
-  clickToCopy: false,
-  copyContent: '',
-  clickFn: () => {}
-}) => {
+export const showNotification = (
+  options: IPrivateShowNotificationOption = {
+    title: '',
+    body: '',
+    clickToCopy: false,
+    copyContent: '',
+    clickFn: () => {}
+  }
+) => {
   const notification = new Notification({
     title: options.title,
     body: options.body
@@ -60,10 +64,8 @@ export const showNotification = (options: IPrivateShowNotificationOption = {
 }
 
 export const showMessageBox = (options: any) => {
-  return new Promise<IShowMessageBoxResult>(async (resolve) => {
-    dialog.showMessageBox(
-      options
-    ).then((res) => {
+  return new Promise<IShowMessageBoxResult>(async resolve => {
+    dialog.showMessageBox(options).then(res => {
       resolve({
         result: res.response,
         checkboxChecked: res.checkboxChecked
@@ -118,14 +120,18 @@ export const getClipboardFilePath = (): string => {
   }
 
   if (img.isEmpty() && platform === 'win32') {
-    const imgPath = clipboard.readBuffer('FileNameW')?.toString('ucs2')?.replace(RegExp(String.fromCharCode(0), 'g'), '')
+    const imgPath = clipboard
+      .readBuffer('FileNameW')
+      ?.toString('ucs2')
+      ?.replace(RegExp(String.fromCharCode(0), 'g'), '')
     return imgPath || ''
   }
 
   return ''
 }
 
-export const handleUrlEncodeWithSetting = (url: string) => db.get(configPaths.settings.encodeOutputURL) ? handleUrlEncode(url) : url
+export const handleUrlEncodeWithSetting = (url: string) =>
+  db.get(configPaths.settings.encodeOutputURL) ? handleUrlEncode(url) : url
 
 const c1nApi = 'https://c1n.cn/link/short'
 
@@ -163,7 +169,12 @@ const generateYOURLSShortUrl = async (url: string) => {
   if (!/^https?:\/\//.test(domain)) {
     domain = `http://${domain}`
   }
-  const params = new URLSearchParams({ signature, action: 'shorturl', format: 'json', url })
+  const params = new URLSearchParams({
+    signature,
+    action: 'shorturl',
+    format: 'json',
+    url
+  })
   try {
     const res = await axios.get(`${domain}/yourls-api.php?${params.toString()}`)
     if (res.data?.shorturl) {

@@ -1,29 +1,14 @@
 <template>
   <div id="rename-page">
-    <el-form
-      ref="formRef"
-      :model="form"
-      @submit.prevent
-    >
+    <el-form ref="formRef" :model="form" @submit.prevent>
       <el-form-item
         :label="$T('FILE_RENAME')"
         prop="fileName"
-        :rules="[
-          { required: true, message: 'file name is required', trigger: 'blur' }
-        ]"
+        :rules="[{ required: true, message: 'file name is required', trigger: 'blur' }]"
       >
-        <el-input
-          v-model="form.fileName"
-          size="small"
-          autofocus
-          @keyup.enter="confirmName"
-        >
+        <el-input v-model="form.fileName" size="small" autofocus @keyup.enter="confirmName">
           <template #suffix>
-            <el-icon
-              class="el-input__icon"
-              style="cursor: pointer;"
-              @click="form.fileName = ''"
-            >
+            <el-icon class="el-input__icon" style="cursor: pointer" @click="form.fileName = ''">
               <close />
             </el-icon>
           </template>
@@ -32,19 +17,10 @@
     </el-form>
     <el-row>
       <div class="pull-right">
-        <el-button
-          round
-          size="small"
-          @click="cancel"
-        >
+        <el-button round size="small" @click="cancel">
           {{ $T('CANCEL') }}
         </el-button>
-        <el-button
-          type="primary"
-          round
-          size="small"
-          @click="confirmName"
-        >
+        <el-button type="primary" round size="small" @click="confirmName">
           {{ $T('CONFIRM') }}
         </el-button>
       </div>
@@ -84,15 +60,15 @@ onBeforeMount(() => {
   ipcRenderer.send(GET_RENAME_FILE_NAME)
 })
 
-function confirmName () {
-  formRef.value?.validate((valid) => {
+function confirmName() {
+  formRef.value?.validate(valid => {
     if (valid) {
       sendToMain(`${RENAME_FILE_NAME}${id.value}`, form.fileName)
     }
   })
 }
 
-function cancel () {
+function cancel() {
   // if cancel, use origin file name
   sendToMain(`${RENAME_FILE_NAME}${id.value}`, form.originName)
 }
@@ -100,18 +76,17 @@ function cancel () {
 onBeforeUnmount(() => {
   ipcRenderer.removeAllListeners(RENAME_FILE_NAME)
 })
-
 </script>
 <script lang="ts">
 export default {
   name: 'RenamePage'
 }
 </script>
-<style lang='stylus'>
-  #rename-page
-    padding 0 20px
-    .pull-right
-      float right
-    .el-form-item__label
-      color #ddd
+<style lang="stylus">
+#rename-page
+  padding 0 20px
+  .pull-right
+    float right
+  .el-form-item__label
+    color #ddd
 </style>

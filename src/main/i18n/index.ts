@@ -15,18 +15,18 @@ class I18nManager {
   readonly defaultLanguage: string = 'zh-CN'
   private i18nFileList: II18nItem[] = builtinI18nList
 
-  setOutterI18nFolder (folder: string) {
+  setOutterI18nFolder(folder: string) {
     this.outterI18nFolder = folder
   }
 
-  addI18nFile (file: string, label: string) {
+  addI18nFile(file: string, label: string) {
     this.i18nFileList.push({
       label,
       value: file
     })
   }
 
-  private getLocales (lang: string): ILocales {
+  private getLocales(lang: string): ILocales {
     if (this.localesMap.has(lang)) {
       return this.localesMap.get(lang)!
     }
@@ -53,13 +53,13 @@ class I18nManager {
     }
   }
 
-  setCurrentLanguage (lang: string) {
+  setCurrentLanguage(lang: string) {
     const locales = this.getLocales(lang)
     this.currentLanguage = lang
     this.initI18n(lang, locales)
   }
 
-  private initI18n (lang: string = this.defaultLanguage, locales: ILocales) {
+  private initI18n(lang: string = this.defaultLanguage, locales: ILocales) {
     const objectAdapter = new ObjectAdapter({
       [lang]: locales
     })
@@ -69,15 +69,15 @@ class I18nManager {
     })
   }
 
-  T (key: ILocalesKey, args: IStringKeyMap = {}): string {
+  T(key: ILocalesKey, args: IStringKeyMap = {}): string {
     return this.i18n?.translate(key, args) || key
   }
 
-  get languageList () {
+  get languageList() {
     return this.i18nFileList
   }
 
-  getCurrentLocales () {
+  getCurrentLocales() {
     return {
       lang: this.currentLanguage,
       locales: this.getLocales(this.currentLanguage)

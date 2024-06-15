@@ -7,15 +7,8 @@ import shortKeyRoutes from '~/events/rpc/routes/setting/shortKey'
 
 const settingRouter = new RPCRouter()
 
-const settingRoutes = [
-  ...advancedRoutes,
-  ...configureRoutes,
-  ...mainAppRoutes,
-  ...shortKeyRoutes
-]
+const settingRoutes = [...advancedRoutes, ...configureRoutes, ...mainAppRoutes, ...shortKeyRoutes]
 
 settingRouter.addBatch(settingRoutes)
 
-export {
-  settingRouter
-}
+export { settingRouter }

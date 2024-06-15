@@ -27,18 +27,20 @@ export default defineComponent({
     }
   },
 
-  setup (props) {
+  setup(props) {
     const base64Url = ref('')
     const success = ref(false)
 
     const imageSource = computed(() => {
-      return (props.isShowThumbnail && props.item.isImage && success.value)
+      return props.isShowThumbnail && props.item.isImage && success.value
         ? base64Url.value
         : require(`../manage/pages/assets/icons/${getFileIconPath(props.item.fileName ?? '')}`)
     })
-    const iconPath = computed(() => require(`../manage/pages/assets/icons/${getFileIconPath(props.item.fileName ?? '')}`))
+    const iconPath = computed(() =>
+      require(`../manage/pages/assets/icons/${getFileIconPath(props.item.fileName ?? '')}`)
+    )
 
-    async function getWebdavHeader (key: string) {
+    async function getWebdavHeader(key: string) {
       let headers = {} as any
       if (props.config.authType === 'digest') {
         const authHeader = await getAuthHeader(
@@ -79,24 +81,14 @@ export default defineComponent({
     onMounted(fetchImage)
 
     return () => (
-      <ElImage
-        src={imageSource.value}
-        fit="contain"
-        style="height: 100px;width: 100%;margin: 0 auto;"
-      >
+      <ElImage src={imageSource.value} fit='contain' style='height: 100px;width: 100%;margin: 0 auto;'>
         {{
           placeholder: () => (
             <ElIcon>
               <Loading />
             </ElIcon>
           ),
-          error: () => (
-            <ElImage
-              src={iconPath.value}
-              fit="contain"
-              style="height: 100px;width: 100%;margin: 0 auto;"
-            />
-          )
+          error: () => <ElImage src={iconPath.value} fit='contain' style='height: 100px;width: 100%;margin: 0 auto;' />
         }}
       </ElImage>
     )

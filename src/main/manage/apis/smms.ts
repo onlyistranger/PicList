@@ -20,7 +20,7 @@ class SmmsApi {
   logger: ManageLogger
   timeout = 30000
 
-  constructor (token: string, logger: ManageLogger) {
+  constructor(token: string, logger: ManageLogger) {
     this.token = token
     this.axiosInstance = axios.create({
       baseURL: this.baseUrl,
@@ -36,7 +36,7 @@ class SmmsApi {
     this.logger = logger
   }
 
-  formatFile (item: any) {
+  formatFile(item: any) {
     return {
       ...item,
       Key: item.path,
@@ -53,7 +53,7 @@ class SmmsApi {
     }
   }
 
-  async getBucketListBackstage (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListBackstage(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
     const { cancelToken } = configMap
     let marker = 1
@@ -71,17 +71,15 @@ class SmmsApi {
       finished: false
     }
     do {
-      res = await this.axiosInstance(
-        '/upload_history',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          },
-          params: {
-            page: marker
-          }
-        })
+      res = await this.axiosInstance('/upload_history', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        params: {
+          page: marker
+        }
+      })
       if (res && res.status === 200 && res.data && res.data.success) {
         if (res.data.Count === 0) {
           result.success = true
@@ -123,26 +121,23 @@ class SmmsApi {
    *  itemsPerPage: number,
    *  customUrl: string
    * }
-  */
-  async getBucketFileList ({ currentPage }: IStringKeyMap): Promise<any> {
+   */
+  async getBucketFileList({ currentPage }: IStringKeyMap): Promise<any> {
     const result = {
       fullList: <any>[],
       isTruncated: false,
       nextMarker: '',
       success: false
     }
-    const res = await this.axiosInstance(
-      '/upload_history',
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        params: {
-          page: currentPage
-        }
+    const res = await this.axiosInstance('/upload_history', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      params: {
+        page: currentPage
       }
-    )
+    })
     if (res?.status !== 200 || !res?.data?.success) return result
 
     if (res.data.Count === 0) return { ...result, success: true }
@@ -157,26 +152,23 @@ class SmmsApi {
   }
 
   /**
-  * 删除文件
-  * @param configMap
-  * configMap = {
-  * bucketName: string,
-  * region: string,
-  * key: string,
-  * DeleteHash: string
-  * }
-  */
-  async deleteBucketFile ({ DeleteHash }: IStringKeyMap): Promise<boolean> {
-    const res = await this.axiosInstance(
-      `/delete/${DeleteHash}`,
-      {
-        method: 'GET',
-        params: {
-          hash: DeleteHash,
-          format: 'json'
-        }
+   * 删除文件
+   * @param configMap
+   * configMap = {
+   * bucketName: string,
+   * region: string,
+   * key: string,
+   * DeleteHash: string
+   * }
+   */
+  async deleteBucketFile({ DeleteHash }: IStringKeyMap): Promise<boolean> {
+    const res = await this.axiosInstance(`/delete/${DeleteHash}`, {
+      method: 'GET',
+      params: {
+        hash: DeleteHash,
+        format: 'json'
       }
-    )
+    })
     return res?.status === 200 && res?.data?.success
   }
 
@@ -184,7 +176,7 @@ class SmmsApi {
    * 上传文件
    * @param configMap
    */
-  async uploadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async uploadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { fileArray } = configMap
     const instance = UpDownTaskQueue.getInstance()
     for (const item of fileArray) {
@@ -221,7 +213,7 @@ class SmmsApi {
    * 下载文件
    * @param configMap
    */
-  async downloadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async downloadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { downloadPath, fileArray, maxDownloadFileCount } = configMap
     const instance = UpDownTaskQueue.getInstance()
     const promises = [] as any
@@ -239,19 +231,21 @@ class SmmsApi {
         sourceFileName: fileName,
         targetFilePath: savedFilePath
       })
-      promises.push(() => new Promise((resolve, reject) => {
-        NewDownloader(instance, preSignedUrl, id, savedFilePath, this.logger)
-          .then((res: boolean) => {
-            if (res) {
-              resolve(res)
-            } else {
-              reject(res)
-            }
+      promises.push(
+        () =>
+          new Promise((resolve, reject) => {
+            NewDownloader(instance, preSignedUrl, id, savedFilePath, this.logger).then((res: boolean) => {
+              if (res) {
+                resolve(res)
+              } else {
+                reject(res)
+              }
+            })
           })
-      }))
+      )
     }
     const pool = new ConcurrencyPromisePool(maxDownloadFileCount)
-    pool.all(promises).catch((error) => {
+    pool.all(promises).catch(error => {
       this.logger.error(formatError(error, { class: 'SmmsApi', method: 'downloadBucketFile' }))
     })
     return true

@@ -23,7 +23,7 @@ export enum ICOREBuildInEvent {
   UNINSTALL = 'uninstall',
   UPDATE = 'update',
   NOTIFICATION = 'notification',
-  REMOVE = 'remove',
+  REMOVE = 'remove'
 }
 
 export enum IPicGoHelperType {
@@ -62,7 +62,7 @@ export enum IRemoteNoticeActionType {
 
 export enum IRemoteNoticeTriggerHook {
   APP_START = 'APP_START',
-  SETTING_WINDOW_OPEN = 'SETTING_WINDOW_OPEN',
+  SETTING_WINDOW_OPEN = 'SETTING_WINDOW_OPEN'
 }
 
 export enum IRemoteNoticeTriggerCount {
@@ -173,21 +173,21 @@ export enum IRPCActionType {
   // tray rpc
   TRAY_SET_TOOL_TIP = 'TRAY_SET_TOOL_TIP',
   TRAY_GET_SHORT_URL = 'TRAY_GET_SHORT_URL',
-  TRAY_UPLOAD_CLIPBOARD_FILES = 'TRAY_UPLOAD_CLIPBOARD_FILES',
+  TRAY_UPLOAD_CLIPBOARD_FILES = 'TRAY_UPLOAD_CLIPBOARD_FILES'
 }
 
 export enum IToolboxItemType {
   IS_CONFIG_FILE_BROKEN = 'IS_CONFIG_FILE_BROKEN',
   IS_GALLERY_FILE_BROKEN = 'IS_GALLERY_FILE_BROKEN',
   HAS_PROBLEM_WITH_CLIPBOARD_PIC_UPLOAD = 'HAS_PROBLEM_WITH_CLIPBOARD_PIC_UPLOAD',
-  HAS_PROBLEM_WITH_PROXY = 'HAS_PROBLEM_WITH_PROXY',
+  HAS_PROBLEM_WITH_PROXY = 'HAS_PROBLEM_WITH_PROXY'
 }
 
 export enum IToolboxItemCheckStatus {
   INIT = 'init',
   LOADING = 'loading',
   SUCCESS = 'success',
-  ERROR = 'error',
+  ERROR = 'error'
 }
 
 // piclist setting
@@ -227,5 +227,5 @@ export enum uploadTaskSpecialStatus {
 
 export enum downloadTaskSpecialStatus {
   downloading = 'downloading',
-  downloaded = 'downloaded',
+  downloaded = 'downloaded'
 }

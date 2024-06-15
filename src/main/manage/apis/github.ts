@@ -6,7 +6,14 @@ import path from 'path'
 import windowManager from 'apis/app/window/windowManager'
 
 import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
-import { gotUpload, NewDownloader, getAgent, getOptions, ConcurrencyPromisePool, formatError } from '~/manage/utils/common'
+import {
+  gotUpload,
+  NewDownloader,
+  getAgent,
+  getOptions,
+  ConcurrencyPromisePool,
+  formatError
+} from '~/manage/utils/common'
 import { ManageLogger } from '~/manage/utils/logger'
 
 import { commonTaskStatus, IWindowList } from '#/types/enum'
@@ -20,9 +27,9 @@ class GithubApi {
   proxy: any
   proxyStr: string | undefined
   baseUrl = 'https://api.github.com'
-  commonHeaders : IStringKeyMap
+  commonHeaders: IStringKeyMap
 
-  constructor (token: string, username: string, proxy: string | undefined, logger: ManageLogger) {
+  constructor(token: string, username: string, proxy: string | undefined, logger: ManageLogger) {
     this.logger = logger
     this.token = token.startsWith('Bearer ') ? token : `Bearer ${token}`.trim()
     this.username = username
@@ -34,16 +41,25 @@ class GithubApi {
     }
   }
 
-  formatFolder (item: any, slicedPrefix: string, branch: string, repo: string, cdnUrl: string | undefined) {
+  formatFolder(item: any, slicedPrefix: string, branch: string, repo: string, cdnUrl: string | undefined) {
     const key = `${slicedPrefix ? `${slicedPrefix}/` : ''}${item.path}/`
     let rawUrl = ''
     const placeholders = ['{username}', '{repo}', '{branch}', '{path}']
     rawUrl = cdnUrl
       ? placeholders.some(item => cdnUrl.includes(item))
         ? placeholders.reduce((url, ph) => {
-          const value = ph === '{username}' ? this.username : ph === '{repo}' ? repo : ph === '{branch}' ? branch : ph === '{path}' ? key : ''
-          return url.replaceAll(ph, value)
-        }, cdnUrl)
+            const value =
+              ph === '{username}'
+                ? this.username
+                : ph === '{repo}'
+                  ? repo
+                  : ph === '{branch}'
+                    ? branch
+                    : ph === '{path}'
+                      ? key
+                      : ''
+            return url.replaceAll(ph, value)
+          }, cdnUrl)
         : `${cdnUrl}/${key}`
       : `https://raw.githubusercontent.com/${this.username}/${repo}/${branch}/${key}`
     rawUrl = rawUrl.replace(/(?<!https?:)\/{2,}/g, '/')
@@ -62,16 +78,25 @@ class GithubApi {
     }
   }
 
-  formatFile (item: any, slicedPrefix: string, branch: string, repo: string, cdnUrl: string | undefined) {
+  formatFile(item: any, slicedPrefix: string, branch: string, repo: string, cdnUrl: string | undefined) {
     let rawUrl = ''
     const placeholders = ['{username}', '{repo}', '{branch}', '{path}']
     const key = slicedPrefix === '' ? item.path : `${slicedPrefix}/${item.path}`
     rawUrl = cdnUrl
       ? placeholders.some(item => cdnUrl.includes(item))
         ? placeholders.reduce((url, ph) => {
-          const value = ph === '{username}' ? this.username : ph === '{repo}' ? repo : ph === '{branch}' ? branch : ph === '{path}' ? `${slicedPrefix}/${item.path}` : ''
-          return url.replaceAll(ph, value)
-        }, cdnUrl)
+            const value =
+              ph === '{username}'
+                ? this.username
+                : ph === '{repo}'
+                  ? repo
+                  : ph === '{branch}'
+                    ? branch
+                    : ph === '{path}'
+                      ? `${slicedPrefix}/${item.path}`
+                      : ''
+            return url.replaceAll(ph, value)
+          }, cdnUrl)
         : `${cdnUrl}/${key}`
       : `https://raw.githubusercontent.com/${this.username}/${repo}/${branch}/${key}`
     rawUrl = rawUrl.replace(/(?<!https?:)\/{2,}/g, '/')
@@ -92,17 +117,25 @@ class GithubApi {
   }
 
   /**
-     * get repo list
-    */
-  async getBucketList (): Promise<any> {
+   * get repo list
+   */
+  async getBucketList(): Promise<any> {
     let initPage = 1
     let res
     const result = [] as any[]
     do {
-      res = await got(
+      res = (await got(
         `${this.baseUrl}/user/repos`,
-        getOptions('GET', this.commonHeaders, { page: initPage, per_page: 100 }, 'json', undefined, undefined, this.proxy)
-      ) as any
+        getOptions(
+          'GET',
+          this.commonHeaders,
+          { page: initPage, per_page: 100 },
+          'json',
+          undefined,
+          undefined,
+          this.proxy
+        )
+      )) as any
       if (res.statusCode === 200) {
         res.body.forEach((item: any) => {
           result.push({
@@ -123,16 +156,24 @@ class GithubApi {
   /**
    * 获取branch列表
    */
-  async getBucketDomain (param: IStringKeyMap): Promise<any> {
+  async getBucketDomain(param: IStringKeyMap): Promise<any> {
     const { bucketName: repo } = param
     let initPage = 1
     let res
     const result = [] as string[]
     do {
-      res = await got(
+      res = (await got(
         `${this.baseUrl}/repos/${this.username}/${repo}/branches`,
-        getOptions('GET', this.commonHeaders, { page: initPage, per_page: 100 }, 'json', undefined, undefined, this.proxy)
-      ) as any
+        getOptions(
+          'GET',
+          this.commonHeaders,
+          { page: initPage, per_page: 100 },
+          'json',
+          undefined,
+          undefined,
+          this.proxy
+        )
+      )) as any
       if (res.statusCode === 200) {
         res.body.forEach((item: any) => result.push(item.name))
       } else {
@@ -143,7 +184,7 @@ class GithubApi {
     return result
   }
 
-  async getBucketListRecursively (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListRecursively(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
     const { bucketName: repo, customUrl: branch, prefix, cancelToken, cdnUrl } = configMap
     const slicedPrefix = prefix.replace(/(^\/+|\/+$)/g, '')
@@ -167,10 +208,10 @@ class GithubApi {
         return result
       }
       const currentPrefix = treeQueue[0]
-      res = await got(
+      res = (await got(
         `${this.baseUrl}/repos/${this.username}/${repo}/git/trees/${branch}:${treeQueue.shift()}`,
         getOptions('GET', this.commonHeaders, {}, 'json', undefined, undefined, this.proxy)
-      ) as any
+      )) as any
       if (res && res.statusCode === 200) {
         const { tree } = res.body
         tree.forEach((item: any) => {
@@ -194,7 +235,7 @@ class GithubApi {
     ipcMain.removeAllListeners(cancelDownloadLoadingFileList)
   }
 
-  async getBucketListBackstage (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListBackstage(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
     const { bucketName: repo, customUrl: branch, prefix, cancelToken, cdnUrl } = configMap
     const slicedPrefix = prefix.replace(/(^\/+|\/+$)/g, '')
@@ -236,15 +277,15 @@ class GithubApi {
   }
 
   /**
-  * 删除文件
-  * @param configMap
-  * configMap = {
-  * bucketName: string,
-  * region: string,
-  * key: string
-  * }
-  */
-  async deleteBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+   * 删除文件
+   * @param configMap
+   * configMap = {
+   * bucketName: string,
+   * region: string,
+   * key: string
+   * }
+   */
+  async deleteBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName: repo, githubBranch: branch, key, DeleteHash: sha } = configMap
     const body = {
       message: 'deleted by PicList',
@@ -259,94 +300,135 @@ class GithubApi {
   }
 
   /**
-  * create a new tree to delete a folder
-  * @param configMap
-  */
-  async deleteBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+   * create a new tree to delete a folder
+   * @param configMap
+   */
+  async deleteBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName: repo, githubBranch: branch, key } = configMap
     // get sha of the branch
-    const refRes = await got(
+    const refRes = (await got(
       `${this.baseUrl}/repos/${this.username}/${repo}/git/refs/heads/${branch}`,
       getOptions('GET', this.commonHeaders, undefined, 'json', undefined, undefined, this.proxy)
-    ) as any
+    )) as any
     if (refRes.statusCode !== 200) return false
     const refSha = refRes.body.object.sha
     // get sha of the root tree
-    const rootRes = await got(
+    const rootRes = (await got(
       `${this.baseUrl}/repos/${this.username}/${repo}/branches/${branch}`,
       getOptions('GET', undefined, undefined, 'json', undefined, undefined, this.proxy)
-    ) as any
+    )) as any
     if (rootRes.statusCode !== 200) return false
     const rootSha = rootRes.body.commit.commit.tree.sha
     // TODO: if there are more than 10000 files in the folder, it will be truncated
     // Rare cases, not considered for now
     // get sha of the folder tree
-    const treeRes = await got(
+    const treeRes = (await got(
       `${this.baseUrl}/repos/${this.username}/${repo}/git/trees/${branch}:${key.replace(/(^\/+|\/+$)/g, '')}`,
-      getOptions('GET', this.commonHeaders, {
-        recursive: true
-      }, 'json', undefined, undefined, this.proxy)
-    ) as any
+      getOptions(
+        'GET',
+        this.commonHeaders,
+        {
+          recursive: true
+        },
+        'json',
+        undefined,
+        undefined,
+        this.proxy
+      )
+    )) as any
     if (treeRes.statusCode !== 200) return false
     const oldTree = treeRes.body.tree
     // create a new tree
-    const newTree = oldTree.filter((item: any) => item.type === 'blob')
-      .map((item:any) => ({
+    const newTree = oldTree
+      .filter((item: any) => item.type === 'blob')
+      .map((item: any) => ({
         path: `${key.replace(/(^\/+|\/+$)/g, '')}/${item.path}`,
         mode: item.mode,
         type: item.type,
         sha: null
       }))
-    const newTreeShaRes = await got(
+    const newTreeShaRes = (await got(
       `${this.baseUrl}/repos/${this.username}/${repo}/git/trees`,
-      getOptions('POST', this.commonHeaders, undefined, 'json', JSON.stringify({
-        base_tree: rootSha,
-        tree: newTree
-      }), undefined, this.proxy)
-    ) as any
+      getOptions(
+        'POST',
+        this.commonHeaders,
+        undefined,
+        'json',
+        JSON.stringify({
+          base_tree: rootSha,
+          tree: newTree
+        }),
+        undefined,
+        this.proxy
+      )
+    )) as any
     if (newTreeShaRes.statusCode !== 201) return false
     const newTreeSha = newTreeShaRes.body.sha
     // create a new commit
-    const commitRes = await got(
+    const commitRes = (await got(
       `${this.baseUrl}/repos/${this.username}/${repo}/git/commits`,
-      getOptions('POST', this.commonHeaders, undefined, 'json', JSON.stringify({
-        message: 'deleted by PicList',
-        tree: newTreeSha,
-        parents: [refSha]
-      }), undefined, this.proxy)
-    ) as any
+      getOptions(
+        'POST',
+        this.commonHeaders,
+        undefined,
+        'json',
+        JSON.stringify({
+          message: 'deleted by PicList',
+          tree: newTreeSha,
+          parents: [refSha]
+        }),
+        undefined,
+        this.proxy
+      )
+    )) as any
     if (commitRes.statusCode !== 201) return false
     const commitSha = commitRes.body.sha
     // update the branch
-    const updateRefRes = await got(
+    const updateRefRes = (await got(
       `${this.baseUrl}/repos/${this.username}/${repo}/git/refs/heads/${branch}`,
-      getOptions('PATCH', this.commonHeaders, undefined, 'json', JSON.stringify({
-        sha: commitSha
-      }), undefined, this.proxy)
-    ) as any
+      getOptions(
+        'PATCH',
+        this.commonHeaders,
+        undefined,
+        'json',
+        JSON.stringify({
+          sha: commitSha
+        }),
+        undefined,
+        this.proxy
+      )
+    )) as any
     return updateRefRes.statusCode === 200
   }
 
   /**
-     * 获取预签名url
-     * @param configMap
-     * configMap = {
-     * bucketName: string,
-     * region: string,
-     * key: string,
-     * expires: number,
-     * customUrl: string
-     * }
-     */
-  async getPreSignedUrl (configMap: IStringKeyMap): Promise<string> {
+   * 获取预签名url
+   * @param configMap
+   * configMap = {
+   * bucketName: string,
+   * region: string,
+   * key: string,
+   * expires: number,
+   * customUrl: string
+   * }
+   */
+  async getPreSignedUrl(configMap: IStringKeyMap): Promise<string> {
     const { bucketName: repo, customUrl: branch, key, rawUrl, githubPrivate: isPrivate } = configMap
     if (!isPrivate) return rawUrl
-    const res = await got(
+    const res = (await got(
       `${this.baseUrl}/repos/${this.username}/${repo}/contents/${key}`,
-      getOptions('GET', this.commonHeaders, {
-        ref: branch
-      }, 'json', undefined, undefined, this.proxy)
-    ) as any
+      getOptions(
+        'GET',
+        this.commonHeaders,
+        {
+          ref: branch
+        },
+        'json',
+        undefined,
+        undefined,
+        this.proxy
+      )
+    )) as any
     return res.statusCode === 200 ? res.body.download_url : ''
   }
 
@@ -354,7 +436,7 @@ class GithubApi {
    * 新建文件夹
    * @param configMap
    */
-  async createBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+  async createBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName: repo, githubBranch: branch, key } = configMap
     const newFileKey = `${trimPath(key)}/.gitkeep`
     const base64Content = Buffer.from('created by PicList').toString('base64')
@@ -374,7 +456,7 @@ class GithubApi {
    * 上传文件
    * @param configMap
    */
-  async uploadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async uploadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { fileArray } = configMap
     const instance = UpDownTaskQueue.getInstance()
     fileArray.forEach((item: any) => {
@@ -423,7 +505,7 @@ class GithubApi {
    * 下载文件
    * @param configMap
    */
-  async downloadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async downloadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { downloadPath, fileArray, maxDownloadFileCount } = configMap
     const instance = UpDownTaskQueue.getInstance()
     const promises = [] as any
@@ -454,27 +536,27 @@ class GithubApi {
       } else {
         downloadUrl = githubUrl
       }
-      promises.push(() => new Promise((resolve, reject) => {
-        NewDownloader(
-          instance,
-          downloadUrl,
-          id,
-          savedFilePath,
-          this.logger,
-          this.proxyStr
-        )
-          .then((res: boolean) => {
-            if (res) {
-              resolve(res)
-            } else {
-              reject(res)
-            }
+      promises.push(
+        () =>
+          new Promise((resolve, reject) => {
+            NewDownloader(instance, downloadUrl, id, savedFilePath, this.logger, this.proxyStr).then((res: boolean) => {
+              if (res) {
+                resolve(res)
+              } else {
+                reject(res)
+              }
+            })
           })
-      }))
+      )
     }
     const pool = new ConcurrencyPromisePool(maxDownloadFileCount)
-    pool.all(promises).catch((error) => {
-      this.logger.error(formatError(error, { class: 'GithubApi', method: 'downloadBucketFile' }))
+    pool.all(promises).catch(error => {
+      this.logger.error(
+        formatError(error, {
+          class: 'GithubApi',
+          method: 'downloadBucketFile'
+        })
+      )
     })
     return true
   }

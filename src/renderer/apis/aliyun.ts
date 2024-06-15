@@ -8,13 +8,11 @@ interface IConfigMap {
 }
 
 export default class AliyunApi {
-  static #getKey (fileName: string, path?: string): string {
-    return path && path !== '/'
-      ? `${path.replace(/^\/+|\/+$/, '')}/${fileName}`
-      : fileName
+  static #getKey(fileName: string, path?: string): string {
+    return path && path !== '/' ? `${path.replace(/^\/+|\/+$/, '')}/${fileName}` : fileName
   }
 
-  static async delete (configMap: IConfigMap): Promise<boolean> {
+  static async delete(configMap: IConfigMap): Promise<boolean> {
     const { fileName, config } = configMap
     try {
       const client = new OSS({ ...config, region: config.area })

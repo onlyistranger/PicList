@@ -3,7 +3,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { sendRPC } from '@/utils/common'
 import { IRPCActionType } from 'root/src/universal/types/enum'
 
-export function useATagClick () {
+export function useATagClick() {
   const handleATagClick = (e: MouseEvent) => {
     if (e.target instanceof HTMLAnchorElement) {
       if (e.target.href) {

@@ -3,3 +3,6 @@ test/unit/*.js
 test/e2e/*.js
 dist/
 src/**/*.js
+node_modules
+dist
+vue.config.js

@@ -1,25 +1,8 @@
 <template>
-  <div
-    id="config-form"
-    :class="props.colorMode === 'white' ? 'white' : ''"
-  >
-    <el-form
-      ref="$form"
-      label-position="left"
-      label-width="50%"
-      :model="ruleForm"
-      size="small"
-    >
-      <el-form-item
-        :label="$T('UPLOADER_CONFIG_NAME')"
-        required
-        prop="_configName"
-      >
-        <el-input
-          v-model="ruleForm._configName"
-          type="input"
-          :placeholder="$T('UPLOADER_CONFIG_PLACEHOLDER')"
-        />
+  <div id="config-form" :class="props.colorMode === 'white' ? 'white' : ''">
+    <el-form ref="$form" label-position="left" label-width="50%" :model="ruleForm" size="small">
+      <el-form-item :label="$T('UPLOADER_CONFIG_NAME')" required prop="_configName">
+        <el-input v-model="ruleForm._configName" type="input" :placeholder="$T('UPLOADER_CONFIG_PLACEHOLDER')" />
       </el-form-item>
       <!-- dynamic config -->
       <el-form-item
@@ -98,19 +81,23 @@ const $form = ref<FormInstance>()
 const configList = ref<IPicGoPluginConfig[]>([])
 const ruleForm = reactive<IStringKeyMap>({})
 
-watch(() => props.config, (val: IPicGoPluginConfig[]) => {
-  handleConfigChange(val)
-}, {
-  deep: true,
-  immediate: true
-})
+watch(
+  () => props.config,
+  (val: IPicGoPluginConfig[]) => {
+    handleConfigChange(val)
+  },
+  {
+    deep: true,
+    immediate: true
+  }
+)
 
-function handleConfigChange (val: any) {
+function handleConfigChange(val: any) {
   handleConfig(val)
 }
 
-async function validate (): Promise<IStringKeyMap | false> {
-  return new Promise((resolve) => {
+async function validate(): Promise<IStringKeyMap | false> {
+  return new Promise(resolve => {
     $form.value?.validate((valid: boolean) => {
       if (valid) {
         resolve(ruleForm)
@@ -121,7 +108,7 @@ async function validate (): Promise<IStringKeyMap | false> {
   })
 }
 
-function getConfigType () {
+function getConfigType() {
   switch (props.type) {
     case 'plugin': {
       return props.id
@@ -137,20 +124,19 @@ function getConfigType () {
   }
 }
 
-async function handleConfig (val: IPicGoPluginConfig[]) {
+async function handleConfig(val: IPicGoPluginConfig[]) {
   const config = await getCurConfigFormData()
   Object.assign(ruleForm, config)
   if (val.length > 0) {
-    configList.value = cloneDeep(val).map((item) => {
-      let defaultValue = item.default !== undefined
-        ? item.default
-        : item.type === 'checkbox'
-          ? []
-          : null
+    configList.value = cloneDeep(val).map(item => {
+      let defaultValue = item.default !== undefined ? item.default : item.type === 'checkbox' ? [] : null
       if (item.type === 'checkbox') {
-        const defaults = item.choices?.filter((i: any) => {
-          return i.checked
-        }).map((i: any) => i.value) || []
+        const defaults =
+          item.choices
+            ?.filter((i: any) => {
+              return i.checked
+            })
+            .map((i: any) => i.value) || []
         defaultValue = union(defaultValue, defaults)
       }
       if (config && config[item.name] !== undefined) {
@@ -162,11 +148,11 @@ async function handleConfig (val: IPicGoPluginConfig[]) {
   }
 }
 
-async function getCurConfigFormData () {
-  return await getConfig<IStringKeyMap>(`${props.id}`) || {}
+async function getCurConfigFormData() {
+  return (await getConfig<IStringKeyMap>(`${props.id}`)) || {}
 }
 
-function updateRuleForm (key: string, value: any) {
+function updateRuleForm(key: string, value: any) {
   try {
     ruleForm[key] = value
   } catch (e) {
@@ -180,7 +166,7 @@ defineExpose({
   getConfigType
 })
 </script>
-<style lang='stylus'>
+<style lang="stylus">
 #config-form
   .el-form
     label

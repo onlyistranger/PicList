@@ -94,6 +94,4 @@ const getLogger = (logPath: string, logType: string) => {
   }
 }
 
-export {
-  getLogger
-}
+export { getLogger }

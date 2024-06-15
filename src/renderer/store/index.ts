@@ -28,7 +28,7 @@ const setDefaultPicBed = (type: string) => {
 }
 
 export const store = {
-  install (app: App) {
+  install(app: App) {
     app.provide(storeKey, {
       state: readonly(state),
       setDefaultPicBed

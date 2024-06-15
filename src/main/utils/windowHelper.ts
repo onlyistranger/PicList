@@ -7,7 +7,7 @@ import windowManager from 'apis/app/window/windowManager'
 import { IWindowList } from '#/types/enum'
 import { configPaths } from '#/utils/configPaths'
 
-export function openMiniWindow (hideSettingWindow:boolean = true) {
+export function openMiniWindow(hideSettingWindow: boolean = true) {
   const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
   miniWindow.removeAllListeners()
   if (db.get(configPaths.settings.miniWindowOntop)) {

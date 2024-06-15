@@ -9,10 +9,7 @@ import picgo from '@core/picgo'
 import logger from '@core/picgo/logger'
 
 import routers from '~/server/routerManager'
-import {
-  handleResponse,
-  ensureHTTPLink
-} from '~/server/utils'
+import { handleResponse, ensureHTTPLink } from '~/server/utils'
 
 import { configPaths } from '#/utils/configPaths'
 
@@ -31,9 +28,7 @@ const multerStorage = multer.diskStorage({
   filename: function (_req: any, file: { originalname: any }, cb: (arg0: null, arg1: any) => void) {
     // eslint-disable-next-line no-control-regex
     if (!/[^\u0000-\u00ff]/.test(file.originalname)) {
-      file.originalname = Buffer.from(file.originalname, 'latin1').toString(
-        'utf8'
-      )
+      file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8')
     }
     cb(null, file.originalname)
   }
@@ -47,12 +42,12 @@ class Server {
   #httpServer: http.Server
   #config: IServerConfig
 
-  constructor () {
+  constructor() {
     this.#config = this.getConfigWithDefaults()
     this.#httpServer = http.createServer(this.#handleRequest)
   }
 
-  getConfigWithDefaults () {
+  getConfigWithDefaults() {
     let config = picgo.getConfig<IServerConfig>(configPaths.settings.server)
     if (!this.#isValidConfig(config)) {
       config = { port: DEFAULT_PORT, host: DEFAULT_HOST, enable: true }
@@ -62,8 +57,8 @@ class Server {
     return config
   }
 
-  #isValidConfig (config: IObj | undefined) {
-    return config && config.port && config.host && (config.enable !== undefined)
+  #isValidConfig(config: IObj | undefined) {
+    return config && config.port && config.host && config.enable !== undefined
   }
 
   #handleRequest = (request: http.IncomingMessage, response: http.ServerResponse) => {
@@ -108,7 +103,7 @@ class Server {
         }
       }
       if (request.headers['content-type'] && request.headers['content-type'].startsWith('multipart/form-data')) {
-        // @ts-ignore
+        // @ts-expect-error since the multer type is not correct
         uploadMulter.any()(request, response, (err: any) => {
           if (err) {
             logger.info('[PicList Server]', err)
@@ -120,7 +115,7 @@ class Server {
               }
             })
           }
-          // @ts-ignore
+          // @ts-expect-error since the multer type is not correct
           const list = request.files.map(file => file.path)
           logger.info('[PicList Server] get a formData request')
           const handler = routers.getHandler(url!, 'POST')?.handler
@@ -140,7 +135,7 @@ class Server {
         })
         request.on('end', () => {
           try {
-            postObj = (body === '') ? {} : JSON.parse(body)
+            postObj = body === '' ? {} : JSON.parse(body)
           } catch (err: any) {
             logger.error('[PicList Server]', err)
             return handleResponse({
@@ -205,20 +200,20 @@ class Server {
     })
   }
 
-  startup () {
+  startup() {
     if (this.#config.enable) {
       this.#listen(this.#config.port)
     }
   }
 
-  shutdown (hasStarted?: boolean) {
+  shutdown(hasStarted?: boolean) {
     this.#httpServer.close()
     if (!hasStarted) {
       logger.info('[PicList Server] shutdown')
     }
   }
 
-  restart () {
+  restart() {
     this.shutdown()
     this.#config = this.getConfigWithDefaults()
     this.startup()

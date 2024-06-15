@@ -4,7 +4,7 @@
       v-model="activeName"
       type="border-card"
       stretch
-      style="height: calc(100vh - 50px);width: 100%;overflow-x: hidden;"
+      style="height: calc(100vh - 50px); width: 100%; overflow-x: hidden"
       tab-position="left"
       lazy
       @tab-change="getExistingConfig(activeName)"
@@ -12,7 +12,7 @@
       <el-tab-pane
         name="login"
         :label="$T('MANAGE_LOGIN_PAGE_PANE_NAME')"
-        style="width: 100%;overflow-y: scroll;height: calc(100vh - 50px);"
+        style="width: 100%; overflow-y: scroll; height: calc(100vh - 50px)"
         lazy
       >
         <el-alert
@@ -25,53 +25,31 @@
           element-loading-svg-view-box="0, 0, 150, 150"
         />
         <el-row>
-          <el-col
-            v-for="item in sortedAllConfigAliasMap"
-            :key="item"
-            :xs="24"
-            :sm="12"
-            :md="8"
-            :lg="6"
-            :xl="4"
-          >
-            <el-card
-              class="box-card"
-              style="margin: 10px 0;"
-              shadow="hover"
-            >
-              <el-popover
-                placement="top"
-                :width="300"
-                trigger="click"
-                :persistent="false"
-                teleported
-              >
+          <el-col v-for="item in sortedAllConfigAliasMap" :key="item" :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
+            <el-card class="box-card" style="margin: 10px 0" shadow="hover">
+              <el-popover placement="top" :width="300" trigger="click" :persistent="false" teleported>
                 <el-table
                   :data="formObjToTableData(item.config)"
                   style="width: 100%"
                   size="small"
-                  :header-cell-style="{'text-align':'center'}"
-                  :cell-style="{'text-align':'center'}"
+                  :header-cell-style="{ 'text-align': 'center' }"
+                  :cell-style="{ 'text-align': 'center' }"
                 >
-                  <el-table-column
-                    prop="key"
-                    :label="$T('MANAGE_LOGIN_PAGE_PANE_KEY_NAME')"
-                    width="100"
-                  />
-                  <el-table-column
-                    prop="value"
-                    :label="$T('MANAGE_LOGIN_PAGE_PANE_KEY_VALUE')"
-                  />
+                  <el-table-column prop="key" :label="$T('MANAGE_LOGIN_PAGE_PANE_KEY_NAME')" width="100" />
+                  <el-table-column prop="value" :label="$T('MANAGE_LOGIN_PAGE_PANE_KEY_VALUE')" />
                 </el-table>
                 <template #reference>
                   <el-button
-                    style="width: 100%; text-align: center;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"
+                    style="
+                      width: 100%;
+                      text-align: center;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                    "
                   >
                     <template #icon>
-                      <img
-                        :src="require(`./assets/${item.picBedName}.webp`)"
-                        style="width: 25px; height: 25px;"
-                      >
+                      <img :src="require(`./assets/${item.picBedName}.webp`)" style="width: 25px; height: 25px" />
                     </template>
                     <el-tooltip
                       effect="light"
@@ -86,23 +64,13 @@
                   </el-button>
                 </template>
               </el-popover>
-              <br>
-              <br>
+              <br />
+              <br />
               <el-button-group>
-                <el-button
-                  type="primary"
-                  :icon="Pointer"
-                  plain
-                  @click="handleConfigClick(item)"
-                >
+                <el-button type="primary" :icon="Pointer" plain @click="handleConfigClick(item)">
                   {{ $T('MANAGE_LOGIN_PAGE_PANE_ENTER') }}
                 </el-button>
-                <el-button
-                  type="warning"
-                  :icon="Delete"
-                  plain
-                  @click="handleConfigRemove(item.alias)"
-                >
+                <el-button type="warning" :icon="Delete" plain @click="handleConfigRemove(item.alias)">
                   {{ $T('MANAGE_LOGIN_PAGE_PANE_DELETE') }}
                 </el-button>
               </el-button-group>
@@ -117,24 +85,13 @@
         :name="item.icon"
         class="tab-pane"
         lazy
-        style="width: 100%;overflow-y: scroll;height: calc(100vh - 50px);"
+        style="width: 100%; overflow-y: scroll; height: calc(100vh - 50px)"
       >
-        <el-alert
-          :title="item.explain"
-          type="info"
-          show-icon
-          center
-          :closable="false"
-        />
-        <el-alert
-          center
-          :closable="false"
-        >
+        <el-alert :title="item.explain" type="info" show-icon center :closable="false" />
+        <el-alert center :closable="false">
           <div>
-            {{ item.referenceText }} <a
-              style="color:blue;cursor:pointer"
-              @click="handleReferenceClick(item.refLink)"
-            >{{ item.refLink }}</a>
+            {{ item.referenceText }}
+            <a style="color: blue; cursor: pointer" @click="handleReferenceClick(item.refLink)">{{ item.refLink }}</a>
           </div>
         </el-alert>
         <el-form
@@ -160,9 +117,7 @@
                 :persistent="false"
                 teleported
               >
-                <el-icon
-                  color="#409EFF"
-                >
+                <el-icon color="#409EFF">
                   <InfoFilled />
                 </el-icon>
               </el-tooltip>
@@ -176,7 +131,7 @@
             <el-switch
               v-else-if="supportedPicBedList[item.icon].configOptions[option].type === 'boolean'"
               v-model="configResult[item.icon + '.' + option]"
-              style="--el-switch-on-color: #13ce66;--el-switch-off-color: #ff4949;"
+              style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
             />
             <el-input
               v-else-if="supportedPicBedList[item.icon].configOptions[option].type === 'number'"
@@ -199,7 +154,7 @@
             </el-select>
           </el-form-item>
         </el-form>
-        <div style="margin: 0 auto;position: relative;left: 10%;right: 50%;">
+        <div style="margin: 0 auto; position: relative; left: 10%; right: 50%">
           <el-dropdown
             split-button
             type="success"
@@ -210,46 +165,25 @@
           >
             {{ $T('MANAGE_LOGIN_PAGE_PANE_IMPORT') }}
             <template #dropdown>
-              <el-dropdown-item
-                v-for="i in currentAliasList"
-                :key="i"
-                @click="handleConfigImport(i)"
-              >
+              <el-dropdown-item v-for="i in currentAliasList" :key="i" @click="handleConfigImport(i)">
                 {{ i }}
               </el-dropdown-item>
             </template>
           </el-dropdown>
-          <el-button
-            type="primary"
-            style="margin-left: 10vw"
-            :icon="Edit"
-            plain
-            @click="handleConfigChange(item.icon)"
-          >
+          <el-button type="primary" style="margin-left: 10vw" :icon="Edit" plain @click="handleConfigChange(item.icon)">
             {{ $T('MANAGE_LOGIN_PAGE_PANE_SAVE') }}
           </el-button>
-          <el-button
-            type="danger"
-            style="margin-left: 10vw"
-            :icon="Delete"
-            plain
-            @click="handleConfigReset(item.icon)"
-          >
+          <el-button type="danger" style="margin-left: 10vw" :icon="Delete" plain @click="handleConfigReset(item.icon)">
             {{ $T('MANAGE_LOGIN_PAGE_PANE_RESET') }}
           </el-button>
         </div>
-        <br>
-        <el-alert
-          :title="$T('MANAGE_LOGIN_PAGE_PANE_TABLE_TITLE')"
-          type="success"
-          center
-          :closable="false"
-        />
+        <br />
+        <el-alert :title="$T('MANAGE_LOGIN_PAGE_PANE_TABLE_TITLE')" type="success" center :closable="false" />
         <el-table
           :data="dataForTable"
-          style="width: 100%;margin-top: 10px"
-          :header-cell-style="{'text-align':'center'}"
-          :cell-style="{'text-align':'center'}"
+          style="width: 100%; margin-top: 10px"
+          :header-cell-style="{ 'text-align': 'center' }"
+          :cell-style="{ 'text-align': 'center' }"
           @cell-click="handleCellClick"
         >
           <el-table-column
@@ -288,7 +222,7 @@ const router = useRouter()
 
 const activeName = ref('login')
 
-const configResult:IStringKeyMap = reactive({})
+const configResult: IStringKeyMap = reactive({})
 const existingConfiguration = reactive({} as IStringKeyMap)
 const dataForTable = reactive([] as any[])
 const allConfigAliasMap = reactive({} as IStringKeyMap)
@@ -303,9 +237,9 @@ const sortedAllConfigAliasMap = computed(() => {
 
 const importedNewConfig: IStringKeyMap = {}
 
-function ruleMap (options: IStringKeyMap) {
-  const rule:any = {}
-  Object.keys(options).forEach((key) => {
+function ruleMap(options: IStringKeyMap) {
+  const rule: any = {}
+  Object.keys(options).forEach(key => {
     const item = options[key].options
     item.forEach((option: string) => {
       const configOptions = options[key].configOptions[option]
@@ -321,13 +255,13 @@ function ruleMap (options: IStringKeyMap) {
   return rule
 }
 
-function getDataForTable () {
+function getDataForTable() {
   for (const key in existingConfiguration) {
-    dataForTable.push({ ...existingConfiguration[key] as IStringKeyMap })
+    dataForTable.push({ ...(existingConfiguration[key] as IStringKeyMap) })
   }
 }
 
-async function getExistingConfig (name:string) {
+async function getExistingConfig(name: string) {
   if (name === 'login') {
     getAllConfigAliasArray()
     return
@@ -353,20 +287,22 @@ async function getExistingConfig (name:string) {
   handleConfigImport(currentAliasList[0])
 }
 
-function getAliasList () {
+function getAliasList() {
   return Object.values(existingConfiguration).map(item => item.alias)
 }
 
-async function handleConfigChange (name: string) {
+async function handleConfigChange(name: string) {
   const aliasList = getAliasList()
   const allKeys = Object.keys(supportedPicBedList[name].configOptions)
-  const resultMap:IStringKeyMap = {}
+  const resultMap: IStringKeyMap = {}
   const reg = /^[\p{Unified_Ideograph}_a-zA-Z0-9-]+$/u
   for (const key of allKeys) {
     const resultKey = name + '.' + key
     if (supportedPicBedList[name].configOptions[key].required) {
       if (supportedPicBedList[name].configOptions[key].type !== 'boolean' && !configResult[resultKey]) {
-        ElMessage.error(`${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_MESSAGE_A')} ${supportedPicBedList[name].configOptions[key].description}`)
+        ElMessage.error(
+          `${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_MESSAGE_A')} ${supportedPicBedList[name].configOptions[key].description}`
+        )
         return
       }
     }
@@ -374,11 +310,15 @@ async function handleConfigChange (name: string) {
       ElMessage.error($T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_ALIAS_MESSAGE'))
       return
     }
-    if (key === 'itemsPerPage' && configResult[resultKey] !== undefined && (configResult[resultKey] < 20 || configResult[resultKey] > 1000)) {
+    if (
+      key === 'itemsPerPage' &&
+      configResult[resultKey] !== undefined &&
+      (configResult[resultKey] < 20 || configResult[resultKey] > 1000)
+    ) {
       ElMessage.error($T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_ITEMS_PER_PAGE_MESSAGE'))
       return
     }
-    if ((key === 'customUrl') && configResult[resultKey] !== undefined && configResult[resultKey] !== '') {
+    if (key === 'customUrl' && configResult[resultKey] !== undefined && configResult[resultKey] !== '') {
       if (name !== 'upyun') {
         if (!/^https?:\/\//.test(configResult[resultKey])) {
           ElMessage.error($T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_CUSTOM_URL_MESSAGE'))
@@ -414,7 +354,12 @@ async function handleConfigChange (name: string) {
           [bucketName[i]]: {
             baseDir: baseDir && baseDir[i] ? baseDir[i] : '/',
             area: area && area[i] ? area[i] : '',
-            customUrl: customUrl && customUrl[i] ? /^https?:\/\//.test(customUrl[i]) ? customUrl[i] : 'http://' + customUrl[i] : '',
+            customUrl:
+              customUrl && customUrl[i]
+                ? /^https?:\/\//.test(customUrl[i])
+                  ? customUrl[i]
+                  : 'http://' + customUrl[i]
+                : '',
             operator: operator && operator[i] ? operator[i] : '',
             password: password && password[i] ? password[i] : ''
           }
@@ -431,33 +376,29 @@ async function handleConfigChange (name: string) {
   dataForTable.length = 0
   getDataForTable()
   if (aliasList.includes(resultMap.alias)) {
-    ElNotification(
-      {
-        title: $T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_NAME'),
-        message: `${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE')}${resultMap.alias}`,
-        type: 'warning',
-        duration: 500,
-        customClass: 'notification',
-        offset: 100
-      }
-    )
+    ElNotification({
+      title: $T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_NAME'),
+      message: `${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE')}${resultMap.alias}`,
+      type: 'warning',
+      duration: 500,
+      customClass: 'notification',
+      offset: 100
+    })
   } else {
-    ElNotification(
-      {
-        title: $T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_NAME'),
-        message: `${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE_B')}${resultMap.alias}`,
-        type: 'success',
-        duration: 2000,
-        customClass: 'notification',
-        offset: 100
-      }
-    )
+    ElNotification({
+      title: $T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_NAME'),
+      message: `${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE_B')}${resultMap.alias}`,
+      type: 'success',
+      duration: 2000,
+      customClass: 'notification',
+      offset: 100
+    })
   }
 }
 
 const handleConfigReset = (name: string) => {
-  const keys = Object.keys(configResult).filter((key) => key.startsWith(name))
-  keys.forEach((key) => {
+  const keys = Object.keys(configResult).filter(key => key.startsWith(name))
+  keys.forEach(key => {
     const optionKey = key.split('.')[1]
     const configOption = supportedPicBedList[name]?.configOptions?.[optionKey]
 
@@ -468,11 +409,15 @@ const handleConfigReset = (name: string) => {
 }
 
 const handleConfigRemove = (name: string) => {
-  ElMessageBox.confirm($T('MANAGE_LOGIN_PAGE_PANE_DELETE_CONFIG_TITLE'), $T('MANAGE_LOGIN_PAGE_PANE_DELETE_CONFIG_TIP'), {
-    confirmButtonText: $T('MANAGE_LOGIN_PAGE_PANE_DELETE_CONFIG_CONFIRM'),
-    cancelButtonText: $T('MANAGE_LOGIN_PAGE_PANE_DELETE_CONFIG_CANCEL'),
-    type: 'warning'
-  }).then(async () => {
+  ElMessageBox.confirm(
+    $T('MANAGE_LOGIN_PAGE_PANE_DELETE_CONFIG_TITLE'),
+    $T('MANAGE_LOGIN_PAGE_PANE_DELETE_CONFIG_TIP'),
+    {
+      confirmButtonText: $T('MANAGE_LOGIN_PAGE_PANE_DELETE_CONFIG_CONFIRM'),
+      cancelButtonText: $T('MANAGE_LOGIN_PAGE_PANE_DELETE_CONFIG_CANCEL'),
+      type: 'warning'
+    }
+  ).then(async () => {
     const commonNoticeConfig = {
       title: $T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_NAME'),
       duration: 2000,
@@ -481,25 +426,21 @@ const handleConfigRemove = (name: string) => {
     }
     try {
       removeConfig('picBed', name)
-      ElNotification(
-        {
-          ...commonNoticeConfig,
-          message: `${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE_C')}${name}`,
-          type: 'success',
-          position: 'bottom-right'
-        }
-      )
+      ElNotification({
+        ...commonNoticeConfig,
+        message: `${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE_C')}${name}`,
+        type: 'success',
+        position: 'bottom-right'
+      })
       manageStore.refreshConfig()
       getAllConfigAliasArray()
     } catch (error) {
-      ElNotification(
-        {
-          ...commonNoticeConfig,
-          message: `${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE_D')}${name}${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE_E')}`,
-          type: 'error',
-          position: 'bottom-right'
-        }
-      )
+      ElNotification({
+        ...commonNoticeConfig,
+        message: `${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE_D')}${name}${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_NOTICE_MESSAGE_E')}`,
+        type: 'error',
+        position: 'bottom-right'
+      })
     }
   })
 }
@@ -519,7 +460,7 @@ const getAllConfigAliasArray = async () => {
   })
 }
 
-const handleCellClick = (row:any, column:any) => {
+const handleCellClick = (row: any, column: any) => {
   navigator.clipboard.writeText(row[column.property])
   ElMessage.success(`${$T('MANAGE_LOGIN_PAGE_PANE_CONFIG_CHANGE_COPY_SUCCESS')}${row[column.property]}`)
 }
@@ -542,7 +483,7 @@ const handleConfigClick = async (item: any) => {
   })
 }
 
-function handleConfigImport (alias: string) {
+function handleConfigImport(alias: string) {
   const selectedConfig = existingConfiguration[alias]
   if (!selectedConfig) return
 
@@ -553,20 +494,36 @@ function handleConfigImport (alias: string) {
   })
 }
 
-async function getCurrentConfigList () {
+async function getCurrentConfigList() {
   await manageStore.refreshConfig()
-  const configList = await getPicBedsConfig<any>('uploader') ?? {}
-  const pbList = ['aliyun', 'aws-s3', 'aws-s3-plist', 'github', 'imgur', 'local', 'qiniu', 'sftpplist', 'smms', 'tcyun', 'upyun', 'webdavplist']
+  const configList = (await getPicBedsConfig<any>('uploader')) ?? {}
+  const pbList = [
+    'aliyun',
+    'aws-s3',
+    'aws-s3-plist',
+    'github',
+    'imgur',
+    'local',
+    'qiniu',
+    'sftpplist',
+    'smms',
+    'tcyun',
+    'upyun',
+    'webdavplist'
+  ]
 
-  const filteredConfigList = pbList.flatMap((pb) => {
+  const filteredConfigList = pbList.flatMap(pb => {
     const config = configList[pb]
     return config?.configList?.length ? config.configList.map((item: any) => ({ ...item, type: pb })) : []
   })
 
-  const autoImport = await getPicBedsConfig<boolean>('settings.autoImport') || false
+  const autoImport = (await getPicBedsConfig<boolean>('settings.autoImport')) || false
   if (autoImport) {
-    const autoImportPicBed = initArray(await getPicBedsConfig<string | string[]>('settings.autoImportPicBed') || '', [])
-    await Promise.all(filteredConfigList.flatMap((config) => transUpToManage(config, config.type, autoImportPicBed)))
+    const autoImportPicBed = initArray(
+      (await getPicBedsConfig<string | string[]>('settings.autoImportPicBed')) || '',
+      []
+    )
+    await Promise.all(filteredConfigList.flatMap(config => transUpToManage(config, config.type, autoImportPicBed)))
     if (Object.keys(importedNewConfig).length > 0) {
       const oldConfig = await getConfig<any>('picBed')
       const newConfig = { ...oldConfig, ...importedNewConfig }
@@ -578,25 +535,27 @@ async function getCurrentConfigList () {
   await getAllConfigAliasArray()
 }
 
-function isImported (alias: string) {
-  return Object.values(allConfigAliasMap).some((item) => item.alias === alias)
+function isImported(alias: string) {
+  return Object.values(allConfigAliasMap).some(item => item.alias === alias)
 }
 
-function initArray (arrayT: string | string[], defaultValue: string[]) {
+function initArray(arrayT: string | string[], defaultValue: string[]) {
   if (!Array.isArray(arrayT)) {
     arrayT = arrayT ? [arrayT] : defaultValue
   }
   return arrayT
 }
 
-async function transUpToManage (config: IUploaderConfigListItem, picBedName: string, autoImportPicBed: string[]) {
-  const alias = `${picBedName === 'webdavplist'
-    ? 'webdav'
-    : picBedName === 'sftpplist'
-      ? 'sftp'
-      : picBedName === 'aws-s3' || picBedName === 'aws-s3-plist'
-        ? 's3plist'
-        : picBedName}-${config._configName ?? 'Default'}-imp`
+async function transUpToManage(config: IUploaderConfigListItem, picBedName: string, autoImportPicBed: string[]) {
+  const alias = `${
+    picBedName === 'webdavplist'
+      ? 'webdav'
+      : picBedName === 'sftpplist'
+        ? 'sftp'
+        : picBedName === 'aws-s3' || picBedName === 'aws-s3-plist'
+          ? 's3plist'
+          : picBedName
+  }-${config._configName ?? 'Default'}-imp`
   if (!autoImportPicBed.includes(picBedName) || isImported(alias)) return
   const commonConfig = {
     alias,
@@ -622,13 +581,15 @@ async function transUpToManage (config: IUploaderConfigListItem, picBedName: str
         baseDir: '/',
         itemsPerPage: 50,
         isAutoCustomUrl: !config.customUrl,
-        transformedConfig: JSON.stringify(config.customUrl
-          ? {
-            [config.bucket]: {
-              customUrl: config.customUrl
-            }
-          }
-          : {})
+        transformedConfig: JSON.stringify(
+          config.customUrl
+            ? {
+                [config.bucket]: {
+                  customUrl: config.customUrl
+                }
+              }
+            : {}
+        )
       })
       break
     case 'qiniu':
@@ -654,13 +615,15 @@ async function transUpToManage (config: IUploaderConfigListItem, picBedName: str
         baseDir: '/',
         appId: config.appId,
         isAutoCustomUrl: !config.customUrl,
-        transformedConfig: JSON.stringify(config.customUrl
-          ? {
-            [config.bucket]: {
-              customUrl: config.customUrl
-            }
-          }
-          : {}),
+        transformedConfig: JSON.stringify(
+          config.customUrl
+            ? {
+                [config.bucket]: {
+                  customUrl: config.customUrl
+                }
+              }
+            : {}
+        ),
         itemsPerPage: 50
       })
       break
@@ -795,10 +758,10 @@ async function transUpToManage (config: IUploaderConfigListItem, picBedName: str
         transformedConfig: JSON.stringify(
           config.urlPrefix
             ? {
-              [config.bucketName]: {
-                customUrl: config.urlPrefix
+                [config.bucketName]: {
+                  customUrl: config.urlPrefix
+                }
               }
-            }
             : {}
         )
       })
@@ -822,10 +785,9 @@ async function transUpToManage (config: IUploaderConfigListItem, picBedName: str
 onMounted(() => {
   getCurrentConfigList()
 })
-
 </script>
 
-<style lang='stylus'>
+<style lang="stylus">
 .layout
   background-color #fff
   position absolute

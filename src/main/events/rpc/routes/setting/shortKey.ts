@@ -1,6 +1,4 @@
-import {
-  Notification
-} from 'electron'
+import { Notification } from 'electron'
 
 import bus from '@core/bus'
 import shortKeyHandler from 'apis/app/shortKey/shortKeyHandler'

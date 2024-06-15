@@ -1,4 +1,3 @@
-
 import { RPCRouter } from '~/events/rpc/router'
 import {
   pluginImportLocalFunc,
@@ -32,6 +31,4 @@ const pluginRoutes = [
 
 pluginRouter.addBatch(pluginRoutes)
 
-export {
-  pluginRouter
-}
+export { pluginRouter }

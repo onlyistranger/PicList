@@ -1,20 +1,12 @@
 <template>
-  <el-image
-    :src="imageSource"
-    fit="contain"
-    style="height: 100px;width: 100%;margin: 0 auto;"
-  >
+  <el-image :src="imageSource" fit="contain" style="height: 100px; width: 100%; margin: 0 auto">
     <template #placeholder>
       <el-icon>
         <Loading />
       </el-icon>
     </template>
     <template #error>
-      <el-image
-        :src="iconPath"
-        fit="contain"
-        style="height: 100px;width: 100%;margin: 0 auto;"
-      />
+      <el-image :src="iconPath" fit="contain" style="height: 100px; width: 100%; margin: 0 auto" />
     </template>
   </el-image>
 </template>
@@ -43,14 +35,14 @@ const props = defineProps<{
 }>()
 
 const imageSource = computed(() => {
-  return (props.isShowThumbnail && props.item.isImage && success.value)
+  return props.isShowThumbnail && props.item.isImage && success.value
     ? base64Url.value
     : require(`../manage/pages/assets/icons/${getFileIconPath(props.item.fileName ?? '')}`)
 })
 
 const iconPath = computed(() => require(`../manage/pages/assets/icons/${getFileIconPath(props.item.fileName ?? '')}`))
 
-async function getWebdavHeader (key: string) {
+async function getWebdavHeader(key: string) {
   let headers = {} as any
   if (props.config.authType === 'digest') {
     const authHeader = await getAuthHeader(
@@ -91,5 +83,4 @@ const fetchImage = async () => {
 watch(() => [props.url, props.item], fetchImage, { deep: true })
 
 onMounted(fetchImage)
-
 </script>

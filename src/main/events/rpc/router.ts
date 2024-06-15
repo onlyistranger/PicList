@@ -20,7 +20,7 @@ export class RPCRouter implements IRPCRouter {
     return this
   }
 
-  routes () {
+  routes() {
     return this.routeMap
   }
 }

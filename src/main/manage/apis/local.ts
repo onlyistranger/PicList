@@ -16,28 +16,30 @@ class LocalApi {
   logger: ManageLogger
   isWindows: boolean
 
-  constructor (logger: ManageLogger) {
+  constructor(logger: ManageLogger) {
     this.logger = logger
     this.isWindows = process.platform === 'win32'
   }
 
-  logParam = (error:any, method: string) =>
-    this.logger.error(formatError(error, { class: 'LocalApi', method }))
+  logParam = (error: any, method: string) => this.logger.error(formatError(error, { class: 'LocalApi', method }))
 
   // windows 系统下将路径转换为 unix 风格
-  transPathToUnix (filePath: string | undefined) {
+  transPathToUnix(filePath: string | undefined) {
     if (!filePath) return ''
     return this.isWindows ? filePath.split(path.sep).join(path.posix.sep) : filePath.replace(/^\/+/, '')
   }
 
-  transBack (filePath: string | undefined) {
+  transBack(filePath: string | undefined) {
     if (!filePath) return ''
     return this.isWindows
-      ? filePath.split(path.posix.sep).join(path.sep).replace(/^\\+|\\+$/g, '')
+      ? filePath
+          .split(path.posix.sep)
+          .join(path.sep)
+          .replace(/^\\+|\\+$/g, '')
       : `/${filePath.replace(/^\/+|\/+$/g, '')}`
   }
 
-  formatFolder (item: fs.Stats, urlPrefix: string, fileName: string, filePath: string) {
+  formatFolder(item: fs.Stats, urlPrefix: string, fileName: string, filePath: string) {
     const key = `${this.transPathToUnix(filePath)}/`.replace(/\/+$/, '/')
     return {
       ...item,
@@ -54,7 +56,7 @@ class LocalApi {
     }
   }
 
-  formatFile (item: fs.Stats, urlPrefix: string, fileName: string, filePath: string, isDownload = false) {
+  formatFile(item: fs.Stats, urlPrefix: string, fileName: string, filePath: string, isDownload = false) {
     const key = isDownload ? filePath : this.transPathToUnix(filePath)
     return {
       ...item,
@@ -71,7 +73,7 @@ class LocalApi {
     }
   }
 
-  async getBucketListRecursively (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListRecursively(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
     const { prefix, customUrl = '', cancelToken } = configMap
     const urlPrefix = customUrl.replace(/\/+$/, '')
@@ -111,7 +113,7 @@ class LocalApi {
     ipcMain.removeAllListeners(cancelDownloadLoadingFileList)
   }
 
-  async getBucketListBackstage (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListBackstage(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
     const { customUrl = '', cancelToken, baseDir } = configMap
     let prefix = configMap.prefix
@@ -167,7 +169,7 @@ class LocalApi {
     ipcMain.removeAllListeners('cancelLoadingFileList')
   }
 
-  async renameBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async renameBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { oldKey, newKey } = configMap
     let result = false
     try {
@@ -179,7 +181,7 @@ class LocalApi {
     return result
   }
 
-  async deleteBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async deleteBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { key } = configMap
     let result = false
     try {
@@ -191,7 +193,7 @@ class LocalApi {
     return result
   }
 
-  async deleteBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+  async deleteBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { key } = configMap
     let result = false
     try {
@@ -205,7 +207,7 @@ class LocalApi {
     return result
   }
 
-  async uploadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async uploadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { fileArray } = configMap
     const instance = UpDownTaskQueue.getInstance()
     for (const item of fileArray) {
@@ -247,7 +249,7 @@ class LocalApi {
     return true
   }
 
-  async createBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+  async createBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { key } = configMap
     let result = false
     try {
@@ -261,7 +263,7 @@ class LocalApi {
     return result
   }
 
-  async downloadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async downloadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { downloadPath, fileArray } = configMap
     const instance = UpDownTaskQueue.getInstance()
     for (const item of fileArray) {

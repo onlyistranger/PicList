@@ -1,14 +1,9 @@
 <template>
   <div class="toolbox">
     <el-row>
-      <el-row
-        class="toolbox-header"
-      >
+      <el-row class="toolbox-header">
         <el-row>
-          <img
-            class="toolbox-header__logo"
-            :src="defaultLogo"
-          >
+          <img class="toolbox-header__logo" :src="defaultLogo" />
           <el-row class="toolbox-header__text">
             <el-row class="toolbox-header__title">
               {{ $T('TOOLBOX_TITLE') }}
@@ -20,12 +15,7 @@
         </el-row>
         <el-row>
           <template v-if="progress !== 100">
-            <el-button
-              type="primary"
-              round
-              :disabled="isLoading"
-              @click="handleCheck"
-            >
+            <el-button type="primary" round :disabled="isLoading" @click="handleCheck">
               {{ $T('TOOLBOX_START_SCAN') }}
             </el-button>
           </template>
@@ -36,23 +26,14 @@
           </template>
           <template v-else-if="!isAllSuccess">
             <template v-if="canFixLength !== 0">
-              <el-button
-                type="primary"
-                round
-                @click="handleFix"
-              >
+              <el-button type="primary" round @click="handleFix">
                 {{ $T('TOOLBOX_START_FIX') }}
               </el-button>
             </template>
             <template v-else>
               <div class="toolbox-cant-fix toolbox-tips">
                 {{ $T('TOOLBOX_CANT_AUTO_FIX') }}
-                <el-button
-                  type="primary"
-                  round
-                  class="toolbox-cant-fix__btn"
-                  @click="handleCheck"
-                >
+                <el-button type="primary" round class="toolbox-cant-fix__btn" @click="handleCheck">
                   {{ $T('TOOLBOX_RE_SCAN') }}
                 </el-button>
               </div>
@@ -62,23 +43,11 @@
       </el-row>
     </el-row>
     <el-row class="progress">
-      <el-progress
-        :percentage="progress"
-        :format="format"
-      />
+      <el-progress :percentage="progress" :format="format" />
     </el-row>
-    <el-collapse
-      v-model="activeTypes"
-      accordion
-    >
-      <el-collapse-item
-        v-for="(item, key) in fixList"
-        :key="key"
-        :name="key"
-      >
-        <template #title>
-          {{ item.title }} <toolbox-status-icon :status="item.status" />
-        </template>
+    <el-collapse v-model="activeTypes" accordion>
+      <el-collapse-item v-for="(item, key) in fixList" :key="key" :name="key">
+        <template #title> {{ item.title }} <toolbox-status-icon :status="item.status" /> </template>
         <div class="toolbox-item-msg">
           {{ item.msg || '' }}
           <template v-if="item.handler && item.handlerText && item.value">
@@ -115,7 +84,7 @@ const fixList = reactive<IToolboxMap>({
     title: $T('TOOLBOX_CHECK_CONFIG_FILE_BROKEN'),
     status: IToolboxItemCheckStatus.INIT,
     handlerText: $T('SETTINGS_OPEN_CONFIG_FILE'),
-    handler (value: string) {
+    handler(value: string) {
       sendRPC(IRPCActionType.OPEN_FILE, value)
     }
   },
@@ -127,7 +96,7 @@ const fixList = reactive<IToolboxMap>({
     title: $T('TOOLBOX_CHECK_PROBLEM_WITH_CLIPBOARD_PIC_UPLOAD'), // picgo-image-clipboard folder
     status: IToolboxItemCheckStatus.INIT,
     handlerText: $T('OPEN_FILE_PATH'),
-    handler (value: string) {
+    handler(value: string) {
       sendRPC(IRPCActionType.OPEN_FILE, value)
     }
   },
@@ -144,7 +113,7 @@ const progress = computed(() => {
     const status = fixList[key as IToolboxItemType].status
     return status !== IToolboxItemCheckStatus.INIT && status !== IToolboxItemCheckStatus.LOADING
   }).length
-  return done / total * 100
+  return (done / total) * 100
 })
 
 const isAllSuccess = computed(() => {
@@ -192,37 +161,44 @@ const handleCheck = () => {
 }
 
 const handleFix = async () => {
-  const fixRes = await Promise.all(Object.keys(fixList).filter(key => {
-    const status = fixList[key as IToolboxItemType].status
-    return status === IToolboxItemCheckStatus.ERROR && !fixList[key as IToolboxItemType].hasNoFixMethod
-  }).map(async key => {
-    return triggerRPC<IToolboxCheckRes>(IRPCActionType.TOOLBOX_CHECK_FIX, key as IToolboxItemType)
-  }))
+  const fixRes = await Promise.all(
+    Object.keys(fixList)
+      .filter(key => {
+        const status = fixList[key as IToolboxItemType].status
+        return status === IToolboxItemCheckStatus.ERROR && !fixList[key as IToolboxItemType].hasNoFixMethod
+      })
+      .map(async key => {
+        return triggerRPC<IToolboxCheckRes>(IRPCActionType.TOOLBOX_CHECK_FIX, key as IToolboxItemType)
+      })
+  )
 
-  fixRes.filter(item => item !== null).forEach(item => {
-    if (item) {
-      fixList[item.type].status = item.status
-      fixList[item.type].msg = item.msg
-      fixList[item.type].value = item.value
-    }
-  })
+  fixRes
+    .filter(item => item !== null)
+    .forEach(item => {
+      if (item) {
+        fixList[item.type].status = item.status
+        fixList[item.type].msg = item.msg
+        fixList[item.type].value = item.value
+      }
+    })
 
   $confirm($T('TOOLBOX_FIX_DONE_NEED_RELOAD'), $T('TIPS_NOTICE'), {
     confirmButtonText: $T('CONFIRM'),
     cancelButtonText: $T('CANCEL'),
     type: 'info'
-  }).then(() => {
-    sendRPC(IRPCActionType.RELOAD_APP)
-  }).catch(() => {})
+  })
+    .then(() => {
+      sendRPC(IRPCActionType.RELOAD_APP)
+    })
+    .catch(() => {})
 }
-
 </script>
 <script lang="ts">
 export default {
   name: 'ToolBoxPage'
 }
 </script>
-<style lang='stylus'>
+<style lang="stylus">
 .toolbox
   padding 0 40px
   &-header

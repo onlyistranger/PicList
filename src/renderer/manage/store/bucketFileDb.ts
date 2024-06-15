@@ -1,14 +1,14 @@
 import Dexie, { Table } from 'dexie'
 
 /*
-  * create a database for bucket file cache
-  *database name: bucketFileDb
-  *structure:
-  * - table: picBedName
-  * - key: alias-bucketName-prefix
-  * - value: from fullList
-  * - primaryKey: key
-*/
+ * create a database for bucket file cache
+ *database name: bucketFileDb
+ *structure:
+ * - table: picBedName
+ * - key: alias-bucketName-prefix
+ * - value: from fullList
+ * - primaryKey: key
+ */
 
 export interface IFileCache {
   key: string
@@ -31,9 +31,21 @@ export class FileCacheDb extends Dexie {
   upyun: Table<IFileCache, string>
   webdavplist: Table<IFileCache, string>
 
-  constructor () {
+  constructor() {
     super('bucketFileDb')
-    const tableNames = ['aliyun', 'github', 'imgur', 'local', 'qiniu', 's3plist', 'sftp', 'smms', 'tcyun', 'upyun', 'webdavplist']
+    const tableNames = [
+      'aliyun',
+      'github',
+      'imgur',
+      'local',
+      'qiniu',
+      's3plist',
+      'sftp',
+      'smms',
+      'tcyun',
+      'upyun',
+      'webdavplist'
+    ]
 
     const tableNamesMap = tableNames.reduce((acc, cur) => {
       acc[cur] = '&key, value'

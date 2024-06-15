@@ -1,4 +1,3 @@
-
 import COS from 'cos-nodejs-sdk-v5'
 import { ipcMain, IpcMainEvent } from 'electron'
 import fs from 'fs-extra'
@@ -18,7 +17,7 @@ class TcyunApi {
   ctx: COS
   logger: ManageLogger
 
-  constructor (secretId: string, secretKey: string, logger: ManageLogger) {
+  constructor(secretId: string, secretKey: string, logger: ManageLogger) {
     this.ctx = new COS({
       SecretId: secretId,
       SecretKey: secretKey
@@ -26,7 +25,7 @@ class TcyunApi {
     this.logger = logger
   }
 
-  formatFolder (item: {Prefix: string}, slicedPrefix: string, urlPrefix: string) {
+  formatFolder(item: { Prefix: string }, slicedPrefix: string, urlPrefix: string) {
     return {
       ...item,
       key: item.Prefix,
@@ -41,7 +40,7 @@ class TcyunApi {
     }
   }
 
-  formatFile (item: COS.CosObject, slicedPrefix: string, urlPrefix: string): any {
+  formatFile(item: COS.CosObject, slicedPrefix: string, urlPrefix: string): any {
     return {
       ...item,
       key: item.Key,
@@ -58,8 +57,8 @@ class TcyunApi {
 
   /**
    * 获取存储桶列表
-  */
-  async getBucketList (): Promise<any> {
+   */
+  async getBucketList(): Promise<any> {
     const res = await this.ctx.getService({})
     return res?.Buckets || []
   }
@@ -67,7 +66,7 @@ class TcyunApi {
   /**
    * 获取自定义域名
    */
-  async getBucketDomain (param: IStringKeyMap): Promise<any> {
+  async getBucketDomain(param: IStringKeyMap): Promise<any> {
     const { bucketName, region } = param
     const res = await this.ctx.getBucketDomain({
       Bucket: bucketName,
@@ -87,8 +86,8 @@ class TcyunApi {
    * }
    * @description
    * acl: private | publicRead | publicReadWrite
-  */
-  async createBucket (configMap: IStringKeyMap): Promise < boolean > {
+   */
+  async createBucket(configMap: IStringKeyMap): Promise<boolean> {
     const res = await this.ctx.putBucket({
       ACL: configMap.acl,
       Bucket: configMap.BucketName,
@@ -97,9 +96,15 @@ class TcyunApi {
     return res?.statusCode === 200
   }
 
-  async getBucketListRecursively (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListRecursively(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
-    const { bucketName: bucket, bucketConfig: { Location: region }, prefix, customUrl, cancelToken } = configMap
+    const {
+      bucketName: bucket,
+      bucketConfig: { Location: region },
+      prefix,
+      customUrl,
+      cancelToken
+    } = configMap
     const slicedPrefix = prefix.slice(1, prefix.length)
     const urlPrefix = customUrl || `https://${bucket}.cos.${region}.myqcloud.com`
     const cancelTask = [false]
@@ -125,8 +130,11 @@ class TcyunApi {
         Marker: marker
       })
       if (res?.statusCode === 200) {
-        result.fullList.push(...res.Contents.filter(item => parseInt(item.Size) !== 0)
-          .map(item => this.formatFile(item, slicedPrefix, urlPrefix)))
+        result.fullList.push(
+          ...res.Contents.filter(item => parseInt(item.Size) !== 0).map(item =>
+            this.formatFile(item, slicedPrefix, urlPrefix)
+          )
+        )
         window.webContents.send(refreshDownloadFileTransferList, result)
       } else {
         result.finished = true
@@ -142,9 +150,15 @@ class TcyunApi {
     ipcMain.removeAllListeners(cancelDownloadLoadingFileList)
   }
 
-  async getBucketListBackstage (configMap: IStringKeyMap): Promise < any > {
+  async getBucketListBackstage(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
-    const { bucketName: bucket, bucketConfig: { Location: region }, prefix, customUrl, cancelToken } = configMap
+    const {
+      bucketName: bucket,
+      bucketConfig: { Location: region },
+      prefix,
+      customUrl,
+      cancelToken
+    } = configMap
     const slicedPrefix = prefix.slice(1, prefix.length)
     const urlPrefix = customUrl || `https://${bucket}.cos.${region}.myqcloud.com`
     const cancelTask = [false]
@@ -173,8 +187,9 @@ class TcyunApi {
       if (res?.statusCode === 200) {
         result.fullList.push(
           ...res.CommonPrefixes.map(item => this.formatFolder(item, slicedPrefix, urlPrefix)),
-          ...res.Contents.filter(item => parseInt(item.Size) !== 0)
-            .map(item => this.formatFile(item, slicedPrefix, urlPrefix))
+          ...res.Contents.filter(item => parseInt(item.Size) !== 0).map(item =>
+            this.formatFile(item, slicedPrefix, urlPrefix)
+          )
         )
         window.webContents.send('refreshFileTransferList', result)
       } else {
@@ -205,19 +220,26 @@ class TcyunApi {
    *  itemsPerPage: number,
    *  customUrl: string
    * }
-  */
-  async getBucketFileList (configMap: IStringKeyMap): Promise<any> {
-    const { bucketName: bucket, bucketConfig: { Location: region }, prefix, customUrl, marker, itemsPerPage } = configMap
+   */
+  async getBucketFileList(configMap: IStringKeyMap): Promise<any> {
+    const {
+      bucketName: bucket,
+      bucketConfig: { Location: region },
+      prefix,
+      customUrl,
+      marker,
+      itemsPerPage
+    } = configMap
     const slicedPrefix = prefix.slice(1)
     const urlPrefix = customUrl || `https://${bucket}.cos.${region}.myqcloud.com`
-    const res = await this.ctx.getBucket({
+    const res = (await this.ctx.getBucket({
       Bucket: bucket,
       Region: region,
       Prefix: slicedPrefix === '' ? undefined : slicedPrefix,
       Delimiter: '/',
       Marker: marker,
       MaxKeys: itemsPerPage
-    }) as COS.GetBucketResult
+    })) as COS.GetBucketResult
     if (res?.statusCode !== 200) {
       return {
         fullList: [],
@@ -229,8 +251,9 @@ class TcyunApi {
     const result = {
       fullList: [
         ...res.CommonPrefixes.map(item => this.formatFolder(item, slicedPrefix, urlPrefix)),
-        ...res.Contents.filter(item => parseInt(item.Size) !== 0)
-          .map(item => this.formatFile(item, slicedPrefix, urlPrefix))
+        ...res.Contents.filter(item => parseInt(item.Size) !== 0).map(item =>
+          this.formatFile(item, slicedPrefix, urlPrefix)
+        )
       ],
       isTruncated: res.IsTruncated === 'true',
       nextMarker: res.NextMarker || '',
@@ -248,8 +271,8 @@ class TcyunApi {
    * oldKey: string,
    * newKey: string
    * }
-  */
-  async renameBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+   */
+  async renameBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, region, oldKey, newKey } = configMap
     const copyRes = await this.ctx.putObjectCopy({
       Bucket: bucketName,
@@ -277,8 +300,8 @@ class TcyunApi {
    * region: string,
    * key: string
    * }
-  */
-  async deleteBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+   */
+  async deleteBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, region, key } = configMap
     const res = await this.ctx.deleteObject({
       Bucket: bucketName,
@@ -292,7 +315,7 @@ class TcyunApi {
    * 删除文件夹
    * @param configMap
    */
-  async deleteBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+  async deleteBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, region, key } = configMap
     let marker
     let res: any
@@ -317,7 +340,14 @@ class TcyunApi {
       marker = res.NextMarker
     } while (res.IsTruncated === 'true')
     for (const item of allFileList.CommonPrefixes) {
-      if (!(await this.deleteBucketFolder({ bucketName, region, key: item.Prefix }))) return false
+      if (
+        !(await this.deleteBucketFolder({
+          bucketName,
+          region,
+          key: item.Prefix
+        }))
+      )
+        return false
     }
     const cycles = Math.ceil(allFileList.Contents.length / 1000)
     for (let i = 0; i < cycles; i++) {
@@ -342,16 +372,18 @@ class TcyunApi {
    * customUrl: string
    * }
    */
-  async getPreSignedUrl (configMap: IStringKeyMap): Promise<string> {
+  async getPreSignedUrl(configMap: IStringKeyMap): Promise<string> {
     const { bucketName, region, key, expires, customUrl } = configMap
-    const res = this.ctx.getObjectUrl({
-      Bucket: bucketName,
-      Region: region,
-      Key: key,
-      Expires: expires,
-      Sign: true
-    }, () => {
-    })
+    const res = this.ctx.getObjectUrl(
+      {
+        Bucket: bucketName,
+        Region: region,
+        Key: key,
+        Expires: expires,
+        Sign: true
+      },
+      () => {}
+    )
     return customUrl ? `${customUrl.replace(/\/+$/, '')}/${key}${res.slice(res.indexOf('?'))}` : res
   }
 
@@ -359,7 +391,7 @@ class TcyunApi {
    * 高级上传文件
    * @param configMap
    */
-  async uploadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async uploadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { fileArray } = configMap
     // fileArray = [{
     //   bucketName: string,
@@ -412,7 +444,12 @@ class TcyunApi {
               finishTime: new Date().toLocaleString()
             })
           } else {
-            this.logger.error(formatError(err, { method: 'uploadBucketFile', class: 'TcyunApi' }))
+            this.logger.error(
+              formatError(err, {
+                method: 'uploadBucketFile',
+                class: 'TcyunApi'
+              })
+            )
             instance.updateUploadTask({
               id,
               progress: 0,
@@ -434,7 +471,7 @@ class TcyunApi {
    * 新建文件夹
    * @param configMap
    */
-  async createBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+  async createBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, region, key } = configMap
     const res = await this.ctx.putObject({
       Bucket: bucketName,
@@ -449,7 +486,7 @@ class TcyunApi {
    * 下载文件
    * @param configMap
    */
-  async downloadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async downloadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { downloadPath, fileArray } = configMap
     // fileArray = [{
     //   bucketName: string,
@@ -472,38 +509,46 @@ class TcyunApi {
         targetFilePath: path.join(downloadPath, fileName)
       })
       fs.ensureDirSync(path.dirname(path.join(downloadPath, fileName)))
-      this.ctx.downloadFile({
-        Bucket: bucketName,
-        Region: region,
-        Key: key,
-        RetryTimes: 3,
-        ChunkSize: 1024 * 1024 * 1,
-        FilePath: path.join(downloadPath, fileName),
-        onProgress: (progress: any) => {
+      this.ctx
+        .downloadFile({
+          Bucket: bucketName,
+          Region: region,
+          Key: key,
+          RetryTimes: 3,
+          ChunkSize: 1024 * 1024 * 1,
+          FilePath: path.join(downloadPath, fileName),
+          onProgress: (progress: any) => {
+            instance.updateDownloadTask({
+              id,
+              progress: Math.floor(progress.percent * 100),
+              status: downloadTaskSpecialStatus.downloading
+            })
+          }
+        })
+        .then((res: any) => {
           instance.updateDownloadTask({
             id,
-            progress: Math.floor(progress.percent * 100),
-            status: downloadTaskSpecialStatus.downloading
+            progress: res && res.statusCode === 200 ? 100 : 0,
+            status: res && res.statusCode === 200 ? downloadTaskSpecialStatus.downloaded : commonTaskStatus.failed,
+            response: typeof res === 'object' ? JSON.stringify(res) : String(res),
+            finishTime: new Date().toLocaleString()
           })
-        }
-      }).then((res: any) => {
-        instance.updateDownloadTask({
-          id,
-          progress: res && res.statusCode === 200 ? 100 : 0,
-          status: res && res.statusCode === 200 ? downloadTaskSpecialStatus.downloaded : commonTaskStatus.failed,
-          response: typeof res === 'object' ? JSON.stringify(res) : String(res),
-          finishTime: new Date().toLocaleString()
         })
-      }).catch((err: any) => {
-        this.logger.error(formatError(err, { method: 'downloadBucketFile', class: 'TcyunApi' }))
-        instance.updateDownloadTask({
-          id,
-          progress: 0,
-          status: commonTaskStatus.failed,
-          response: typeof err === 'object' ? JSON.stringify(err) : String(err),
-          finishTime: new Date().toLocaleString()
+        .catch((err: any) => {
+          this.logger.error(
+            formatError(err, {
+              method: 'downloadBucketFile',
+              class: 'TcyunApi'
+            })
+          )
+          instance.updateDownloadTask({
+            id,
+            progress: 0,
+            status: commonTaskStatus.failed,
+            response: typeof err === 'object' ? JSON.stringify(err) : String(err),
+            finishTime: new Date().toLocaleString()
+          })
         })
-      })
     }
     return true
   }

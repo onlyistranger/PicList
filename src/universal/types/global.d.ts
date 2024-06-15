@@ -7,3 +7,8 @@ declare var notificationList: IAppNotification[]
 declare module 'epipebomb' {
     export default function epipebomb(stream: NodeJS.Process['stdout'], callback: () => void): void
   }
+
+declare module 'ssh2-no-cpu-features' {
+    const Client: any
+    export { Client }
+}

@@ -30,6 +30,4 @@ const uploadRoutes = [
 
 uploadRouter.addBatch(uploadRoutes)
 
-export {
-  uploadRouter
-}
+export { uploadRouter }

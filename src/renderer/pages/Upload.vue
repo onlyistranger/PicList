@@ -1,31 +1,14 @@
 <template>
   <div id="upload-view">
-    <el-row
-      :gutter="16"
-      align="middle"
-    >
-      <el-col
-        :span="24"
-      >
+    <el-row :gutter="16" align="middle">
+      <el-col :span="24">
         <div class="view-title">
-          <el-tooltip
-            placement="top"
-            effect="light"
-            :content="$T('UPLOAD_VIEW_HINT')"
-            :persistent="false"
-            teleported
-          >
-            <span
-              id="upload-view-title"
-              @click="handlePicBedNameClick(picBedName, picBedConfigName)"
-            >
+          <el-tooltip placement="top" effect="light" :content="$T('UPLOAD_VIEW_HINT')" :persistent="false" teleported>
+            <span id="upload-view-title" @click="handlePicBedNameClick(picBedName, picBedConfigName)">
               {{ picBedName }} - {{ picBedConfigName || 'Default' }}
             </span>
           </el-tooltip>
-          <el-icon
-            style="cursor: pointer; margin-left: 4px;"
-            @click="handleChangePicBed"
-          >
+          <el-icon style="cursor: pointer; margin-left: 4px" @click="handleChangePicBed">
             <CaretBottom />
           </el-icon>
           <el-button
@@ -46,29 +29,22 @@
           @dragover.prevent="dragover = true"
           @dragleave.prevent="dragover = false"
         >
-          <div
-            id="upload-dragger"
-            @click="openUplodWindow"
-          >
+          <div id="upload-dragger" @click="openUplodWindow">
             <el-icon>
               <UploadFilled />
             </el-icon>
             <div class="upload-dragger__text">
-              {{ $T('DRAG_FILE_TO_HERE') }} <span>{{ $T('CLICK_TO_UPLOAD') }}</span>
+              {{ $T('DRAG_FILE_TO_HERE') }}
+              <span>{{ $T('CLICK_TO_UPLOAD') }}</span>
             </div>
-            <input
-              id="file-uploader"
-              type="file"
-              multiple
-              @change="onChange"
-            >
+            <input id="file-uploader" type="file" multiple @change="onChange" />
           </div>
         </div>
         <el-progress
           :percentage="progress"
           :show-text="false"
           class="upload-progress"
-          :class="{ 'show': showProgress }"
+          :class="{ show: showProgress }"
           :status="showError ? 'exception' : undefined"
         />
         <div class="paste-style">
@@ -76,35 +52,16 @@
             <div class="paste-style__text">
               {{ $T('LINK_FORMAT') }}
             </div>
-            <el-radio-group
-              v-model="pasteStyle"
-              size="small"
-              @change="handlePasteStyleChange"
-            >
-              <el-radio-button
-                v-for="(item, key) in pasteFormatList"
-                :key="key"
-                :value="key"
-                :title="item"
-              >
+            <el-radio-group v-model="pasteStyle" size="small" @change="handlePasteStyleChange">
+              <el-radio-button v-for="(item, key) in pasteFormatList" :key="key" :value="key" :title="item">
                 {{ key }}
               </el-radio-button>
             </el-radio-group>
-            <el-radio-group
-              v-model="useShortUrl"
-              size="small"
-              @change="handleUseShortUrlChange"
-            >
-              <el-radio-button
-                :value="true"
-                style="border-radius: 5px"
-              >
+            <el-radio-group v-model="useShortUrl" size="small" @change="handleUseShortUrlChange">
+              <el-radio-button :value="true" style="border-radius: 5px">
                 {{ $T('UPLOAD_SHORT_URL') }}
               </el-radio-button>
-              <el-radio-button
-                :value="false"
-                style="border-radius: 5px"
-              >
+              <el-radio-button :value="false" style="border-radius: 5px">
                 {{ $T('UPLOAD_NORMAL_URL') }}
               </el-radio-button>
             </el-radio-group>
@@ -146,9 +103,7 @@
       align-center
       append-to-body
     >
-      <ImageProcessSetting
-        v-model="imageProcessDialogVisible"
-      />
+      <ImageProcessSetting v-model="imageProcessDialogVisible" />
     </el-dialog>
   </div>
 </template>
@@ -168,14 +123,9 @@ import { sendRPC, triggerRPC } from '@/utils/common'
 import { getConfig, saveConfig } from '@/utils/dataSender'
 import { picBedGlobal, updatePicBedGlobal } from '@/utils/global'
 
-import {
-  SHOW_INPUT_BOX,
-  SHOW_INPUT_BOX_RESPONSE
-} from '#/events/constants'
+import { SHOW_INPUT_BOX, SHOW_INPUT_BOX_RESPONSE } from '#/events/constants'
 import { IPasteStyle, IRPCActionType } from '#/types/enum'
-import {
-  isUrl
-} from '#/utils/common'
+import { isUrl } from '#/utils/common'
 import { configPaths } from '#/utils/configPaths'
 
 const $router = useRouter()
@@ -228,7 +178,7 @@ const handleImageProcess = () => {
 
 watch(progress, onProgressChange)
 
-function onProgressChange (val: number) {
+function onProgressChange(val: number) {
   if (val === 100) {
     setTimeout(() => {
       showProgress.value = false
@@ -240,10 +190,10 @@ function onProgressChange (val: number) {
   }
 }
 
-async function handlePicBedNameClick (_picBedName: string, picBedConfigName: string | undefined) {
+async function handlePicBedNameClick(_picBedName: string, picBedConfigName: string | undefined) {
   const formatedpicBedConfigName = picBedConfigName || 'Default'
   const currentPicBed = await getConfig<string>(configPaths.picBed.current)
-  const currentPicBedConfig = await getConfig<any[]>(`uploader.${currentPicBed}`) as any || {}
+  const currentPicBedConfig = ((await getConfig<any[]>(`uploader.${currentPicBed}`)) as any) || {}
   const configList = await triggerRPC<IUploaderConfigItem>(IRPCActionType.PICBED_GET_CONFIG_LIST, currentPicBed)
   const currentConfigList = configList?.configList ?? []
   const config = currentConfigList.find((item: any) => item._configName === formatedpicBedConfigName)
@@ -265,19 +215,18 @@ onBeforeUnmount(() => {
   ipcRenderer.removeAllListeners('syncPicBed')
 })
 
-function onDrop (e: DragEvent) {
+function onDrop(e: DragEvent) {
   dragover.value = false
-  const items = e.dataTransfer?.items!
-  const files = e.dataTransfer?.files!
 
   // send files first
-  if (files?.length) {
-    ipcSendFiles(e.dataTransfer?.files!)
-  } else {
+  if (e.dataTransfer?.files?.length) {
+    ipcSendFiles(e.dataTransfer.files)
+  } else if (e.dataTransfer?.items) {
+    const items = e.dataTransfer.items
     if (items.length === 2 && items[0].type === 'text/uri-list') {
-      handleURLDrag(items, e.dataTransfer!)
+      handleURLDrag(items, e.dataTransfer)
     } else if (items[0].type === 'text/plain') {
-      const str = e.dataTransfer!.getData(items[0].type)
+      const str = e.dataTransfer.getData(items[0].type)
       if (isUrl(str)) {
         sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, [{ path: str }])
       } else {
@@ -287,7 +236,7 @@ function onDrop (e: DragEvent) {
   }
 }
 
-function handleURLDrag (items: DataTransferItemList, dataTransfer: DataTransfer) {
+function handleURLDrag(items: DataTransferItemList, dataTransfer: DataTransfer) {
   // text/html
   // Use this data to get a more precise URL
   const urlString = dataTransfer.getData(items[1].type)
@@ -303,18 +252,18 @@ function handleURLDrag (items: DataTransferItemList, dataTransfer: DataTransfer)
   }
 }
 
-function openUplodWindow () {
+function openUplodWindow() {
   document.getElementById('file-uploader')!.click()
 }
 
-function onChange (e: any) {
-  ipcSendFiles(e.target.files);
-  (document.getElementById('file-uploader') as HTMLInputElement).value = ''
+function onChange(e: any) {
+  ipcSendFiles(e.target.files)
+  ;(document.getElementById('file-uploader') as HTMLInputElement).value = ''
 }
 
-function ipcSendFiles (files: FileList) {
+function ipcSendFiles(files: FileList) {
   const sendFiles: IFileWithPath[] = []
-  Array.from(files).forEach((item) => {
+  Array.from(files).forEach(item => {
     const obj = {
       name: item.name,
       path: item.path
@@ -324,32 +273,32 @@ function ipcSendFiles (files: FileList) {
   sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, sendFiles)
 }
 
-async function getPasteStyle () {
-  pasteStyle.value = await getConfig(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
-  pasteFormatList.value.Custom = await getConfig(configPaths.settings.customLink) || '![$fileName]($url)'
+async function getPasteStyle() {
+  pasteStyle.value = (await getConfig(configPaths.settings.pasteStyle)) || IPasteStyle.MARKDOWN
+  pasteFormatList.value.Custom = (await getConfig(configPaths.settings.customLink)) || '![$fileName]($url)'
 }
 
-async function getUseShortUrl () {
-  useShortUrl.value = await getConfig(configPaths.settings.useShortUrl) || false
+async function getUseShortUrl() {
+  useShortUrl.value = (await getConfig(configPaths.settings.useShortUrl)) || false
 }
 
-async function handleUseShortUrlChange () {
+async function handleUseShortUrlChange() {
   saveConfig({
     [configPaths.settings.useShortUrl]: useShortUrl.value
   })
 }
 
-function handlePasteStyleChange (val: string | number | boolean | undefined) {
+function handlePasteStyleChange(val: string | number | boolean | undefined) {
   saveConfig({
     [configPaths.settings.pasteStyle]: val || IPasteStyle.MARKDOWN
   })
 }
 
-function uploadClipboardFiles () {
+function uploadClipboardFiles() {
   sendRPC(IRPCActionType.UPLOAD_CLIPBOARD_FILES_FROM_UPLOAD_PAGE)
 }
 
-async function uploadURLFiles () {
+async function uploadURLFiles() {
   const str = await navigator.clipboard.readText()
   $bus.emit(SHOW_INPUT_BOX, {
     value: isUrl(str) ? str : '',
@@ -358,28 +307,30 @@ async function uploadURLFiles () {
   })
 }
 
-function handleInputBoxValue (val: string) {
+function handleInputBoxValue(val: string) {
   if (val === '') return
   if (isUrl(val)) {
-    sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, [{
-      path: val
-    }])
+    sendRPC(IRPCActionType.UPLOAD_CHOOSED_FILES, [
+      {
+        path: val
+      }
+    ])
   } else {
     $message.error($T('TIPS_INPUT_VALID_URL'))
   }
 }
 
-async function getDefaultPicBed () {
+async function getDefaultPicBed() {
   const currentPicBed = await getConfig<string>(configPaths.picBed.current)
   picBedGlobal.value.forEach(item => {
     if (item.type === currentPicBed) {
       picBedName.value = item.name
     }
   })
-  picBedConfigName.value = await getConfig<string>(`picBed.${currentPicBed}._configName`) || ''
+  picBedConfigName.value = (await getConfig<string>(`picBed.${currentPicBed}._configName`)) || ''
 }
 
-async function handleChangePicBed () {
+async function handleChangePicBed() {
   sendRPC(IRPCActionType.SHOW_UPLOAD_PAGE_MENU)
 }
 </script>
@@ -390,7 +341,7 @@ export default {
 }
 </script>
 
-<style lang='stylus'>
+<style lang="stylus">
 .view-title
   display flex
   color #eee

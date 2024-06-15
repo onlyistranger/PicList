@@ -8,7 +8,13 @@ import windowManager from 'apis/app/window/windowManager'
 
 import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
 import { ManageLogger } from '~/manage/utils/logger'
-import { hmacSha1Base64, getFileMimeType, formatError, NewDownloader, ConcurrencyPromisePool } from '~/manage/utils/common'
+import {
+  hmacSha1Base64,
+  getFileMimeType,
+  formatError,
+  NewDownloader,
+  ConcurrencyPromisePool
+} from '~/manage/utils/common'
 
 import { commonTaskStatus, IWindowList, uploadTaskSpecialStatus } from '#/types/enum'
 import { isImage } from '#/utils/common'
@@ -22,7 +28,7 @@ class AliyunApi {
   timeOut = 30000
   logger: ManageLogger
 
-  constructor (accessKeyId: string, accessKeySecret: string, logger: ManageLogger) {
+  constructor(accessKeyId: string, accessKeySecret: string, logger: ManageLogger) {
     this.ctx = new OSS({
       accessKeyId,
       accessKeySecret,
@@ -33,7 +39,7 @@ class AliyunApi {
     this.logger = logger
   }
 
-  formatFolder (item: string, slicedPrefix: string, urlPrefix: string): any {
+  formatFolder(item: string, slicedPrefix: string, urlPrefix: string): any {
     return {
       key: item,
       url: `${urlPrefix}/${item}`,
@@ -48,7 +54,7 @@ class AliyunApi {
     }
   }
 
-  formatFile (item: OSS.ObjectMeta, slicedPrefix: string, urlPrefix: string): any {
+  formatFile(item: OSS.ObjectMeta, slicedPrefix: string, urlPrefix: string): any {
     const fileName = item.name.replace(slicedPrefix, '')
     return {
       ...item,
@@ -65,26 +71,32 @@ class AliyunApi {
     }
   }
 
-  getCanonicalizedOSSHeaders (headers: IStringKeyMap) {
+  getCanonicalizedOSSHeaders(headers: IStringKeyMap) {
     const lowerCaseHeaders = Object.keys(headers).reduce((acc, key) => {
       acc[key.toLowerCase()] = headers[key]
       return acc
     }, {} as IStringKeyMap)
     let canonicalizedOSSHeaders = ''
     const headerKeys = Object.keys(lowerCaseHeaders).sort()
-    headerKeys.forEach((key) => {
+    headerKeys.forEach(key => {
       key.startsWith('x-oss-') && (canonicalizedOSSHeaders += `${key}:${lowerCaseHeaders[key]}\n`)
     })
     return canonicalizedOSSHeaders
   }
 
-  authorization (method: string, canonicalizedResource: string, headers: IStringKeyMap, contentMd5: string, contentType: string) {
+  authorization(
+    method: string,
+    canonicalizedResource: string,
+    headers: IStringKeyMap,
+    contentMd5: string,
+    contentType: string
+  ) {
     const date = new Date().toUTCString()
     const stringToSign = `${method.toUpperCase()}\n${contentMd5}\n${contentType}\n${date}\n${this.getCanonicalizedOSSHeaders(headers)}${canonicalizedResource}`
     return `OSS ${this.accessKeyId}:${hmacSha1Base64(this.accessKeySecret, stringToSign)}`
   }
 
-  getNewCtx (region: string, bucket: string) {
+  getNewCtx(region: string, bucket: string) {
     return new OSS({
       accessKeyId: this.accessKeyId,
       accessKeySecret: this.accessKeySecret,
@@ -95,21 +107,25 @@ class AliyunApi {
   }
 
   /**
-     * 获取存储桶列表
-    */
-  async getBucketList (): Promise<any> {
+   * 获取存储桶列表
+   */
+  async getBucketList(): Promise<any> {
     const getBuckets = async (marker?: string) => {
-      const res = await this.ctx.listBuckets({
+      const res = (await this.ctx.listBuckets({
         marker,
         'max-keys': 1000
-      }) as IStringKeyMap
+      })) as IStringKeyMap
       if (res?.res?.statusCode !== 200 || !res?.buckets) return { result: [], isTruncated: false }
       const formattedBuckets = res.buckets.map((item: OSS.Bucket) => ({
         Name: item.name,
         Location: item.region,
         CreationDate: item.creationDate
       }))
-      return { result: formattedBuckets, isTruncated: res.isTruncated, nextMarker: res.nextMarker }
+      return {
+        result: formattedBuckets,
+        isTruncated: res.isTruncated,
+        nextMarker: res.nextMarker
+      }
     }
     const result: IStringKeyMap[] = []
     let NextMarker: string | undefined
@@ -127,7 +143,7 @@ class AliyunApi {
   /**
    * 获取自定义域名
    */
-  async getBucketDomain (param: IStringKeyMap): Promise<any> {
+  async getBucketDomain(param: IStringKeyMap): Promise<any> {
     const headers = {
       Date: new Date().toUTCString()
     }
@@ -160,17 +176,17 @@ class AliyunApi {
   }
 
   /**
-     * 创建存储桶
-     * @param {Object} configMap
-     * configMap = {
-     * BucketName: string,
-     * region: string,
-     * acl: string
-     * }
-     * @description
-     * acl: private | publicRead | publicReadWrite
-    */
-  async createBucket (configMap: IStringKeyMap): Promise<boolean> {
+   * 创建存储桶
+   * @param {Object} configMap
+   * configMap = {
+   * BucketName: string,
+   * region: string,
+   * acl: string
+   * }
+   * @description
+   * acl: private | publicRead | publicReadWrite
+   */
+  async createBucket(configMap: IStringKeyMap): Promise<boolean> {
     const client = new OSS({
       accessKeyId: this.accessKeyId,
       accessKeySecret: this.accessKeySecret,
@@ -191,9 +207,14 @@ class AliyunApi {
     return res?.res?.status === 200
   }
 
-  async getBucketListRecursively (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListRecursively(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
-    const { bucketName: bucket, bucketConfig: { Location: region }, prefix, cancelToken } = configMap
+    const {
+      bucketName: bucket,
+      bucketConfig: { Location: region },
+      prefix,
+      cancelToken
+    } = configMap
     const slicedPrefix = prefix.slice(1)
     const urlPrefix = configMap.customUrl || `https://${bucket}.${region}.aliyuncs.com`
     let marker
@@ -212,13 +233,16 @@ class AliyunApi {
     }
     const client = this.getNewCtx(region, bucket)
     do {
-      res = await client.listV2({
-        prefix: slicedPrefix === '' ? undefined : slicedPrefix,
-        'max-keys': '1000',
-        'continuation-token': marker
-      }, {
-        timeout: this.timeOut
-      })
+      res = await client.listV2(
+        {
+          prefix: slicedPrefix === '' ? undefined : slicedPrefix,
+          'max-keys': '1000',
+          'continuation-token': marker
+        },
+        {
+          timeout: this.timeOut
+        }
+      )
       if (res?.res?.statusCode === 200) {
         res?.objects?.forEach((item: OSS.ObjectMeta) => {
           item.size !== 0 && result.fullList.push(this.formatFile(item, slicedPrefix, urlPrefix))
@@ -238,9 +262,14 @@ class AliyunApi {
     ipcMain.removeAllListeners(cancelDownloadLoadingFileList)
   }
 
-  async getBucketListBackstage (configMap: IStringKeyMap): Promise<any> {
+  async getBucketListBackstage(configMap: IStringKeyMap): Promise<any> {
     const window = windowManager.get(IWindowList.SETTING_WINDOW)!
-    const { bucketName: bucket, bucketConfig: { Location: region }, prefix, cancelToken } = configMap
+    const {
+      bucketName: bucket,
+      bucketConfig: { Location: region },
+      prefix,
+      cancelToken
+    } = configMap
     const slicedPrefix = prefix.slice(1)
     const urlPrefix = configMap.customUrl || `https://${bucket}.${region}.aliyuncs.com`
     let marker
@@ -259,14 +288,17 @@ class AliyunApi {
     }
     const client = this.getNewCtx(region, bucket)
     do {
-      res = await client.listV2({
-        prefix: slicedPrefix === '' ? undefined : slicedPrefix,
-        delimiter: '/',
-        'max-keys': '1000',
-        'continuation-token': marker
-      }, {
-        timeout: this.timeOut
-      })
+      res = await client.listV2(
+        {
+          prefix: slicedPrefix === '' ? undefined : slicedPrefix,
+          delimiter: '/',
+          'max-keys': '1000',
+          'continuation-token': marker
+        },
+        {
+          timeout: this.timeOut
+        }
+      )
       if (res?.res?.statusCode === 200) {
         res?.prefixes?.forEach((item: string) => {
           result.fullList.push(this.formatFolder(item, slicedPrefix, urlPrefix))
@@ -303,21 +335,30 @@ class AliyunApi {
    *  itemsPerPage: number,
    *  customUrl: string
    * }
-  */
-  async getBucketFileList (configMap: IStringKeyMap): Promise<any> {
-    const { bucketName: bucket, bucketConfig: { Location: region }, prefix, marker, itemsPerPage } = configMap
+   */
+  async getBucketFileList(configMap: IStringKeyMap): Promise<any> {
+    const {
+      bucketName: bucket,
+      bucketConfig: { Location: region },
+      prefix,
+      marker,
+      itemsPerPage
+    } = configMap
     const slicedPrefix = prefix.slice(1)
     const urlPrefix = configMap.customUrl || `https://${bucket}.${region}.aliyuncs.com`
 
     const client = this.getNewCtx(region, bucket)
-    const res = await client.listV2({
-      prefix: slicedPrefix || undefined,
-      delimiter: '/',
-      'max-keys': itemsPerPage.toString(),
-      'continuation-token': marker
-    }, {
-      timeout: this.timeOut
-    }) as any
+    const res = (await client.listV2(
+      {
+        prefix: slicedPrefix || undefined,
+        delimiter: '/',
+        'max-keys': itemsPerPage.toString(),
+        'continuation-token': marker
+      },
+      {
+        timeout: this.timeOut
+      }
+    )) as any
     // prefixes can be null
     // objects will be [] when no file
     if (res?.res.statusCode !== 200) {
@@ -330,7 +371,9 @@ class AliyunApi {
     }
     const fullList = [
       ...(res.prefixes?.map((item: string) => this.formatFolder(item, slicedPrefix, urlPrefix)) || []),
-      ...(res.objects?.filter((item: OSS.ObjectMeta) => item.size !== 0).map((item: OSS.ObjectMeta) => this.formatFile(item, slicedPrefix, urlPrefix)) || [])
+      ...(res.objects
+        ?.filter((item: OSS.ObjectMeta) => item.size !== 0)
+        .map((item: OSS.ObjectMeta) => this.formatFile(item, slicedPrefix, urlPrefix)) || [])
     ]
     return {
       fullList,
@@ -341,50 +384,47 @@ class AliyunApi {
   }
 
   /**
-     * 重命名文件
-     * @param configMap
-     * configMap = {
-     * bucketName: string,
-     * region: string,
-     * oldKey: string,
-     * newKey: string
-     * }
-    */
-  async renameBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+   * 重命名文件
+   * @param configMap
+   * configMap = {
+   * bucketName: string,
+   * region: string,
+   * oldKey: string,
+   * newKey: string
+   * }
+   */
+  async renameBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, region, oldKey, newKey } = configMap
     const client = this.getNewCtx(region, bucketName)
-    const copyRes = await client.copy(
-      newKey,
-      oldKey
-    ) as any
+    const copyRes = (await client.copy(newKey, oldKey)) as any
     if (copyRes?.res.statusCode === 200) {
-      const deleteRes = await client.delete(oldKey) as any
+      const deleteRes = (await client.delete(oldKey)) as any
       return deleteRes?.res.statusCode === 204
     }
     return false
   }
 
   /**
-  * 删除文件
-  * @param configMap
-  * configMap = {
-  * bucketName: string,
-  * region: string,
-  * key: string
-  * }
-  */
-  async deleteBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+   * 删除文件
+   * @param configMap
+   * configMap = {
+   * bucketName: string,
+   * region: string,
+   * key: string
+   * }
+   */
+  async deleteBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, region, key } = configMap
     const client = this.getNewCtx(region, bucketName)
-    const res = await client.delete(key) as any
+    const res = (await client.delete(key)) as any
     return res?.res.statusCode === 204
   }
 
   /**
-  * 删除文件夹
-  * @param configMap
-  */
-  async deleteBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+   * 删除文件夹
+   * @param configMap
+   */
+  async deleteBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, region, key } = configMap
     const client = this.getNewCtx(region, bucketName)
     let marker
@@ -394,14 +434,17 @@ class AliyunApi {
       Contents: [] as any[]
     }
     do {
-      const res = await client.listV2({
-        prefix: key,
-        delimiter: '/',
-        'max-keys': '1000',
-        'continuation-token': marker
-      }, {
-        timeout: this.timeOut
-      }) as any
+      const res = (await client.listV2(
+        {
+          prefix: key,
+          delimiter: '/',
+          'max-keys': '1000',
+          'continuation-token': marker
+        },
+        {
+          timeout: this.timeOut
+        }
+      )) as any
       if (res?.res.statusCode !== 200) return false
 
       res.prefixes !== null && allFileList.CommonPrefixes.push(...res.prefixes)
@@ -423,8 +466,9 @@ class AliyunApi {
     if (allFileList.Contents.length > 0) {
       const cycle = Math.ceil(allFileList.Contents.length / 1000)
       for (let i = 0; i < cycle; i++) {
-        const deleteRes = await client.deleteMulti(
-          allFileList.Contents.slice(i * 1000, (i + 1) * 1000).map((item: any) => item.name)) as any
+        const deleteRes = (await client.deleteMulti(
+          allFileList.Contents.slice(i * 1000, (i + 1) * 1000).map((item: any) => item.name)
+        )) as any
         if (deleteRes?.res.statusCode !== 200) return false
       }
     }
@@ -432,17 +476,17 @@ class AliyunApi {
   }
 
   /**
-     * 获取预签名url
-     * @param configMap
-     * configMap = {
-     * bucketName: string,
-     * region: string,
-     * key: string,
-     * expires: number,
-     * customUrl: string
-     * }
-     */
-  async getPreSignedUrl (configMap: IStringKeyMap): Promise<string> {
+   * 获取预签名url
+   * @param configMap
+   * configMap = {
+   * bucketName: string,
+   * region: string,
+   * key: string,
+   * expires: number,
+   * customUrl: string
+   * }
+   */
+  async getPreSignedUrl(configMap: IStringKeyMap): Promise<string> {
     const { bucketName, region, key, expires, customUrl } = configMap
     const client = this.getNewCtx(region, bucketName)
     const res = client.signatureUrl(key, {
@@ -455,7 +499,7 @@ class AliyunApi {
    * 上传文件
    * @param configMap
    */
-  async uploadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async uploadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { fileArray } = configMap
     // fileArray = [{
     //   bucketName: string,
@@ -485,10 +529,8 @@ class AliyunApi {
         targetFileBucket: bucketName,
         targetFileRegion: region
       })
-      client.multipartUpload(
-        key,
-        filePath,
-        {
+      client
+        .multipartUpload(key, filePath, {
           partSize: 1 * 1024 * 1024,
           mime: getFileMimeType(fileName),
           progress: (p: number) => {
@@ -499,37 +541,43 @@ class AliyunApi {
               status: uploadTaskSpecialStatus.uploading
             })
           }
-        }
-      ).then((res: any) => {
-        const id = `${bucketName}-${region}-${key}-${filePath}`
-        if (res?.res?.statusCode === 200) {
-          instance.updateUploadTask({
-            id,
-            progress: 100,
-            status: uploadTaskSpecialStatus.uploaded,
-            response: JSON.stringify(res),
-            finishTime: new Date().toLocaleString()
-          })
-        } else {
+        })
+        .then((res: any) => {
+          const id = `${bucketName}-${region}-${key}-${filePath}`
+          if (res?.res?.statusCode === 200) {
+            instance.updateUploadTask({
+              id,
+              progress: 100,
+              status: uploadTaskSpecialStatus.uploaded,
+              response: JSON.stringify(res),
+              finishTime: new Date().toLocaleString()
+            })
+          } else {
+            instance.updateUploadTask({
+              id,
+              progress: 0,
+              status: commonTaskStatus.failed,
+              response: JSON.stringify(res),
+              finishTime: new Date().toLocaleString()
+            })
+          }
+        })
+        .catch((err: any) => {
+          this.logger.error(
+            formatError(err, {
+              class: 'AliyunApi',
+              method: 'uploadBucketFile'
+            })
+          )
+          const id = `${bucketName}-${region}-${key}-${filePath}`
           instance.updateUploadTask({
             id,
             progress: 0,
             status: commonTaskStatus.failed,
-            response: JSON.stringify(res),
+            response: JSON.stringify(err),
             finishTime: new Date().toLocaleString()
           })
-        }
-      }).catch((err: any) => {
-        this.logger.error(formatError(err, { class: 'AliyunApi', method: 'uploadBucketFile' }))
-        const id = `${bucketName}-${region}-${key}-${filePath}`
-        instance.updateUploadTask({
-          id,
-          progress: 0,
-          status: commonTaskStatus.failed,
-          response: JSON.stringify(err),
-          finishTime: new Date().toLocaleString()
         })
-      })
     }
     return true
   }
@@ -538,10 +586,10 @@ class AliyunApi {
    * 新建文件夹
    * @param configMap
    */
-  async createBucketFolder (configMap: IStringKeyMap): Promise<boolean> {
+  async createBucketFolder(configMap: IStringKeyMap): Promise<boolean> {
     const { bucketName, region, key } = configMap
     const client = this.getNewCtx(region, bucketName)
-    const res = await client.put(key, Buffer.from('')) as any
+    const res = (await client.put(key, Buffer.from(''))) as any
     return res?.res?.statusCode === 200
   }
 
@@ -549,7 +597,7 @@ class AliyunApi {
    * 下载文件
    * @param configMap
    */
-  async downloadBucketFile (configMap: IStringKeyMap): Promise<boolean> {
+  async downloadBucketFile(configMap: IStringKeyMap): Promise<boolean> {
     const { downloadPath, fileArray, maxDownloadFileCount } = configMap
     const instance = UpDownTaskQueue.getInstance()
     const promises = [] as any
@@ -571,20 +619,27 @@ class AliyunApi {
       const preSignedUrl = client.signatureUrl(key, {
         expires: 60 * 60 * 48
       })
-      promises.push(() => new Promise((resolve, reject) => {
-        NewDownloader(instance, preSignedUrl, id, savedFilePath, this.logger)
-          .then((res: boolean) => {
-            if (res) {
-              resolve(res)
-            } else {
-              reject(res)
-            }
+      promises.push(
+        () =>
+          new Promise((resolve, reject) => {
+            NewDownloader(instance, preSignedUrl, id, savedFilePath, this.logger).then((res: boolean) => {
+              if (res) {
+                resolve(res)
+              } else {
+                reject(res)
+              }
+            })
           })
-      }))
+      )
     }
     const pool = new ConcurrencyPromisePool(maxDownloadFileCount)
     pool.all(promises).catch((error: any) => {
-      this.logger.error(formatError(error, { class: 'AliyunApi', method: 'downloadBucketFile' }))
+      this.logger.error(
+        formatError(error, {
+          class: 'AliyunApi',
+          method: 'downloadBucketFile'
+        })
+      )
     })
     return true
   }

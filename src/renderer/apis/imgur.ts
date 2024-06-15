@@ -10,11 +10,8 @@ interface IConfigMap {
 export default class ImgurApi {
   static #baseUrl = 'https://api.imgur.com/3'
 
-  static async delete (configMap: IConfigMap): Promise<boolean> {
-    const {
-      config: { clientId = '', username = '', accessToken = '' } = {},
-      hash = ''
-    } = configMap
+  static async delete(configMap: IConfigMap): Promise<boolean> {
+    const { config: { clientId = '', username = '', accessToken = '' } = {}, hash = '' } = configMap
     let Authorization: string, apiUrl: string
 
     if (username && accessToken) {

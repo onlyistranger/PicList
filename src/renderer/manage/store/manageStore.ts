@@ -9,8 +9,8 @@ export const useManageStore = defineStore('manageConfig', {
     }
   },
   actions: {
-    async refreshConfig () {
-      this.config = await getConfig() ?? {}
+    async refreshConfig() {
+      this.config = (await getConfig()) ?? {}
     }
   },
   persist: true
@@ -25,23 +25,23 @@ export const useFileTransferStore = defineStore('fileTransfer', {
     }
   },
   actions: {
-    refreshFileTransferList (newData: IStringKeyMap) {
+    refreshFileTransferList(newData: IStringKeyMap) {
       this.fileTransferList = newData.fullList ?? []
       this.success = newData.success
       this.finished = newData.finished
     },
-    resetFileTransferList () {
+    resetFileTransferList() {
       this.fileTransferList = []
       this.success = false
       this.finished = false
     },
-    getFileTransferList () {
+    getFileTransferList() {
       return this.fileTransferList
     },
-    isFinished () {
+    isFinished() {
       return this.finished
     },
-    isSuccess () {
+    isSuccess() {
       return this.success
     }
   }
@@ -56,23 +56,23 @@ export const useDownloadFileTransferStore = defineStore('downloadFileTransfer', 
     }
   },
   actions: {
-    refreshDownloadFileTransferList (newData: IStringKeyMap) {
+    refreshDownloadFileTransferList(newData: IStringKeyMap) {
       this.downloadFileTransferList = newData.fullList ?? []
       this.success = newData.success
       this.finished = newData.finished
     },
-    resetDownloadFileTransferList () {
+    resetDownloadFileTransferList() {
       this.downloadFileTransferList = []
       this.success = false
       this.finished = false
     },
-    getDownloadFileTransferList () {
+    getDownloadFileTransferList() {
       return this.downloadFileTransferList
     },
-    isFinished () {
+    isFinished() {
       return this.finished
     },
-    isSuccess () {
+    isSuccess() {
       return this.success
     }
   }

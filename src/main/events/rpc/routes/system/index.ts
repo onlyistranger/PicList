@@ -4,13 +4,8 @@ import windowRoutes from '~/events/rpc/routes/system/window'
 
 const systemRouter = new RPCRouter()
 
-const systemRoutes = [
-  ...appRoutes,
-  ...windowRoutes
-]
+const systemRoutes = [...appRoutes, ...windowRoutes]
 
 systemRouter.addBatch(systemRoutes)
 
-export {
-  systemRouter
-}
+export { systemRouter }

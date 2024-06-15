@@ -1,8 +1,6 @@
 /* eslint-disable camelcase */
 import { ipcRenderer } from 'electron'
-import {
-  TALKING_DATA_APPID, TALKING_DATA_EVENT
-} from '#/events/constants'
+import { TALKING_DATA_APPID, TALKING_DATA_EVENT } from '#/events/constants'
 
 import { handleTalkingDataEvent } from '@/utils/common'
 

@@ -1,11 +1,10 @@
-
 import { II18nLanguage, IPasteStyle, ISartMode, IShortUrlServer } from '#/types/enum'
 import { IBuildInCompressOptions, IBuildInWaterMarkOptions } from 'piclist'
 
-export type ISartModeValues = typeof ISartMode[keyof typeof ISartMode]
-export type IPasteStyleValues = typeof IPasteStyle[keyof typeof IPasteStyle]
-export type II18nLanguageValues = typeof II18nLanguage[keyof typeof II18nLanguage]
-export type IShortUrlServerValues = typeof IShortUrlServer[keyof typeof IShortUrlServer]
+export type ISartModeValues = (typeof ISartMode)[keyof typeof ISartMode]
+export type IPasteStyleValues = (typeof IPasteStyle)[keyof typeof IPasteStyle]
+export type II18nLanguageValues = (typeof II18nLanguage)[keyof typeof II18nLanguage]
+export type IShortUrlServerValues = (typeof IShortUrlServer)[keyof typeof IShortUrlServer]
 export type manualPageOpenType = 'window' | 'browser'
 
 interface IPicGoPlugins {
@@ -14,10 +13,10 @@ interface IPicGoPlugins {
 
 export interface IConfigStruct {
   picBed: {
-    uploader: string,
-    current?: string,
-    smms?: ISMMSConfig,
-    qiniu?: IQiniuConfig,
+    uploader: string
+    current?: string
+    smms?: ISMMSConfig
+    qiniu?: IQiniuConfig
     upyun?: IUpYunConfig
     tcyun?: ITcYunConfig
     github?: IGitHubConfig
@@ -33,7 +32,7 @@ export interface IConfigStruct {
     transformer?: string
     list: IPicBedType[]
     [others: string]: any
-  },
+  }
   settings: {
     shortKey: {
       [key: string]: IShortKeyConfig

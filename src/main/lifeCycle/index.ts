@@ -1,19 +1,9 @@
 import axios from 'axios'
 import fs from 'fs-extra'
-import {
-  app,
-  globalShortcut,
-  protocol,
-  Notification,
-  dialog,
-  screen,
-  shell
-} from 'electron'
+import { app, globalShortcut, protocol, Notification, dialog, screen, shell } from 'electron'
 import { UpdateInfo, autoUpdater } from 'electron-updater'
 import path from 'path'
-import {
-  createProtocol
-} from 'vue-cli-plugin-electron-builder/lib'
+import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 
 import bus from '@core/bus'
 import db from '@core/datastore'
@@ -22,13 +12,8 @@ import logger from '@core/picgo/logger'
 
 import { remoteNoticeHandler } from 'apis/app/remoteNotice'
 import shortKeyHandler from 'apis/app/shortKey/shortKeyHandler'
-import {
-  createTray, setDockMenu
-} from 'apis/app/system'
-import {
-  uploadChoosedFiles,
-  uploadClipboardFiles
-} from 'apis/app/uploader/apis'
+import { createTray, setDockMenu } from 'apis/app/system'
+import { uploadChoosedFiles, uploadClipboardFiles } from 'apis/app/uploader/apis'
 import windowManager from 'apis/app/window/windowManager'
 
 import busEventList from '~/events/busEventList'
@@ -57,7 +42,8 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const handleStartUpFiles = (argv: string[], cwd: string) => {
   const files = getUploadFiles(argv, cwd, logger)
-  if (files === null || files.length > 0) { // 如果有文件列表作为参数，说明是命令行启动
+  if (files === null || files.length > 0) {
+    // 如果有文件列表作为参数，说明是命令行启动
     if (files === null) {
       logger.info('cli -> uploading file from clipboard')
       uploadClipboardFiles()
@@ -83,34 +69,43 @@ autoUpdater.on('update-available', async (info: UpdateInfo) => {
   const lang = db.get(configPaths.settings.language) || II18nLanguage.ZH_CN
   let updateLog = ''
   try {
-    const url = lang === II18nLanguage.ZH_CN ? 'https://release.piclist.cn/currentVersion.md' : 'https://release.piclist.cn/currentVersion_en.md'
+    const url =
+      lang === II18nLanguage.ZH_CN
+        ? 'https://release.piclist.cn/currentVersion.md'
+        : 'https://release.piclist.cn/currentVersion_en.md'
     const res = await axios.get(url)
     updateLog = res.data
   } catch (e: any) {
     logger.error(e)
   }
-  dialog.showMessageBox({
-    type: 'info',
-    title: T('FIND_NEW_VERSION'),
-    buttons: ['Yes', 'Go to download page'],
-    message: T('TIPS_FIND_NEW_VERSION', {
-      v: info.version
-    }) + '\n\n' + updateLog,
-    checkboxLabel: T('NO_MORE_NOTICE'),
-    checkboxChecked: false
-  }).then((result) => {
-    if (result.response === 0) {
-      autoUpdater.downloadUpdate()
-    } else {
-      shell.openExternal('https://github.com/Kuingsmile/PicList/releases/latest')
-    }
-    db.set(configPaths.settings.showUpdateTip, !result.checkboxChecked)
-  }).catch((err) => {
-    logger.error(err)
-  })
+  dialog
+    .showMessageBox({
+      type: 'info',
+      title: T('FIND_NEW_VERSION'),
+      buttons: ['Yes', 'Go to download page'],
+      message:
+        T('TIPS_FIND_NEW_VERSION', {
+          v: info.version
+        }) +
+        '\n\n' +
+        updateLog,
+      checkboxLabel: T('NO_MORE_NOTICE'),
+      checkboxChecked: false
+    })
+    .then(result => {
+      if (result.response === 0) {
+        autoUpdater.downloadUpdate()
+      } else {
+        shell.openExternal('https://github.com/Kuingsmile/PicList/releases/latest')
+      }
+      db.set(configPaths.settings.showUpdateTip, !result.checkboxChecked)
+    })
+    .catch(err => {
+      logger.error(err)
+    })
 })
 
-autoUpdater.on('download-progress', (progressObj) => {
+autoUpdater.on('download-progress', progressObj => {
   const percent = {
     progress: progressObj.percent
   }
@@ -119,28 +114,31 @@ autoUpdater.on('download-progress', (progressObj) => {
 })
 
 autoUpdater.on('update-downloaded', () => {
-  dialog.showMessageBox({
-    type: 'info',
-    title: T('UPDATE_DOWNLOADED'),
-    buttons: ['Yes', 'No'],
-    message: T('TIPS_UPDATE_DOWNLOADED')
-  }).then((result) => {
-    const window = windowManager.get(IWindowList.SETTING_WINDOW)!
-    window.webContents.send('updateProgress', { progress: 100 })
-    if (result.response === 0) {
-      autoUpdater.quitAndInstall()
-    }
-  }).catch((err) => {
-    logger.error(err)
-  })
+  dialog
+    .showMessageBox({
+      type: 'info',
+      title: T('UPDATE_DOWNLOADED'),
+      buttons: ['Yes', 'No'],
+      message: T('TIPS_UPDATE_DOWNLOADED')
+    })
+    .then(result => {
+      const window = windowManager.get(IWindowList.SETTING_WINDOW)!
+      window.webContents.send('updateProgress', { progress: 100 })
+      if (result.response === 0) {
+        autoUpdater.quitAndInstall()
+      }
+    })
+    .catch(err => {
+      logger.error(err)
+    })
 })
 
-autoUpdater.on('error', (err) => {
+autoUpdater.on('error', err => {
   console.log(err)
 })
 
 class LifeCycle {
-  async #beforeReady () {
+  async #beforeReady() {
     protocol.registerSchemesAsPrivileged([{ scheme: 'picgo', privileges: { secure: true, standard: true } }])
     // fix the $PATH in macOS & linux
     fixPath()
@@ -153,7 +151,7 @@ class LifeCycle {
     busEventList.listen()
   }
 
-  #onReady () {
+  #onReady() {
     const readyFunction = async () => {
       createProtocol('picgo')
       windowManager.create(IWindowList.TRAY_WINDOW)
@@ -173,7 +171,6 @@ class LifeCycle {
       const isHideDock = db.get(configPaths.settings.isHideDock) || false
       const startMode = db.get(configPaths.settings.startMode) || ISartMode.QUIET
       const currentPicBed = db.get(configPaths.picBed.uploader) || db.get(configPaths.picBed.current) || 'smms'
-      // @ts-ignore
       const currentPicBedConfig = db.get(`picBed.${currentPicBed}`)?._configName || 'Default'
       const tooltip = `${currentPicBed} ${currentPicBedConfig}`
       if (process.platform === 'darwin') {
@@ -237,7 +234,7 @@ class LifeCycle {
     app.whenReady().then(readyFunction)
   }
 
-  #onRunning () {
+  #onRunning() {
     app.on('second-instance', (_, commandLine, workingDirectory) => {
       logger.info('detect second instance')
       const result = handleStartUpFiles(commandLine, workingDirectory)
@@ -272,7 +269,7 @@ class LifeCycle {
     }
   }
 
-  #onQuit () {
+  #onQuit() {
     app.on('window-all-closed', () => {
       if (process.platform !== 'darwin') {
         app.quit()
@@ -304,7 +301,7 @@ class LifeCycle {
     }
   }
 
-  async launchApp () {
+  async launchApp() {
     const gotTheLock = app.requestSingleInstanceLock()
     if (!gotTheLock) {
       app.quit()
@@ -319,6 +316,4 @@ class LifeCycle {
 
 const bootstrap = new LifeCycle()
 
-export {
-  bootstrap
-}
+export { bootstrap }

@@ -334,7 +334,16 @@ export const supportedPicBedList: IStringKeyMap = {
       }
     },
     explain: $T('MANAGE_CONSTANT_ALIYUN_EXPLAIN'),
-    options: ['alias', 'accessKeyId', 'accessKeySecret', 'bucketName', 'baseDir', 'isAutoCustomUrl', 'paging', 'itemsPerPage'],
+    options: [
+      'alias',
+      'accessKeyId',
+      'accessKeySecret',
+      'bucketName',
+      'baseDir',
+      'isAutoCustomUrl',
+      'paging',
+      'itemsPerPage'
+    ],
     refLink: 'https://piclist.cn/manage.html#%E9%98%BF%E9%87%8C%E4%BA%91oss',
     referenceText: $T('MANAGE_CONSTANT_ALIYUN_REFER_TEXT')
   },
@@ -412,7 +421,17 @@ export const supportedPicBedList: IStringKeyMap = {
       }
     },
     explain: $T('MANAGE_CONSTANT_TENCENT_EXPLAIN'),
-    options: ['alias', 'secretId', 'secretKey', 'appId', 'bucketName', 'baseDir', 'isAutoCustomUrl', 'paging', 'itemsPerPage'],
+    options: [
+      'alias',
+      'secretId',
+      'secretKey',
+      'appId',
+      'bucketName',
+      'baseDir',
+      'isAutoCustomUrl',
+      'paging',
+      'itemsPerPage'
+    ],
     refLink: 'https://piclist.cn/manage.html#%E8%85%BE%E8%AE%AF%E4%BA%91',
     referenceText: $T('MANAGE_CONSTANT_TENCENT_REFER_TEXT')
   },
@@ -525,7 +544,18 @@ export const supportedPicBedList: IStringKeyMap = {
       }
     },
     explain: $T('MANAGE_CONSTANT_UPYUN_EXPLAIN'),
-    options: ['alias', 'bucketName', 'operator', 'password', 'baseDir', 'customUrl', 'paging', 'itemsPerPage', 'antiLeechToken', 'expireTime'],
+    options: [
+      'alias',
+      'bucketName',
+      'operator',
+      'password',
+      'baseDir',
+      'customUrl',
+      'paging',
+      'itemsPerPage',
+      'antiLeechToken',
+      'expireTime'
+    ],
     refLink: 'https://piclist.cn/manage.html#%E5%8F%88%E6%8B%8D%E4%BA%91',
     referenceText: $T('MANAGE_CONSTANT_UPYUN_REFER_TEXT')
   },
@@ -680,7 +710,21 @@ export const supportedPicBedList: IStringKeyMap = {
       }
     },
     explain: $T('MANAGE_CONSTANT_S3_EXPLAIN'),
-    options: ['alias', 'accessKeyId', 'secretAccessKey', 'endpoint', 'sslEnabled', 's3ForcePathStyle', 'proxy', 'aclForUpload', 'bucketName', 'baseDir', 'dogeCloudSupport', 'paging', 'itemsPerPage'],
+    options: [
+      'alias',
+      'accessKeyId',
+      'secretAccessKey',
+      'endpoint',
+      'sslEnabled',
+      's3ForcePathStyle',
+      'proxy',
+      'aclForUpload',
+      'bucketName',
+      'baseDir',
+      'dogeCloudSupport',
+      'paging',
+      'itemsPerPage'
+    ],
     refLink: 'https://piclist.cn/manage.html#s3',
     referenceText: $T('MANAGE_CONSTANT_S3_REFER_TEXT')
   },
@@ -792,7 +836,19 @@ export const supportedPicBedList: IStringKeyMap = {
       }
     },
     explain: $T('MANAGE_CONSTANT_WEBDAV_EXPLAIN'),
-    options: ['alias', 'endpoint', 'username', 'password', 'bucketName', 'baseDir', 'customUrl', 'webPath', 'proxy', 'sslEnabled', 'authType'],
+    options: [
+      'alias',
+      'endpoint',
+      'username',
+      'password',
+      'bucketName',
+      'baseDir',
+      'customUrl',
+      'webPath',
+      'proxy',
+      'sslEnabled',
+      'authType'
+    ],
     refLink: 'https://piclist.cn/manage.html#webdav',
     referenceText: $T('MANAGE_CONSTANT_WEBDAV_REFER_TEXT')
   },
@@ -1003,7 +1059,21 @@ export const supportedPicBedList: IStringKeyMap = {
       }
     },
     explain: $T('MANAGE_CONSTANT_SFTP_EXPLAIN'),
-    options: ['alias', 'host', 'port', 'username', 'password', 'privateKey', 'passphrase', 'fileMode', 'dirMode', 'baseDir', 'customUrl', 'bucketName', 'webPath'],
+    options: [
+      'alias',
+      'host',
+      'port',
+      'username',
+      'password',
+      'privateKey',
+      'passphrase',
+      'fileMode',
+      'dirMode',
+      'baseDir',
+      'customUrl',
+      'bucketName',
+      'webPath'
+    ],
     refLink: 'https://piclist.cn/manage.html#sftp',
     referenceText: $T('MANAGE_CONSTANT_SFTP_REFER_TEXT')
   }

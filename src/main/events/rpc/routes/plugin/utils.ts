@@ -104,15 +104,17 @@ const getPluginList = (): IPicGoPlugin[] => {
 const handleNPMError = (): IDispose => {
   const handler = (msg: string) => {
     if (msg === 'NPM is not installed') {
-      dialog.showMessageBox({
-        title: T('TIPS_ERROR'),
-        message: T('TIPS_INSTALL_NODE_AND_RELOAD_PICGO'),
-        buttons: ['Yes']
-      }).then((res) => {
-        if (res.response === 0) {
-          shell.openExternal('https://nodejs.org/')
-        }
-      })
+      dialog
+        .showMessageBox({
+          title: T('TIPS_ERROR'),
+          message: T('TIPS_INSTALL_NODE_AND_RELOAD_PICGO'),
+          buttons: ['Yes']
+        })
+        .then(res => {
+          if (res.response === 0) {
+            shell.openExternal('https://nodejs.org/')
+          }
+        })
     }
   }
   picgo.once(ICOREBuildInEvent.FAILED, handler)

@@ -1,10 +1,12 @@
 <template>
   <el-image
-    :src="isShowThumbnail && item.isImage ?
-      base64Image
-      : require(`../manage/pages/assets/icons/${getFileIconPath(item.fileName ?? '')}`)"
+    :src="
+      isShowThumbnail && item.isImage
+        ? base64Image
+        : require(`../manage/pages/assets/icons/${getFileIconPath(item.fileName ?? '')}`)
+    "
     fit="contain"
-    style="height: 100px;width: 100%;margin: 0 auto;"
+    style="height: 100px; width: 100%; margin: 0 auto"
   >
     <template #placeholder>
       <el-icon>
@@ -15,7 +17,7 @@
       <el-image
         :src="require(`../manage/pages/assets/icons/${getFileIconPath(item.fileName ?? '')}`)"
         fit="contain"
-        style="height: 100px;width: 100%;margin: 0 auto;"
+        style="height: 100px; width: 100%; margin: 0 auto"
       />
     </template>
   </el-image>

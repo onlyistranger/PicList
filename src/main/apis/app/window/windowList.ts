@@ -23,8 +23,11 @@ const windowList = new Map<IWindowList, IWindowListItem>()
 
 const handleWindowParams = (windowURL: string) => windowURL
 
-const getDefaultWindowSizes = (): { width: number, height: number } => {
-  const [mainWindowWidth, mainWindowHeight] = db.get([configPaths.settings.mainWindowWidth, configPaths.settings.mainWindowHeight])
+const getDefaultWindowSizes = (): { width: number; height: number } => {
+  const [mainWindowWidth, mainWindowHeight] = db.get([
+    configPaths.settings.mainWindowWidth,
+    configPaths.settings.mainWindowHeight
+  ])
   return {
     width: mainWindowWidth || 1200,
     height: mainWindowHeight || 800
@@ -176,7 +179,7 @@ windowList.set(IWindowList.TRAY_WINDOW, {
   isValid: process.platform !== 'linux',
   multiple: false,
   options: () => trayWindowOptions,
-  callback (window) {
+  callback(window) {
     window.loadURL(handleWindowParams(TRAY_WINDOW_URL))
     window.on('blur', () => {
       window.hide()
@@ -188,7 +191,7 @@ windowList.set(IWindowList.MANUAL_WINDOW, {
   isValid: true,
   multiple: false,
   options: () => manualWindowOptions,
-  callback (window) {
+  callback(window) {
     window.loadURL(handleWindowParams(MANUAL_WINDOW_URL))
     window.focus()
   }
@@ -198,7 +201,7 @@ windowList.set(IWindowList.SETTING_WINDOW, {
   isValid: true,
   multiple: false,
   options: () => settingWindowOptions,
-  callback (window, windowManager) {
+  callback(window, windowManager) {
     window.loadURL(handleWindowParams(SETTING_WINDOW_URL))
     window.on('closed', () => {
       bus.emit(TOGGLE_SHORTKEY_MODIFIED_MODE, false)
@@ -217,7 +220,7 @@ windowList.set(IWindowList.MINI_WINDOW, {
   isValid: process.platform !== 'darwin',
   multiple: false,
   options: () => miniWindowOptions,
-  callback (window) {
+  callback(window) {
     window.loadURL(handleWindowParams(MINI_WINDOW_URL))
   }
 })
@@ -226,18 +229,19 @@ windowList.set(IWindowList.RENAME_WINDOW, {
   isValid: true,
   multiple: true,
   options: () => renameWindowOptions,
-  async callback (window, windowManager) {
+  async callback(window, windowManager) {
     window.loadURL(handleWindowParams(RENAME_WINDOW_URL))
     const currentWindow = windowManager.getAvailableWindow(true)
     if (currentWindow && currentWindow.isVisible()) {
-    // bounds: { x: 821, y: 75, width: 800, height: 450 }
+      // bounds: { x: 821, y: 75, width: 800, height: 450 }
       const bounds = currentWindow.getBounds()
       const positionX = bounds.x + bounds.width / 2 - 150
       let positionY
       // if is the settingWindow
       if (bounds.height > 400) {
         positionY = bounds.y + bounds.height / 2 - 88
-      } else { // if is the miniWindow
+      } else {
+        // if is the miniWindow
         positionY = bounds.y + bounds.height / 2
       }
       window.setPosition(positionX, positionY, false)
@@ -249,7 +253,7 @@ windowList.set(IWindowList.TOOLBOX_WINDOW, {
   isValid: true,
   multiple: false,
   options: () => toolboxWindowOptions,
-  async callback (window, windowManager) {
+  async callback(window, windowManager) {
     window.loadURL(TOOLBOX_WINDOW_URL)
     const currentWindow = windowManager.getAvailableWindow(true)
     if (currentWindow && currentWindow.isVisible()) {

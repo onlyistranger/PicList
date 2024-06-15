@@ -1,4 +1,4 @@
-const AliyunAreaCodeName : IStringKeyMap = {
+const AliyunAreaCodeName: IStringKeyMap = {
   'oss-cn-hangzhou': '华东1(杭州)',
   'oss-cn-shanghai': '华东2(上海)',
   'oss-cn-nanjing': '华东5(南京)',
@@ -31,7 +31,7 @@ const AliyunAreaCodeName : IStringKeyMap = {
   'oss-rg-china-mainland': '无地域属性'
 }
 
-const QiniuAreaCodeName : IStringKeyMap = {
+const QiniuAreaCodeName: IStringKeyMap = {
   z0: '华东-浙江',
   'cn-east-2': '华东 浙江2',
   z1: '华北-河北',
@@ -42,7 +42,7 @@ const QiniuAreaCodeName : IStringKeyMap = {
   'ap-southeast-2': '亚太-河内'
 }
 
-const TencentAreaCodeName : IStringKeyMap = {
+const TencentAreaCodeName: IStringKeyMap = {
   'ap-beijing-1': '北京一区',
   'ap-beijing': '北京',
   'ap-nanjing': '南京',

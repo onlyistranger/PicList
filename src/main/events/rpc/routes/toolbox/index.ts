@@ -30,7 +30,7 @@ toolboxRouter
           handler(event as IpcMainEvent)
         }
       } else {
-      // do check all
+        // do check all
         for (const key in toolboxCheckMap) {
           const handler = toolboxCheckMap[key as IToolboxItemType]
           if (handler) {
@@ -42,7 +42,8 @@ toolboxRouter
     IRPCType.SEND
   )
   .add(
-    IRPCActionType.TOOLBOX_CHECK_FIX, async (event, args) => {
+    IRPCActionType.TOOLBOX_CHECK_FIX,
+    async (event, args) => {
       const [type] = args as IToolboxCheckArgs
       const handler = toolboxFixMap[type]
       if (handler) {
@@ -52,6 +53,4 @@ toolboxRouter
     IRPCType.INVOKE
   )
 
-export {
-  toolboxRouter
-}
+export { toolboxRouter }

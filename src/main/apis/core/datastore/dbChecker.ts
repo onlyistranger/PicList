@@ -25,7 +25,7 @@ const errorMsg = {
 /** ensure notification list */
 if (!global.notificationList) global.notificationList = []
 
-function dbChecker () {
+function dbChecker() {
   if (process.type !== 'renderer') {
     // db save bak
     try {
@@ -54,7 +54,9 @@ function dbChecker () {
       fs.unlinkSync(configFilePath)
       if (fs.existsSync(configFileBackupPath)) {
         try {
-          configFile = fs.readFileSync(configFileBackupPath, { encoding: 'utf-8' })
+          configFile = fs.readFileSync(configFileBackupPath, {
+            encoding: 'utf-8'
+          })
           JSON.parse(configFile)
           writeFile.sync(configFilePath, configFile, { encoding: 'utf-8' })
           const stats = fs.statSync(configFileBackupPath)
@@ -80,7 +82,7 @@ function dbChecker () {
 /**
  * Get config path
  */
-function dbPathChecker (): string {
+function dbPathChecker(): string {
   if (_configFilePath) {
     return _configFilePath
   }
@@ -91,7 +93,9 @@ function dbPathChecker (): string {
     return _configFilePath
   }
   try {
-    const configString = fs.readFileSync(defaultConfigPath, { encoding: 'utf-8' })
+    const configString = fs.readFileSync(defaultConfigPath, {
+      encoding: 'utf-8'
+    })
     const config = JSON.parse(configString)
     const userConfigPath: string = config.configPath || ''
     if (userConfigPath) {
@@ -118,11 +122,11 @@ function dbPathChecker (): string {
   }
 }
 
-function dbPathDir () {
+function dbPathDir() {
   return path.dirname(dbPathChecker())
 }
 
-function getGalleryDBPath (): {
+function getGalleryDBPath(): {
   dbPath: string
   dbBackupPath: string
 } {
@@ -135,9 +139,4 @@ function getGalleryDBPath (): {
   }
 }
 
-export {
-  dbChecker,
-  dbPathChecker,
-  dbPathDir,
-  getGalleryDBPath
-}
+export { dbChecker, dbPathChecker, dbPathDir, getGalleryDBPath }

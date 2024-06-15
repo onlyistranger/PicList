@@ -1,11 +1,5 @@
 import dayjs from 'dayjs'
-import {
-  BrowserWindow,
-  clipboard,
-  ipcMain,
-  Notification,
-  WebContents
-} from 'electron'
+import { BrowserWindow, clipboard, ipcMain, Notification, WebContents } from 'electron'
 import fs from 'fs-extra'
 import util from 'util'
 import path from 'path'
@@ -21,17 +15,13 @@ import logger from '@core/picgo/logger'
 import { T } from '~/i18n'
 import { showNotification, getClipboardFilePath, calcDurationRange } from '~/utils/common'
 
-import {
-  GET_RENAME_FILE_NAME,
-  RENAME_FILE_NAME,
-  TALKING_DATA_EVENT
-} from '#/events/constants'
+import { GET_RENAME_FILE_NAME, RENAME_FILE_NAME, TALKING_DATA_EVENT } from '#/events/constants'
 import { ICOREBuildInEvent, IWindowList } from '#/types/enum'
 import { configPaths } from '#/utils/configPaths'
 import { CLIPBOARD_IMAGE_FOLDER } from '#/utils/static'
 
-const waitForRename = (window: BrowserWindow, id: number): Promise<string|null> => {
-  return new Promise((resolve) => {
+const waitForRename = (window: BrowserWindow, id: number): Promise<string | null> => {
+  return new Promise(resolve => {
     const windowId = window.id
     ipcMain.once(`${RENAME_FILE_NAME}${id}`, (_: Event, newName: string) => {
       resolve(newName)
@@ -62,11 +52,11 @@ const handleTalkingData = (webContents: WebContents, options: IAnalyticsData) =>
 class Uploader {
   private webContents: WebContents | null = null
 
-  constructor () {
+  constructor() {
     this.init()
   }
 
-  init () {
+  init() {
     picgo.on(ICOREBuildInEvent.NOTIFICATION, (message: Electron.NotificationConstructorOptions | undefined) => {
       const notification = new Notification(message)
       notification.show()
@@ -91,37 +81,39 @@ class Uploader {
         const rename = db.get(configPaths.settings.rename)
         const autoRename = db.get(configPaths.settings.autoRename)
         if (autoRename || rename) {
-          await Promise.all(ctx.output.map(async (item, index) => {
-            let name: undefined | string | null
-            let fileName: string | undefined
-            if (autoRename) {
-              fileName = dayjs().add(index, 'ms').format('YYYYMMDDHHmmSSS') + item.extname
-            } else {
-              fileName = item.fileName
-            }
-            if (rename) {
-              const window = windowManager.create(IWindowList.RENAME_WINDOW)!
-              logger.info('create rename window')
-              ipcMain.on(GET_RENAME_FILE_NAME, (evt) => {
-                try {
-                  if (evt.sender.id === window.webContents.id) {
-                    logger.info('rename window ready, wait for rename...')
-                    window.webContents.send(RENAME_FILE_NAME, fileName, item.fileName, window.webContents.id)
+          await Promise.all(
+            ctx.output.map(async (item, index) => {
+              let name: undefined | string | null
+              let fileName: string | undefined
+              if (autoRename) {
+                fileName = dayjs().add(index, 'ms').format('YYYYMMDDHHmmSSS') + item.extname
+              } else {
+                fileName = item.fileName
+              }
+              if (rename) {
+                const window = windowManager.create(IWindowList.RENAME_WINDOW)!
+                logger.info('create rename window')
+                ipcMain.on(GET_RENAME_FILE_NAME, evt => {
+                  try {
+                    if (evt.sender.id === window.webContents.id) {
+                      logger.info('rename window ready, wait for rename...')
+                      window.webContents.send(RENAME_FILE_NAME, fileName, item.fileName, window.webContents.id)
+                    }
+                  } catch (e: any) {
+                    logger.error(e)
                   }
-                } catch (e: any) {
-                  logger.error(e)
-                }
-              })
-              name = await waitForRename(window, window.webContents.id)
-            }
-            item.fileName = name || fileName
-          }))
+                })
+                name = await waitForRename(window, window.webContents.id)
+              }
+              item.fileName = name || fileName
+            })
+          )
         }
       }
     })
   }
 
-  setWebContents (webContents: WebContents) {
+  setWebContents(webContents: WebContents) {
     this.webContents = webContents
     return this
   }
@@ -129,7 +121,7 @@ class Uploader {
   /**
    * use electron's clipboard image to upload
    */
-  async uploadWithBuildInClipboard (): Promise<ImgInfo[]|false> {
+  async uploadWithBuildInClipboard(): Promise<ImgInfo[] | false> {
     let filePath = ''
     try {
       const imgPath = getClipboardFilePath()
@@ -157,7 +149,7 @@ class Uploader {
     }
   }
 
-  async upload (img?: IUploadOption): Promise<ImgInfo[]|false> {
+  async upload(img?: IUploadOption): Promise<ImgInfo[] | false> {
     try {
       const startTime = Date.now()
       const output = await picgo.upload(img)

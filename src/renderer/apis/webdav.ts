@@ -9,8 +9,11 @@ interface IConfigMap {
 }
 
 export default class WebdavApi {
-  static async delete (configMap: IConfigMap): Promise<boolean> {
-    const { fileName, config: { host, username, password, path, sslEnabled, authType } } = configMap
+  static async delete(configMap: IConfigMap): Promise<boolean> {
+    const {
+      fileName,
+      config: { host, username, password, path, sslEnabled, authType }
+    } = configMap
     const endpoint = formatEndpoint(host, sslEnabled)
     const options: WebDAVClientOptions = {
       username,
@@ -19,10 +22,7 @@ export default class WebdavApi {
     if (authType === 'digest') {
       options.authType = AuthType.Digest
     }
-    const ctx = createClient(
-      endpoint,
-      options
-    )
+    const ctx = createClient(endpoint, options)
     let key
     if (path === '/' || !path) {
       key = fileName

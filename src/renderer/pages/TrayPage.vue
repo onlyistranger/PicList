@@ -1,33 +1,16 @@
 <template>
   <div id="tray-page">
-    <div
-      class="open-main-window"
-      @click="openSettingWindow"
-    >
+    <div class="open-main-window" @click="openSettingWindow">
       {{ $T('OPEN_MAIN_WINDOW') }}
     </div>
     <div class="content">
-      <div
-        v-if="clipboardFiles.length > 0"
-        class="wait-upload-img"
-      >
+      <div v-if="clipboardFiles.length > 0" class="wait-upload-img">
         <div class="list-title">
           {{ $T('WAIT_TO_UPLOAD') }}
         </div>
-        <div
-          v-for="(item, index) in clipboardFiles"
-          :key="index"
-          class="img-list"
-        >
-          <div
-            class="upload-img__container"
-            :class="{ upload: uploadFlag }"
-            @click="uploadClipboardFiles"
-          >
-            <img
-              :src="item.imgUrl"
-              class="upload-img"
-            >
+        <div v-for="(item, index) in clipboardFiles" :key="index" class="img-list">
+          <div class="upload-img__container" :class="{ upload: uploadFlag }" @click="uploadClipboardFiles">
+            <img :src="item.imgUrl" class="upload-img" />
           </div>
         </div>
       </div>
@@ -35,23 +18,10 @@
         <div class="list-title">
           {{ $T('ALREADY_UPLOAD') }}
         </div>
-        <div
-          v-for="item in files"
-          :key="item.imgUrl"
-          class="img-list"
-        >
-          <div
-            class="upload-img__container"
-            @click="copyTheLink(item)"
-          >
-            <img
-              v-lazy="item.imgUrl"
-              class="upload-img"
-            >
-            <div
-              class="upload-img__title"
-              :title="item.fileName"
-            >
+        <div v-for="item in files" :key="item.imgUrl" class="img-list">
+          <div class="upload-img__container" @click="copyTheLink(item)">
+            <img v-lazy="item.imgUrl" class="upload-img" />
+            <div class="upload-img__title" :title="item.fileName">
               {{ item.fileName }}
             </div>
           </div>
@@ -85,11 +55,11 @@ const notification = reactive({
 const clipboardFiles = ref<ImgInfo[]>([])
 const uploadFlag = ref(false)
 
-function openSettingWindow () {
+function openSettingWindow() {
   sendRPC(IRPCActionType.OPEN_WINDOW, IWindowList.SETTING_WINDOW)
 }
 
-async function getData () {
+async function getData() {
   files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 }))!.data
 }
 
@@ -112,8 +82,8 @@ const formatCustomLink = (customLink: string, item: ImgInfo) => {
   return customLink
 }
 
-async function copyTheLink (item: ImgInfo) {
-  const pasteStyle = await getConfig<IPasteStyle>(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
+async function copyTheLink(item: ImgInfo) {
+  const pasteStyle = (await getConfig<IPasteStyle>(configPaths.settings.pasteStyle)) || IPasteStyle.MARKDOWN
   const customLink = await getConfig<string>(configPaths.settings.customLink)
   const txt = await pasteTemplate(pasteStyle, item, customLink)
   clipboard.writeText(txt)
@@ -123,7 +93,7 @@ async function copyTheLink (item: ImgInfo) {
   }
 }
 
-async function pasteTemplate (style: IPasteStyle, item: ImgInfo, customLink: string | undefined) {
+async function pasteTemplate(style: IPasteStyle, item: ImgInfo, customLink: string | undefined) {
   let url = item.url || item.imgUrl
   if (item.type === 'aws-s3' || item.type === 'aws-s3-plist') {
     url = item.imgUrl || item.url || ''
@@ -131,9 +101,9 @@ async function pasteTemplate (style: IPasteStyle, item: ImgInfo, customLink: str
   if ((await getConfig(configPaths.settings.encodeOutputURL)) === true) {
     url = handleUrlEncode(url)
   }
-  const useShortUrl = await getConfig(configPaths.settings.useShortUrl) || false
+  const useShortUrl = (await getConfig(configPaths.settings.useShortUrl)) || false
   if (useShortUrl) {
-    url = await triggerRPC<string>(IRPCActionType.TRAY_GET_SHORT_URL, url) || url
+    url = (await triggerRPC<string>(IRPCActionType.TRAY_GET_SHORT_URL, url)) || url
   }
   notification.body = url
   const _customLink = customLink || '![$fileName]($url)'
@@ -150,18 +120,26 @@ async function pasteTemplate (style: IPasteStyle, item: ImgInfo, customLink: str
   return tpl[style]
 }
 
-function disableDragFile () {
-  window.addEventListener('dragover', (e) => {
-    e = e || event
-    e.preventDefault()
-  }, false)
-  window.addEventListener('drop', (e) => {
-    e = e || event
-    e.preventDefault()
-  }, false)
+function disableDragFile() {
+  window.addEventListener(
+    'dragover',
+    e => {
+      e = e || event
+      e.preventDefault()
+    },
+    false
+  )
+  window.addEventListener(
+    'drop',
+    e => {
+      e = e || event
+      e.preventDefault()
+    },
+    false
+  )
 }
 
-function uploadClipboardFiles () {
+function uploadClipboardFiles() {
   if (uploadFlag.value) {
     return
   }
@@ -177,13 +155,19 @@ onBeforeMount(() => {
       const item = _files[i]
       await $$db.insert(item)
     }
-    files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 }))!.data
+    files.value = (await $$db.get<ImgInfo>({
+      orderBy: 'desc',
+      limit: 5
+    }))!.data
   })
   ipcRenderer.on('clipboardFiles', (_: Event, files: ImgInfo[]) => {
     clipboardFiles.value = files
   })
   ipcRenderer.on('uploadFiles', async () => {
-    files.value = (await $$db.get<ImgInfo>({ orderBy: 'desc', limit: 5 }))!.data
+    files.value = (await $$db.get<ImgInfo>({
+      orderBy: 'desc',
+      limit: 5
+    }))!.data
     uploadFlag.value = false
   })
   ipcRenderer.on('updateFiles', () => {

@@ -1,7 +1,5 @@
 <template>
-  <el-empty
-    :description="$T('MANAGE_NO_DATA')"
-  />
+  <el-empty :description="$T('MANAGE_NO_DATA')" />
 </template>
 
 <script lang="ts" setup>

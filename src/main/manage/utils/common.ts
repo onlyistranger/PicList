@@ -18,17 +18,12 @@ import { ManageLogger } from '~/manage/utils/logger'
 import { commonTaskStatus, downloadTaskSpecialStatus, uploadTaskSpecialStatus } from '#/types/enum'
 import { formatHttpProxy } from '#/utils/common'
 
-export const getFSFile = async (
-  filePath: string,
-  stream: boolean = false
-): Promise<IStringKeyMap> => {
+export const getFSFile = async (filePath: string, stream: boolean = false): Promise<IStringKeyMap> => {
   try {
     return {
       extension: path.extname(filePath),
       fileName: path.basename(filePath),
-      buffer: stream
-        ? fs.createReadStream(filePath)
-        : await fs.readFile(filePath),
+      buffer: stream ? fs.createReadStream(filePath) : await fs.readFile(filePath),
       success: true
     }
   } catch (e) {
@@ -38,10 +33,8 @@ export const getFSFile = async (
   }
 }
 
-export function isInputConfigValid (config: any): boolean {
-  return typeof config === 'object' &&
-    !Array.isArray(config) &&
-    Object.keys(config).length > 0
+export function isInputConfigValid(config: any): boolean {
+  return typeof config === 'object' && !Array.isArray(config) && Object.keys(config).length > 0
 }
 
 export const getFileMimeType = (filePath: string): string => mime.lookup(filePath) || 'application/octet-stream'
@@ -83,17 +76,18 @@ export const clearTempFolder = () => fs.emptyDirSync(getTempDirPath())
 
 export const md5 = (str: string, code: 'hex' | 'base64'): string => crypto.createHash('md5').update(str).digest(code)
 
-export const hmacSha1Base64 = (secretKey: string, stringToSign: string) : string => crypto.createHmac('sha1', secretKey).update(Buffer.from(stringToSign, 'utf8')).digest('base64')
+export const hmacSha1Base64 = (secretKey: string, stringToSign: string): string =>
+  crypto.createHmac('sha1', secretKey).update(Buffer.from(stringToSign, 'utf8')).digest('base64')
 
 export const NewDownloader = async (
   instance: UpDownTaskQueue,
   preSignedUrl: string,
-  id : string,
+  id: string,
   savedFilePath: string,
   logger?: ManageLogger,
   proxy?: string,
   headers?: any
-) : Promise<boolean> => {
+): Promise<boolean> => {
   const options = {
     url: preSignedUrl,
     directory: path.dirname(savedFilePath),
@@ -150,19 +144,16 @@ export const gotUpload = async (
   throwHttpErrors: boolean = false,
   agent: any = {}
 ) => {
-  got(
-    url,
-    {
-      headers,
-      method,
-      body,
-      timeout: {
-        lookup: timeout
-      },
-      throwHttpErrors,
-      agent
-    }
-  )
+  got(url, {
+    headers,
+    method,
+    body,
+    timeout: {
+      lookup: timeout
+    },
+    throwHttpErrors,
+    agent
+  })
     .on('uploadProgress', (progress: any) => {
       instance.updateUploadTask({
         id,
@@ -174,7 +165,10 @@ export const gotUpload = async (
       instance.updateUploadTask({
         id,
         progress: res?.statusCode === 200 || res?.statusCode === 201 ? 100 : 0,
-        status: res?.statusCode === 200 || res?.statusCode === 201 ? uploadTaskSpecialStatus.uploaded : commonTaskStatus.failed,
+        status:
+          res?.statusCode === 200 || res?.statusCode === 201
+            ? uploadTaskSpecialStatus.uploaded
+            : commonTaskStatus.failed,
         finishTime: new Date().toLocaleString()
       })
     })
@@ -190,7 +184,7 @@ export const gotUpload = async (
     })
 }
 
-export const formatError = (err: any, params:IStringKeyMap) => {
+export const formatError = (err: any, params: IStringKeyMap) => {
   if (err instanceof RequestError) {
     return {
       ...params,
@@ -220,7 +214,10 @@ const commonOptions = {
   scheduling: 'lifo' as 'lifo' | 'fifo' | undefined
 } as any
 
-export const getAgent = (proxy:any, https: boolean = true): {
+export const getAgent = (
+  proxy: any,
+  https: boolean = true
+): {
   https?: HttpsProxyAgent
   http?: HttpProxyAgent
 } => {
@@ -253,36 +250,36 @@ export const getInnerAgent = (proxy: any, sslEnabled: boolean = true) => {
   if (sslEnabled) {
     return formatProxy
       ? {
-        agent: new https.Agent({
+          agent: new https.Agent({
+            ...commonOptions,
+            rejectUnauthorized: false,
+            host: formatProxy.host,
+            port: formatProxy.port
+          })
+        }
+      : {
+          agent: new https.Agent({
+            rejectUnauthorized: false,
+            keepAlive: true
+          })
+        }
+  }
+  return formatProxy
+    ? {
+        agent: new http.Agent({
           ...commonOptions,
-          rejectUnauthorized: false,
           host: formatProxy.host,
           port: formatProxy.port
         })
       }
-      : {
-        agent: new https.Agent({
-          rejectUnauthorized: false,
-          keepAlive: true
+    : {
+        agent: new http.Agent({
+          ...commonOptions
         })
       }
-  }
-  return formatProxy
-    ? {
-      agent: new http.Agent({
-        ...commonOptions,
-        host: formatProxy.host,
-        port: formatProxy.port
-      })
-    }
-    : {
-      agent: new http.Agent({
-        ...commonOptions
-      })
-    }
 }
 
-export function getOptions (
+export function getOptions(
   method?: string,
   headers?: IStringKeyMap,
   searchParams?: IStringKeyMap,
@@ -298,7 +295,9 @@ export function getOptions (
     ...(body && { body }),
     ...(responseType && { responseType }),
     ...(timeout !== undefined ? { timeout: { request: timeout } } : { timeout: { request: 30000 } }),
-    ...(proxy && { agent: Object.fromEntries(Object.entries(getAgent(proxy)).filter(([, v]) => v !== undefined)) }),
+    ...(proxy && {
+      agent: Object.fromEntries(Object.entries(getAgent(proxy)).filter(([, v]) => v !== undefined))
+    }),
     throwHttpErrors: false
   }
 }
@@ -309,14 +308,14 @@ export class ConcurrencyPromisePool {
   runningNum: number
   results: any[]
 
-  constructor (limit: number) {
+  constructor(limit: number) {
     this.limit = limit
     this.queue = []
     this.runningNum = 0
     this.results = []
   }
 
-  all (promises: any[] = []) {
+  all(promises: any[] = []) {
     return new Promise((resolve, reject) => {
       for (const promise of promises) {
         this._run(promise, resolve, reject)
@@ -324,7 +323,7 @@ export class ConcurrencyPromisePool {
     })
   }
 
-  _run (promise: any, resolve: any, reject: any) {
+  _run(promise: any, resolve: any, reject: any) {
     if (this.runningNum >= this.limit) {
       this.queue.push(promise)
       return

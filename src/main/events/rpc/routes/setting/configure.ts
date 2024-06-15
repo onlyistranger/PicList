@@ -16,19 +16,15 @@ export default [
     action: IRPCActionType.CONFIGURE_MIGRATE_FROM_PICGO,
     handler: async () => {
       const picGoConfigPath = STORE_PATH.replace('piclist', 'picgo')
-      const files = [
-        'data.json',
-        'data.bak.json',
-        'picgo.db',
-        'picgo.bak.db'
-      ]
+      const files = ['data.json', 'data.bak.json', 'picgo.db', 'picgo.bak.db']
       try {
-        await Promise.all(files.map(async file => {
-          const sourcePath = path.join(picGoConfigPath, file)
-          const targetPath = path.join(STORE_PATH, file.replace('picgo', 'piclist'))
-          await fs.copy(sourcePath, targetPath, { overwrite: true })
-        }
-        ))
+        await Promise.all(
+          files.map(async file => {
+            const sourcePath = path.join(picGoConfigPath, file)
+            const targetPath = path.join(STORE_PATH, file.replace('picgo', 'piclist'))
+            await fs.copy(sourcePath, targetPath, { overwrite: true })
+          })
+        )
         return true
       } catch (err: any) {
         logger.error(err)

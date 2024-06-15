@@ -1,18 +1,18 @@
 import { ComponentOptions } from 'vue'
 
 export const dragMixin: ComponentOptions = {
-  mounted () {
+  mounted() {
     this.disableDragEvent()
   },
 
   methods: {
-    disableDragEvent () {
+    disableDragEvent() {
       window.addEventListener('dragenter', this.disableDrag, false)
       window.addEventListener('dragover', this.disableDrag)
       window.addEventListener('drop', this.disableDrag)
     },
 
-    disableDrag (e: DragEvent) {
+    disableDrag(e: DragEvent) {
       const dropzone = document.getElementById('upload-area')
       if (dropzone === null || !dropzone.contains(<Node>e.target)) {
         e.preventDefault()
@@ -22,7 +22,7 @@ export const dragMixin: ComponentOptions = {
     }
   },
 
-  beforeUnmount () {
+  beforeUnmount() {
     window.removeEventListener('dragenter', this.disableDrag, false)
     window.removeEventListener('dragover', this.disableDrag)
     window.removeEventListener('drop', this.disableDrag)

@@ -12,7 +12,7 @@ const serverPort = 36699
 
 let server: http.Server
 
-export function startFileServer () {
+export function startFileServer() {
   server = http.createServer((req, res) => {
     const requestPath = req.url?.split('?')[0]
     const filePath = path.join(imgFilePath, decodeURIComponent(requestPath as string))
@@ -27,14 +27,16 @@ export function startFileServer () {
     })
   })
 
-  server.listen(serverPort, () => {
-    logger.info(`File server is running, http://localhost:${serverPort}`)
-  }).on('error', (err) => {
-    logger.error(err)
-  })
+  server
+    .listen(serverPort, () => {
+      logger.info(`File server is running, http://localhost:${serverPort}`)
+    })
+    .on('error', err => {
+      logger.error(err)
+    })
 }
 
-export function stopFileServer () {
+export function stopFileServer() {
   server.close(() => {
     logger.info('File server is stopped')
   })

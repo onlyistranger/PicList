@@ -2,7 +2,7 @@ import { ILogger } from 'piclist/dist/types'
 import { commonTaskStatus, downloadTaskSpecialStatus, uploadTaskSpecialStatus } from './enum'
 
 // common type
-export type Undefinable<T> = T | undefined;
+export type Undefinable<T> = T | undefined
 
 export interface IManageError extends Error {
   code?: number
@@ -11,7 +11,7 @@ export interface IManageError extends Error {
   picbed?: string
 }
 
-export type IPicBedMangeConfig = IStringKeyMap;
+export type IPicBedMangeConfig = IStringKeyMap
 
 export interface IManageApiType {
   /**
@@ -57,129 +57,87 @@ export interface IManageApiType {
   /**
    * get bucket list
    */
-  getBucketListRecursively: (
-    param?: IStringKeyMap
-  ) => Promise<any | IManageError>
+  getBucketListRecursively: (param?: IStringKeyMap) => Promise<any | IManageError>
   /**
    * get bucket list
    */
-  getBucketListBackstage: (
-    param?: IStringKeyMap
-  ) => Promise<any | IManageError>
+  getBucketListBackstage: (param?: IStringKeyMap) => Promise<any | IManageError>
   /**
    * get bucket list
    */
-  getBucketList: (
-    param?: IStringKeyMap
-  ) => Promise<any | IManageError>
-  getBucketDomain: (
-    param: IStringKeyMap
-  ) => Promise<any>
+  getBucketList: (param?: IStringKeyMap) => Promise<any | IManageError>
+  getBucketDomain: (param: IStringKeyMap) => Promise<any>
   /**
    * get bucket info
    */
-  getBucketInfo: (
-    param?: IStringKeyMap
-  ) => Promise<IStringKeyMap | IManageError>
+  getBucketInfo: (param?: IStringKeyMap) => Promise<IStringKeyMap | IManageError>
   /**
    * create bucket
    */
-  createBucket: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  createBucket: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * delete bucket
    */
-  deleteBucket: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  deleteBucket: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * get Operator list
    * specific for upyun
    */
-  getOperatorList: (
-    param?: IStringKeyMap
-  ) => Promise<string[] | IManageError>
+  getOperatorList: (param?: IStringKeyMap) => Promise<string[] | IManageError>
   /**
    * add Operator
    * specific for upyun
    */
-  addOperator: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  addOperator: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * delete Operator
    * specific for upyun
    */
-  deleteOperator: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  deleteOperator: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * get bucket ACL policy
    */
-  getBucketAclPolicy: (
-    param?: IStringKeyMap
-  ) => Promise<IStringKeyMap | IManageError>
+  getBucketAclPolicy: (param?: IStringKeyMap) => Promise<IStringKeyMap | IManageError>
   /**
    * set bucket ACL policy
    */
-  setBucketAclPolicy: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  setBucketAclPolicy: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * get bucket file list
    */
-  getBucketFileList: (
-    param?: IStringKeyMap
-  ) => Promise<IStringKeyMap | IManageError>
+  getBucketFileList: (param?: IStringKeyMap) => Promise<IStringKeyMap | IManageError>
   /**
    * delete bucket file
    */
-  deleteBucketFile: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  deleteBucketFile: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * delete folder
    */
-  deleteBucketFolder: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  deleteBucketFolder: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * rename bucket file
    */
-  renameBucketFile: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  renameBucketFile: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * download bucket file
    */
-  downloadBucketFile: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  downloadBucketFile: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * copy or move between buckets
    */
-  copyMoveBucketFile: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  copyMoveBucketFile: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * create folder
    */
-  createBucketFolder: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  createBucketFolder: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * upload file
    */
-  uploadBucketFile: (
-    param?: IStringKeyMap
-  ) => Promise<boolean>
+  uploadBucketFile: (param?: IStringKeyMap) => Promise<boolean>
   /**
    * get presigned url
    */
-  getPreSignedUrl: (
-    param?: IStringKeyMap
-  ) => Promise<string>
+  getPreSignedUrl: (param?: IStringKeyMap) => Promise<string>
 }
 
 /** PicList 存储管理功能配置文件类型定义 */

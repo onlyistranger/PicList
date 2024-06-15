@@ -11,7 +11,7 @@ import { T } from '~/i18n'
 import { IToolboxItemCheckStatus, IToolboxItemType } from '#/types/enum'
 
 export const checkFileMap: IToolboxCheckerMap<
-IToolboxItemType.IS_CONFIG_FILE_BROKEN | IToolboxItemType.IS_GALLERY_FILE_BROKEN
+  IToolboxItemType.IS_CONFIG_FILE_BROKEN | IToolboxItemType.IS_GALLERY_FILE_BROKEN
 > = {
   [IToolboxItemType.IS_CONFIG_FILE_BROKEN]: async (event: IpcMainEvent) => {
     const sendToolboxRes = sendToolboxResWithType(IToolboxItemType.IS_CONFIG_FILE_BROKEN)
@@ -38,7 +38,7 @@ IToolboxItemType.IS_CONFIG_FILE_BROKEN | IToolboxItemType.IS_GALLERY_FILE_BROKEN
       })
     }
   },
-  [IToolboxItemType.IS_GALLERY_FILE_BROKEN]: async (event) => {
+  [IToolboxItemType.IS_GALLERY_FILE_BROKEN]: async event => {
     const sendToolboxRes = sendToolboxResWithType(IToolboxItemType.IS_GALLERY_FILE_BROKEN)
     sendToolboxRes(event, {
       status: IToolboxItemCheckStatus.LOADING
@@ -63,7 +63,7 @@ IToolboxItemType.IS_CONFIG_FILE_BROKEN | IToolboxItemType.IS_GALLERY_FILE_BROKEN
 }
 
 export const fixFileMap: IToolboxFixMap<
-IToolboxItemType.IS_CONFIG_FILE_BROKEN | IToolboxItemType.IS_GALLERY_FILE_BROKEN
+  IToolboxItemType.IS_CONFIG_FILE_BROKEN | IToolboxItemType.IS_GALLERY_FILE_BROKEN
 > = {
   [IToolboxItemType.IS_CONFIG_FILE_BROKEN]: async () => {
     try {

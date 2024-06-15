@@ -34,7 +34,7 @@ import { hideMiniWindow, openMainWindow, openMiniWindow } from '~/utils/windowHe
 
 let contextMenu: Menu | null
 
-export function setDockMenu () {
+export function setDockMenu() {
   const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
   const dockMenu = Menu.buildFromTemplate([
     {
@@ -43,7 +43,7 @@ export function setDockMenu () {
     },
     {
       label: T('START_WATCH_CLIPBOARD'),
-      click () {
+      click() {
         db.set(configPaths.settings.isListeningClipboard, true)
         clipboardPoll.startListening()
         clipboardPoll.on('change', () => {
@@ -56,7 +56,7 @@ export function setDockMenu () {
     },
     {
       label: T('STOP_WATCH_CLIPBOARD'),
-      click () {
+      click() {
         db.set(configPaths.settings.isListeningClipboard, false)
         clipboardPoll.stopListening()
         clipboardPoll.removeAllListeners()
@@ -68,14 +68,20 @@ export function setDockMenu () {
   app.dock.setMenu(dockMenu)
 }
 
-export function createMenu () {
+export function createMenu() {
   const submenu = buildPicBedListMenu()
   const appMenu = Menu.buildFromTemplate([
     {
       label: 'PicList',
       submenu: [
         { label: T('OPEN_MAIN_WINDOW'), click: openMainWindow },
-        { label: T('RELOAD_APP'), click () { app.relaunch(); app.exit(0) } }
+        {
+          label: T('RELOAD_APP'),
+          click() {
+            app.relaunch()
+            app.exit(0)
+          }
+        }
       ]
     },
     { label: T('CHOOSE_DEFAULT_PICBED'), type: 'submenu', submenu },
@@ -93,18 +99,17 @@ export function createMenu () {
     },
     {
       label: T('QUIT'),
-      submenu: [
-        { label: T('QUIT'), role: 'quit' }
-      ]
+      submenu: [{ label: T('QUIT'), role: 'quit' }]
     }
   ])
   Menu.setApplicationMenu(appMenu)
 }
 
-export function createContextMenu () {
+export function createContextMenu() {
   const ClipboardWatcher = clipboardPoll
   const isListeningClipboard = db.get(configPaths.settings.isListeningClipboard) || false
-  const isMiniWindowVisible = windowManager.has(IWindowList.MINI_WINDOW) && windowManager.get(IWindowList.MINI_WINDOW)!.isVisible()
+  const isMiniWindowVisible =
+    windowManager.has(IWindowList.MINI_WINDOW) && windowManager.get(IWindowList.MINI_WINDOW)!.isVisible()
 
   const startWatchClipboard = () => {
     db.set(configPaths.settings.isListeningClipboard, true)
@@ -125,18 +130,44 @@ export function createContextMenu () {
 
   if (process.platform === 'darwin' || process.platform === 'win32') {
     const submenu = buildPicBedListMenu()
-    const template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [
+    const template: Array<MenuItemConstructorOptions | MenuItem> = [
       { label: T('OPEN_MAIN_WINDOW'), click: openMainWindow },
       { label: T('CHOOSE_DEFAULT_PICBED'), type: 'submenu', submenu },
-      { label: T('START_WATCH_CLIPBOARD'), click: startWatchClipboard, visible: !isListeningClipboard },
-      { label: T('STOP_WATCH_CLIPBOARD'), click: stopWatchClipboard, visible: isListeningClipboard },
-      { label: T('RELOAD_APP'), click () { app.relaunch(); app.exit(0) } },
+      {
+        label: T('START_WATCH_CLIPBOARD'),
+        click: startWatchClipboard,
+        visible: !isListeningClipboard
+      },
+      {
+        label: T('STOP_WATCH_CLIPBOARD'),
+        click: stopWatchClipboard,
+        visible: isListeningClipboard
+      },
+      {
+        label: T('RELOAD_APP'),
+        click() {
+          app.relaunch()
+          app.exit(0)
+        }
+      },
       { label: T('QUIT'), role: 'quit' }
     ]
     if (process.platform === 'win32') {
-      template.splice(2, 0,
-        { label: T('OPEN_MINI_WINDOW'), click () { openMiniWindow(false) }, visible: !isMiniWindowVisible },
-        { label: T('HIDE_MINI_WINDOW'), click: hideMiniWindow, visible: isMiniWindowVisible }
+      template.splice(
+        2,
+        0,
+        {
+          label: T('OPEN_MINI_WINDOW'),
+          click() {
+            openMiniWindow(false)
+          },
+          visible: !isMiniWindowVisible
+        },
+        {
+          label: T('HIDE_MINI_WINDOW'),
+          click: hideMiniWindow,
+          visible: isMiniWindowVisible
+        }
       )
     }
     contextMenu = Menu.buildFromTemplate(template)
@@ -150,13 +181,31 @@ export function createContextMenu () {
 
     contextMenu = Menu.buildFromTemplate([
       { label: T('OPEN_MAIN_WINDOW'), click: openMainWindow },
-      { label: T('OPEN_MINI_WINDOW'), click () { openMiniWindow(false) }, visible: !isMiniWindowVisible },
-      { label: T('HIDE_MINI_WINDOW'), click: hideMiniWindow, visible: isMiniWindowVisible },
-      { label: T('START_WATCH_CLIPBOARD'), click: startWatchClipboard, visible: !isListeningClipboard },
-      { label: T('STOP_WATCH_CLIPBOARD'), click: stopWatchClipboard, visible: isListeningClipboard },
+      {
+        label: T('OPEN_MINI_WINDOW'),
+        click() {
+          openMiniWindow(false)
+        },
+        visible: !isMiniWindowVisible
+      },
+      {
+        label: T('HIDE_MINI_WINDOW'),
+        click: hideMiniWindow,
+        visible: isMiniWindowVisible
+      },
+      {
+        label: T('START_WATCH_CLIPBOARD'),
+        click: startWatchClipboard,
+        visible: !isListeningClipboard
+      },
+      {
+        label: T('STOP_WATCH_CLIPBOARD'),
+        click: stopWatchClipboard,
+        visible: isListeningClipboard
+      },
       {
         label: T('ABOUT'),
-        click () {
+        click() {
           dialog.showMessageBox({
             title: 'PicList',
             message: 'PicList',
@@ -179,7 +228,7 @@ const getTrayIcon = () => {
   }
 }
 
-export function createTray (tooltip: string) {
+export function createTray(tooltip: string) {
   const menubarPic = getTrayIcon()
   setTray(new Tray(menubarPic))
   tray.setToolTip(tooltip)
@@ -260,9 +309,7 @@ export function createTray (tooltip: string) {
       const pasteStyle = db.get(configPaths.settings.pasteStyle) || IPasteStyle.MARKDOWN
       const rawInput = cloneDeep(files)
       const trayWindow = windowManager.get(IWindowList.TRAY_WINDOW)!
-      const imgs = await uploader
-        .setWebContents(trayWindow.webContents)
-        .upload(files)
+      const imgs = await uploader.setWebContents(trayWindow.webContents).upload(files)
       const deleteLocalFile = db.get(configPaths.settings.deleteLocalFile) || false
       if (imgs !== false) {
         const pasteText: string[] = []
@@ -270,8 +317,11 @@ export function createTray (tooltip: string) {
           if (deleteLocalFile) {
             await fs.remove(rawInput[i])
           }
-          pasteText.push(await (pasteTemplate(pasteStyle, imgs[i], db.get(configPaths.settings.customLink))))
-          const isShowResultNotification = db.get(configPaths.settings.uploadResultNotification) === undefined ? true : !!db.get(configPaths.settings.uploadResultNotification)
+          pasteText.push(await pasteTemplate(pasteStyle, imgs[i], db.get(configPaths.settings.customLink)))
+          const isShowResultNotification =
+            db.get(configPaths.settings.uploadResultNotification) === undefined
+              ? true
+              : !!db.get(configPaths.settings.uploadResultNotification)
           if (isShowResultNotification) {
             const notification = new Notification({
               title: T('UPLOAD_SUCCEED'),
@@ -290,8 +340,8 @@ export function createTray (tooltip: string) {
     })
     // toggleWindow()
   } else if (process.platform === 'linux') {
-  // click事件在Ubuntu上无法触发，Unity不支持（在Mac和Windows上可以触发）
-  // 需要使用 setContextMenu 设置菜单
+    // click事件在Ubuntu上无法触发，Unity不支持（在Mac和Windows上可以触发）
+    // 需要使用 setContextMenu 设置菜单
     createContextMenu()
     tray!.setContextMenu(contextMenu)
   }

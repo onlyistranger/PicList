@@ -13,6 +13,7 @@ export const handleConfigWithFunction = (config: IPicGoPluginOriginConfig[]): IP
       config[i].default = config[i].default()
     }
     if (typeof config[i].choices === 'function') {
+      // eslint-disable-next-line @typescript-eslint/ban-types
       config[i].choices = (config[i].choices as Function)()
     }
   }
@@ -20,13 +21,17 @@ export const handleConfigWithFunction = (config: IPicGoPluginOriginConfig[]): IP
 }
 
 export const completeUploaderMetaConfig = (originData: IStringKeyMap): IUploaderConfigListItem => {
-  return Object.assign({
-    _configName: 'Default'
-  }, trimValues(originData), {
-    _id: uuid(),
-    _createdAt: Date.now(),
-    _updatedAt: Date.now()
-  })
+  return Object.assign(
+    {
+      _configName: 'Default'
+    },
+    trimValues(originData),
+    {
+      _id: uuid(),
+      _createdAt: Date.now(),
+      _updatedAt: Date.now()
+    }
+  )
 }
 
 /**
@@ -130,7 +135,9 @@ export const deleteUploaderConfig = (type: string, id: string): IUploaderConfigI
 /**
  * upgrade old uploader config to new format
  */
-export const upgradeUploaderConfig = (type: string): {
+export const upgradeUploaderConfig = (
+  type: string
+): {
   configList: IStringKeyMap[]
   defaultId: string
 } => {

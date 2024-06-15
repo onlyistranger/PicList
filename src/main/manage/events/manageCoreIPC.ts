@@ -1,11 +1,11 @@
-import {
-  IpcMainEvent,
-  IpcMainInvokeEvent,
-  ipcMain
-} from 'electron'
+import { IpcMainEvent, IpcMainInvokeEvent, ipcMain } from 'electron'
 
 import getManageApi from '~/manage/Main'
-import { PICLIST_MANAGE_GET_CONFIG, PICLIST_MANAGE_SAVE_CONFIG, PICLIST_MANAGE_REMOVE_CONFIG } from '~/manage/events/constants'
+import {
+  PICLIST_MANAGE_GET_CONFIG,
+  PICLIST_MANAGE_SAVE_CONFIG,
+  PICLIST_MANAGE_REMOVE_CONFIG
+} from '~/manage/events/constants'
 
 const manageApi = getManageApi()
 
@@ -28,7 +28,7 @@ const handleManageRemoveConfig = () => {
 }
 
 export default {
-  listen () {
+  listen() {
     handleManageGetConfig()
     handleManageSaveConfig()
     handleManageRemoveConfig()

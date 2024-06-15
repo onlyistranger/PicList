@@ -36,7 +36,7 @@ export const getRawData = (args: any): any => {
   return args
 }
 
-export function sendToMain (channel: string, ...args: any[]) {
+export function sendToMain(channel: string, ...args: any[]) {
   const data = getRawData(args)
   ipcRenderer.send(channel, ...data)
 }
@@ -46,26 +46,26 @@ export function sendToMain (channel: string, ...args: any[]) {
  *
  * or the response will be handled by other listener
  */
-export function sendRPC (action: IRPCActionType, ...args: any[]): void {
+export function sendRPC(action: IRPCActionType, ...args: any[]): void {
   const data = getRawData(args)
   ipcRenderer.send(RPC_ACTIONS, action, data)
 }
 
-export function sendRpcSync (action: IRPCActionType, ...args: any[]) {
+export function sendRpcSync(action: IRPCActionType, ...args: any[]) {
   const data = getRawData(args)
   return ipcRenderer.sendSync(RPC_ACTIONS, action, data)
 }
 
-export function invokeToMain (channel: string, ...args: any[]) {
+export function invokeToMain(channel: string, ...args: any[]) {
   const data = getRawData(args)
   return ipcRenderer.invoke(channel, ...data)
 }
 
 /**
-   * trigger RPC action
-   * TODO: create an isolate rpc handler
-   */
-export async function triggerRPC<T> (action: IRPCActionType, ...args: any[]): Promise<T | undefined> {
+ * trigger RPC action
+ * TODO: create an isolate rpc handler
+ */
+export async function triggerRPC<T>(action: IRPCActionType, ...args: any[]): Promise<T | undefined> {
   const data = getRawData(args)
   return await ipcRenderer.invoke(RPC_ACTIONS_INVOKE, action, data)
 }

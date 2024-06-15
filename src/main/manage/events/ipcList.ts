@@ -10,7 +10,7 @@ import { downloadFileFromUrl } from '~/manage/utils/common'
 import { selectDownloadFolder } from '#/utils/static'
 
 export const manageIpcList = {
-  listen () {
+  listen() {
     manageCoreIPC.listen()
 
     ipcMain.handle('getBucketList', async (_: IpcMainInvokeEvent, currentPicBed: string) => {
@@ -59,10 +59,13 @@ export const manageIpcList = {
       return manage.getBucketListBackstage(param)
     })
 
-    ipcMain.on('getBucketListRecursively', async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
-      const manage = new ManageApi(currentPicBed)
-      return manage.getBucketListRecursively(param)
-    })
+    ipcMain.on(
+      'getBucketListRecursively',
+      async (_: IpcMainInvokeEvent, currentPicBed: string, param: IStringKeyMap) => {
+        const manage = new ManageApi(currentPicBed)
+        return manage.getBucketListRecursively(param)
+      }
+    )
 
     ipcMain.handle('convertPathToBase64', async (_: IpcMainInvokeEvent, filePath: string) => {
       const res = fs.readFileSync(filePath, 'base64')

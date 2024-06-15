@@ -18,38 +18,38 @@ class UpDownTaskQueue {
 
   private persistPath = path.join(app.getPath('userData'), 'UpDownTaskQueue.json')
 
-  private constructor () {
+  private constructor() {
     this.restore()
   }
 
-  static getInstance () {
+  static getInstance() {
     if (!UpDownTaskQueue.instance) {
       UpDownTaskQueue.instance = new UpDownTaskQueue()
     }
     return UpDownTaskQueue.instance
   }
 
-  getUploadTaskQueue () {
+  getUploadTaskQueue() {
     return UpDownTaskQueue.getInstance().uploadTaskQueue
   }
 
-  getDownloadTaskQueue () {
+  getDownloadTaskQueue() {
     return UpDownTaskQueue.getInstance().downloadTaskQueue
   }
 
-  getUploadTask (taskId: string) {
+  getUploadTask(taskId: string) {
     return UpDownTaskQueue.getInstance().uploadTaskQueue.find(item => item.id === taskId)
   }
 
-  getAllUploadTask () {
+  getAllUploadTask() {
     return UpDownTaskQueue.getInstance().uploadTaskQueue
   }
 
-  addUploadTask (task: IUploadTask) {
+  addUploadTask(task: IUploadTask) {
     UpDownTaskQueue.getInstance().uploadTaskQueue.push(task)
   }
 
-  updateUploadTask (task: Partial<IUploadTask>) {
+  updateUploadTask(task: Partial<IUploadTask>) {
     const taskIndex = UpDownTaskQueue.getInstance().uploadTaskQueue.findIndex(item => item.id === task.id)
     if (taskIndex !== -1) {
       const taskKeys = Object.keys(task)
@@ -61,33 +61,33 @@ class UpDownTaskQueue {
     }
   }
 
-  removeUploadTask (taskId: string) {
+  removeUploadTask(taskId: string) {
     const taskIndex = UpDownTaskQueue.getInstance().uploadTaskQueue.findIndex(item => item.id === taskId)
     if (taskIndex !== -1) {
       UpDownTaskQueue.getInstance().uploadTaskQueue.splice(taskIndex, 1)
     }
   }
 
-  removeDownloadTask (taskId: string) {
+  removeDownloadTask(taskId: string) {
     const taskIndex = UpDownTaskQueue.getInstance().downloadTaskQueue.findIndex(item => item.id === taskId)
     if (taskIndex !== -1) {
       UpDownTaskQueue.getInstance().downloadTaskQueue.splice(taskIndex, 1)
     }
   }
 
-  getDownloadTask (taskId: string) {
+  getDownloadTask(taskId: string) {
     return UpDownTaskQueue.getInstance().downloadTaskQueue.find(item => item.id === taskId)
   }
 
-  getAllDownloadTask () {
+  getAllDownloadTask() {
     return UpDownTaskQueue.getInstance().downloadTaskQueue
   }
 
-  addDownloadTask (task: IDownloadTask) {
+  addDownloadTask(task: IDownloadTask) {
     UpDownTaskQueue.getInstance().downloadTaskQueue.push(task)
   }
 
-  updateDownloadTask (task: Partial<IDownloadTask>) {
+  updateDownloadTask(task: Partial<IDownloadTask>) {
     const taskIndex = UpDownTaskQueue.getInstance().downloadTaskQueue.findIndex(item => item.id === task.id)
     if (taskIndex !== -1) {
       const taskKeys = Object.keys(task)
@@ -99,40 +99,53 @@ class UpDownTaskQueue {
     }
   }
 
-  clearUploadTaskQueue () {
+  clearUploadTaskQueue() {
     UpDownTaskQueue.getInstance().uploadTaskQueue = []
   }
 
-  removeUploadedTask () {
-    UpDownTaskQueue.getInstance().uploadTaskQueue = UpDownTaskQueue.getInstance().uploadTaskQueue.filter(item => item.status !== uploadTaskSpecialStatus.uploaded && item.status !== commonTaskStatus.canceled && item.status !== commonTaskStatus.failed)
+  removeUploadedTask() {
+    UpDownTaskQueue.getInstance().uploadTaskQueue = UpDownTaskQueue.getInstance().uploadTaskQueue.filter(
+      item =>
+        item.status !== uploadTaskSpecialStatus.uploaded &&
+        item.status !== commonTaskStatus.canceled &&
+        item.status !== commonTaskStatus.failed
+    )
   }
 
-  removeDownloadedTask () {
-    UpDownTaskQueue.getInstance().downloadTaskQueue = UpDownTaskQueue.getInstance().downloadTaskQueue.filter(item => item.status !== downloadTaskSpecialStatus.downloaded && item.status !== commonTaskStatus.canceled && item.status !== commonTaskStatus.failed)
+  removeDownloadedTask() {
+    UpDownTaskQueue.getInstance().downloadTaskQueue = UpDownTaskQueue.getInstance().downloadTaskQueue.filter(
+      item =>
+        item.status !== downloadTaskSpecialStatus.downloaded &&
+        item.status !== commonTaskStatus.canceled &&
+        item.status !== commonTaskStatus.failed
+    )
   }
 
-  clearDownloadTaskQueue () {
+  clearDownloadTaskQueue() {
     UpDownTaskQueue.getInstance().downloadTaskQueue = []
   }
 
-  clearAllTaskQueue () {
+  clearAllTaskQueue() {
     this.clearUploadTaskQueue()
     this.clearDownloadTaskQueue()
   }
 
-  persist () {
+  persist() {
     try {
       this.checkPersistPath()
-      fs.writeFileSync(this.persistPath, JSON.stringify({
-        uploadTaskQueue: this.uploadTaskQueue,
-        downloadTaskQueue: this.downloadTaskQueue
-      }))
+      fs.writeFileSync(
+        this.persistPath,
+        JSON.stringify({
+          uploadTaskQueue: this.uploadTaskQueue,
+          downloadTaskQueue: this.downloadTaskQueue
+        })
+      )
     } catch (e) {
       console.log(e)
     }
   }
 
-  private restore () {
+  private restore() {
     try {
       this.checkPersistPath()
       const persistData = JSON.parse(fs.readFileSync(this.persistPath, { encoding: 'utf-8' }))
@@ -144,20 +157,26 @@ class UpDownTaskQueue {
     }
   }
 
-  private checkPersistPath () {
+  private checkPersistPath() {
     if (!fs.existsSync(this.persistPath)) {
-      fs.writeFileSync(this.persistPath, JSON.stringify({
-        uploadTaskQueue: this.uploadTaskQueue,
-        downloadTaskQueue: this.downloadTaskQueue
-      }))
+      fs.writeFileSync(
+        this.persistPath,
+        JSON.stringify({
+          uploadTaskQueue: this.uploadTaskQueue,
+          downloadTaskQueue: this.downloadTaskQueue
+        })
+      )
     }
     try {
       JSON.parse(fs.readFileSync(this.persistPath, { encoding: 'utf-8' }))
     } catch (e) {
-      fs.writeFileSync(this.persistPath, JSON.stringify({
-        uploadTaskQueue: this.uploadTaskQueue,
-        downloadTaskQueue: this.downloadTaskQueue
-      }))
+      fs.writeFileSync(
+        this.persistPath,
+        JSON.stringify({
+          uploadTaskQueue: this.uploadTaskQueue,
+          downloadTaskQueue: this.downloadTaskQueue
+        })
+      )
     }
   }
 }

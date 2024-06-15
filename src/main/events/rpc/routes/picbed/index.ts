@@ -94,6 +94,4 @@ const picbedRoutes = [
 
 picbedRouter.addBatch(picbedRoutes)
 
-export {
-  picbedRouter
-}
+export { picbedRouter }

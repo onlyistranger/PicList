@@ -32,7 +32,7 @@ const dogeRegionMap: IStringKeyMap = {
   'ap-chengdu': '3'
 }
 
-async function dogecloudApi (
+async function dogecloudApi(
   apiPath: string,
   data = {},
   jsonMode: boolean = false,
@@ -40,7 +40,10 @@ async function dogecloudApi (
   secretKey: string
 ) {
   const body = jsonMode ? JSON.stringify(data) : querystring.encode(data)
-  const sign = crypto.createHmac('sha1', secretKey).update(Buffer.from(apiPath + '\n' + body, 'utf8')).digest('hex')
+  const sign = crypto
+    .createHmac('sha1', secretKey)
+    .update(Buffer.from(apiPath + '\n' + body, 'utf8'))
+    .digest('hex')
   const authorization = `TOKEN ${accessKey}:${sign}`
   try {
     const res = await axios.request({
@@ -62,12 +65,18 @@ async function dogecloudApi (
   }
 }
 
-async function getDogeToken (accessKey: string, secretKey: string): Promise<{} | DogecloudTokenFull> {
+async function getDogeToken(accessKey: string, secretKey: string): Promise<IObj | DogecloudTokenFull> {
   try {
-    const data = await dogecloudApi('/auth/tmp_token.json', {
-      channel: 'OSS_FULL',
-      scopes: ['*']
-    }, true, accessKey, secretKey)
+    const data = await dogecloudApi(
+      '/auth/tmp_token.json',
+      {
+        channel: 'OSS_FULL',
+        scopes: ['*']
+      },
+      true,
+      accessKey,
+      secretKey
+    )
     return data
   } catch (err: any) {
     console.log(err)
@@ -75,10 +84,17 @@ async function getDogeToken (accessKey: string, secretKey: string): Promise<{} |
   }
 }
 
-export async function removeFileFromS3InMain (configMap: IStringKeyMap, dogeMode: boolean = false) {
+export async function removeFileFromS3InMain(configMap: IStringKeyMap, dogeMode: boolean = false) {
   try {
-    const { url: rawUrl, type, config: { accessKeyID, secretAccessKey, bucketName, endpoint, pathStyleAccess, rejectUnauthorized, proxy } } = configMap
-    let { imgUrl, config: { region } } = configMap
+    const {
+      url: rawUrl,
+      type,
+      config: { accessKeyID, secretAccessKey, bucketName, endpoint, pathStyleAccess, rejectUnauthorized, proxy }
+    } = configMap
+    let {
+      imgUrl,
+      config: { region }
+    } = configMap
     if (type === 'aws-s3' || type === 'aws-s3-plist') {
       imgUrl = rawUrl || imgUrl || ''
     }
@@ -105,21 +121,21 @@ export async function removeFileFromS3InMain (configMap: IStringKeyMap, dogeMode
     const extraOptions = sslEnabled ? { rejectUnauthorized: !!rejectUnauthorized } : {}
     const handler = sslEnabled
       ? new NodeHttpHandler({
-        httpsAgent: agent.https
-          ? agent.https
-          : new https.Agent({
-            ...commonOptions,
-            ...extraOptions
-          })
-      })
+          httpsAgent: agent.https
+            ? agent.https
+            : new https.Agent({
+                ...commonOptions,
+                ...extraOptions
+              })
+        })
       : new NodeHttpHandler({
-        httpAgent: agent.http
-          ? agent.http
-          : new http.Agent({
-            ...commonOptions,
-            ...extraOptions
-          })
-      })
+          httpAgent: agent.http
+            ? agent.http
+            : new http.Agent({
+                ...commonOptions,
+                ...extraOptions
+              })
+        })
     const s3Options: S3ClientConfig = {
       credentials: {
         accessKeyId: accessKeyID,
@@ -162,10 +178,12 @@ export async function removeFileFromS3InMain (configMap: IStringKeyMap, dogeMode
   }
 }
 
-export async function removeFileFromDogeInMain (configMap: IStringKeyMap) {
+export async function removeFileFromDogeInMain(configMap: IStringKeyMap) {
   try {
-    const { config: { bucketName, AccessKey, SecretKey } } = configMap
-    const token = await getDogeToken(AccessKey, SecretKey) as DogecloudTokenFull
+    const {
+      config: { bucketName, AccessKey, SecretKey }
+    } = configMap
+    const token = (await getDogeToken(AccessKey, SecretKey)) as DogecloudTokenFull
     const bucket = token.Buckets?.find(item => item.name === bucketName || item.s3Bucket === bucketName)
     const newConfigMap = Object.assign({}, configMap)
     newConfigMap.config = {
@@ -184,7 +202,7 @@ export async function removeFileFromDogeInMain (configMap: IStringKeyMap) {
   }
 }
 
-function createHuaweiAuthorization (
+function createHuaweiAuthorization(
   bucketName: string,
   path: string,
   fileName: string,
@@ -197,7 +215,7 @@ function createHuaweiAuthorization (
   return `OBS ${accessKey}:${singature}`
 }
 
-export async function removeFileFromHuaweiInMain (configMap: IStringKeyMap) {
+export async function removeFileFromHuaweiInMain(configMap: IStringKeyMap) {
   const { fileName, config } = configMap
   const { accessKeyId, accessKeySecret, bucketName, endpoint } = config
   let path = config.path || '/'
@@ -223,11 +241,11 @@ export async function removeFileFromHuaweiInMain (configMap: IStringKeyMap) {
   }
 }
 
-export async function removeFileFromSFTPInMain (config: ISftpPlistConfig, fileName: string) {
+export async function removeFileFromSFTPInMain(config: ISftpPlistConfig, fileName: string) {
   try {
     const client = SSHClient.instance
     await client.connect(config)
-    const uploadPath = `/${(config.uploadPath || '')}/`.replace(/\/+/g, '/')
+    const uploadPath = `/${config.uploadPath || ''}/`.replace(/\/+/g, '/')
     const remote = path.join(uploadPath, fileName)
     const deleteResult = await client.deleteFileSFTP(config, remote)
     client.close()
