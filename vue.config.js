@@ -13,15 +13,10 @@ const config = {
       .set('~', resolve('src/main'))
       .set('root', resolve('./'))
       .set('#', resolve('src/universal'))
-    // define
-    // config.plugin('define')
-    //   .tap(args => {
-    //     return args
-    //   })
   },
   pluginOptions: {
     electronBuilder: {
-      nodeIntegration: true, // will remove in the future
+      nodeIntegration: true,
       customFileProtocol: 'picgo://./',
       externals: ['piclist'],
       chainWebpackMainProcess: config => {

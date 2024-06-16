@@ -6,3 +6,4 @@ src/**/*.js
 node_modules
 dist
 vue.config.js
+babel.config.js
