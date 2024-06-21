@@ -1052,7 +1052,7 @@ const formOfSetting = ref<ISettingForm>({
 })
 
 const proxy = ref('')
-const formKeys = Object.keys(formOfSetting.value)
+const formKeys = Object.keys(formOfSetting.value) as (keyof ISettingForm)[]
 const autoWatchKeys = [
   'showUpdateTip',
   'autoImport',
@@ -1208,8 +1208,7 @@ async function initData() {
   const settings = config.settings || {}
   const picBed = config.picBed
   formKeys.forEach(key => {
-    ;(formOfSetting.value as any)[key as keyof ISettingForm] =
-      settings[key] ?? formOfSetting.value[key as keyof ISettingForm]
+    ;(formOfSetting.value as any)[key] = settings[key] ?? formOfSetting.value[key]
   })
   formOfSetting.value.logLevel = initArray(settings.logLevel || [], ['all'])
   formOfSetting.value.autoImportPicBed = initArray(settings.autoImportPicBed || [], [])
