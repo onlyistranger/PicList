@@ -197,7 +197,7 @@ SETTINGS_PLUGIN_INSTALL_MIRROR: Mirror for Plugin Install
 SETTINGS_CURRENT_VERSION: Current Version
 SETTINGS_NEWEST_VERSION: Newest Version
 SETTINGS_GETING: Getting...
-SETTINGS_TIPS_HAS_NEW_VERSION: PicList has a new version, please click confirm to open download page
+SETTINGS_TIPS_HAS_NEW_VERSION: PicList has a new version, please click confirm to restart
 SETTINGS_LOG_FILE_PATH: Log File Path
 SETTINGS_CONFIG_FILE_PATH: Config File Path
 SETTINGS_LOG_FILE: Log File
