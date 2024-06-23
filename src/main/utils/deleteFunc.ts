@@ -156,6 +156,9 @@ export async function removeFileFromS3InMain(configMap: IStringKeyMap, dogeMode:
     }
     let result: any
     try {
+      fileKey = decodeURIComponent(fileKey)
+    } catch (err: any) {}
+    try {
       const client = new S3Client(s3Options)
       const command = new DeleteObjectCommand({
         Bucket: bucketName,
