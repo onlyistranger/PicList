@@ -70,7 +70,7 @@ router.post(
       let needRestore = false
       if (picbed) {
         const currentPicBed = picgo.getConfig<IStringKeyMap>('picBed') || ({} as IStringKeyMap)
-        currentPicBedType = currentPicBed.current || ''
+        currentPicBedType = currentPicBed.uploader || currentPicBed.current || 'smms'
         currentPicBedConfig = currentPicBed[currentPicBedType] || ({} as IStringKeyMap)
         currentPicBedConfigId = currentPicBedConfig._id
         const configName = urlparams?.get('configName') || currentPicBed[picbed]?._configName
