@@ -58,7 +58,7 @@ PicList的内核使用的是原版PicGo-Core基础上修改的[PicList-core](htt
 
 #### **1.6.0版本及以上**
 
-**Typora 1.6.0-dev以及以上版本现在已经原生支持PicList了** 
+**Typora 1.6.0-dev以及以上版本现在已经原生支持PicList了**
 
 目前Typora中需要同时设置上传服务PicList和PicGo（app）的路径为PicList的安装路径，已经在最新的Dev版本中修复。
 
@@ -162,6 +162,15 @@ docker-compose up -d
 
 [https://github.com/Kuingsmile/PicList/releases/latest](https://github.com/Kuingsmile/PicList/releases/latest)
 
+### Scoop
+
+感谢[scoop-lemon](https://github.com/hoilc/scoop-lemon)，你可以使用Scoop来安装PicList，只需要执行以下命令即可：
+
+```bash
+scoop bucket add lemon https://github.com/hoilc/scoop-lemon
+scoop install lemon/piclist
+```
+
 ### Homebrew
 
 MacOS用户现在可以使用Homebrew来安装PicList了，只需要执行以下命令即可：
@@ -175,6 +184,12 @@ brew install piclist --cask
 ```bash
 brew uninstall piclist
 ```
+
+### Mac特殊说明
+
+如果macOS系统安装PicList后显示“文件已损坏”或者安装后打开无响应，请升级到PicList V1.4.1或以上版本。
+
+V1.4.1之后，所有mac安装包都已经使用我的开发者证书签名，不会被macOS系统识别为“恶意软件”，不会出现“文件已损坏”提示。
 
 ## 应用截图
 

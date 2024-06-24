@@ -162,6 +162,15 @@ docker-compose up -d
 
 [https://github.com/Kuingsmile/PicList/releases/latest](https://github.com/Kuingsmile/PicList/releases/latest)
 
+### Scoop
+
+Thanks to [scoop-lemon](https://github.com/hoilc/scoop-lemon), you can use Scoop to install PicList, just execute the following command:
+
+```bash
+scoop bucket add lemon https://github.com/hoilc/scoop-lemon
+scoop install lemon/piclist
+```
+
 ### Homebrew
 
 MacOS users can now use Homebrew to install PicList, just execute the following command:
@@ -181,16 +190,6 @@ brew uninstall piclist
 If the macOS system installs PicList and displays "file is damaged" or installs and opens without response, please upgrade to PicList V1.4.1 or above.
 
 After V1.4.1, all mac installation packages have been signed by my developer certificate, will not be recognized by the macOS system as "malicious software", will not appear "file is damaged" prompt.
-
-### Mac App Store
-
-Due to the sandbox mechanism of Mac App Store, many functions cannot be used normally, so the installation method of Mac App Store is no longer supported.
-
-If you have purchased PicList through Mac App Store, please add my WeChat `pku_sq_ma`, I will refund you.
-
-Thank you again for your support for PicList.
-
-**Of course, if you don't want to pay, you can also download the free installation package through Github to install.**
 
 ## Application screenshot
 
