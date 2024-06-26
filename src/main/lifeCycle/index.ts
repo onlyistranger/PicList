@@ -22,7 +22,6 @@ import { T } from '~/i18n'
 import '~/lifeCycle/errorHandler'
 import fixPath from '~/lifeCycle/fixPath'
 import UpDownTaskQueue from '~/manage/datastore/upDownTaskQueue'
-import { manageIpcList } from '~/manage/events/ipcList'
 import getManageApi from '~/manage/Main'
 import { clearTempFolder } from '~/manage/utils/common'
 import server from '~/server/index'
@@ -143,11 +142,10 @@ class LifeCycle {
     // fix the $PATH in macOS & linux
     fixPath()
     beforeOpen()
-    initI18n()
-    rpcServer.start()
     getManageApi()
     UpDownTaskQueue.getInstance()
-    manageIpcList.listen()
+    initI18n()
+    rpcServer.start()
     busEventList.listen()
   }
 

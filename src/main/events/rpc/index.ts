@@ -10,6 +10,7 @@ import { systemRouter } from '~/events/rpc/routes/system'
 import { toolboxRouter } from '~/events/rpc/routes/toolbox'
 import { trayRouter } from '~/events/rpc/routes/tray'
 import { uploadRouter } from '~/events/rpc/routes/upload'
+import { manageRouter } from '~/events/rpc/routes/manage'
 
 import { IRPCActionType, IRPCType } from '#/types/enum'
 import { RPC_ACTIONS, RPC_ACTIONS_INVOKE } from '#/events/constants'
@@ -75,7 +76,8 @@ const routes = [
   systemRouter.routes(),
   toolboxRouter.routes(),
   trayRouter.routes(),
-  uploadRouter.routes()
+  uploadRouter.routes(),
+  manageRouter.routes()
 ]
 
 for (const route of routes) {

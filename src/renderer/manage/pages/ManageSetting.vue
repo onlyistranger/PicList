@@ -204,8 +204,8 @@ import { getConfig, saveConfig } from '@/manage/utils/dataSender'
 
 import { T as $T } from '@/i18n'
 
-import { selectDownloadFolder } from '#/utils/static'
-import { invokeToMain } from '@/utils/common'
+import { triggerRPC } from '@/utils/common'
+import { IRPCActionType } from 'root/src/universal/types/enum'
 
 const form = ref<IStringKeyMap>({
   timestampRename: false,
@@ -321,7 +321,7 @@ async function initData() {
 }
 
 async function handleDownloadDirClick() {
-  const result = await invokeToMain(selectDownloadFolder)
+  const result = triggerRPC<any>(IRPCActionType.MANAGE_SELECT_DOWNLOAD_FOLDER)
   if (result) {
     form.value.downloadDir = result
   }

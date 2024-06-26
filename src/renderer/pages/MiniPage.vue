@@ -31,7 +31,7 @@ import { IConfig } from 'piclist'
 import { onBeforeUnmount, onBeforeMount, ref, watch } from 'vue'
 
 import { T as $T } from '@/i18n/index'
-import { invokeToMain, sendRPC } from '@/utils/common'
+import { sendRPC, triggerRPC } from '@/utils/common'
 import { getConfig } from '@/utils/dataSender'
 import { osGlobal } from '@/utils/global'
 
@@ -53,7 +53,8 @@ async function initLogoPath() {
   if (config) {
     if (config.settings?.isCustomMiniIcon && config.settings?.customMiniIcon) {
       logoPath.value =
-        'data:image/jpg;base64,' + (await invokeToMain('convertPathToBase64', config.settings.customMiniIcon))
+        'data:image/jpg;base64,' +
+        (await triggerRPC(IRPCActionType.MANAGE_CONVERT_PATH_TO_BASE64, config.settings.customMiniIcon))
     }
   }
 }

@@ -56,11 +56,6 @@ export function sendRpcSync(action: IRPCActionType, ...args: any[]) {
   return ipcRenderer.sendSync(RPC_ACTIONS, action, data)
 }
 
-export function invokeToMain(channel: string, ...args: any[]) {
-  const data = getRawData(args)
-  return ipcRenderer.invoke(channel, ...data)
-}
-
 /**
  * trigger RPC action
  * TODO: create an isolate rpc handler

@@ -1230,6 +1230,8 @@ import { T as $T } from '@/i18n'
 import { getExtension, trimPath } from '#/utils/common'
 import { cancelDownloadLoadingFileList, refreshDownloadFileTransferList } from '#/utils/static'
 import { IUploadTask, IDownloadTask } from '#/types/manage'
+import { sendRPC, triggerRPC } from '@/utils/common'
+import { IRPCActionType } from 'root/src/universal/types/enum'
 
 /*
 configMap:{
@@ -1416,7 +1418,7 @@ function showUploadDialog() {
 
 function startRefreshUploadTask() {
   refreshUploadTaskId.value = setInterval(() => {
-    ipcRenderer.invoke('getUploadTaskList').then((res: any) => {
+    triggerRPC(IRPCActionType.MANAGE_GET_UPLOAD_TASK_LIST).then((res: any) => {
       uploadTaskList.value = res
     })
   }, 300)
@@ -1438,7 +1440,7 @@ function showDownloadDialog() {
 
 function startRefreshDownloadTask() {
   refreshDownloadTaskId.value = setInterval(() => {
-    ipcRenderer.invoke('getDownloadTaskList').then((res: any) => {
+    triggerRPC(IRPCActionType.MANAGE_GET_DOWNLOAD_TASK_LIST).then((res: any) => {
       downloadTaskList.value = res
     })
   }, 300)
@@ -1458,7 +1460,7 @@ function handleViewChange(val: 'list' | 'grid') {
 // 上传文件选择相关
 
 function openFileSelectDialog() {
-  ipcRenderer.invoke('openFileSelectDialog').then((res: any) => {
+  triggerRPC(IRPCActionType.MANAGE_OPEN_FILE_SELECT_DIALOG).then((res: any) => {
     if (res) {
       res.forEach((item: any) => {
         tableData.push({
@@ -1664,7 +1666,7 @@ function uploadFiles() {
       aclForUpload: manageStore.config.picBed[configMap.alias].aclForUpload
     })
   })
-  ipcRenderer.send('uploadBucketFile', configMap.alias, param)
+  sendRPC(IRPCActionType.MANAGE_UPLOAD_BUCKET_FILE, configMap.alias, param)
 }
 
 function handleCopyUploadingTaskInfo() {
@@ -1673,12 +1675,12 @@ function handleCopyUploadingTaskInfo() {
 }
 
 function handleDeleteUploadedTask() {
-  ipcRenderer.send('deleteUploadedTask')
+  sendRPC(IRPCActionType.MANAGE_DELETE_UPLOADED_TASK)
   ElMessage.success($T('MANAGE_BUCKET_DELETE_SUCCESS'))
 }
 
 function handleDeleteAllUploadedTask() {
-  ipcRenderer.send('deleteAllUploadedTask')
+  sendRPC(IRPCActionType.MANAGE_DELETE_ALL_UPLOADED_TASK)
   ElMessage.success($T('MANAGE_BUCKET_DELETE_SUCCESS'))
 }
 
@@ -1690,17 +1692,17 @@ function handleCopyDownloadingTaskInfo() {
 }
 
 function handleDeleteDownloadedTask() {
-  ipcRenderer.send('deleteDownloadedTask')
+  sendRPC(IRPCActionType.MANAGE_DELETE_DOWNLOADED_TASK)
   ElMessage.success($T('MANAGE_BUCKET_DELETE_SUCCESS'))
 }
 
 function handleDeleteAllDownloadedTask() {
-  ipcRenderer.send('deleteAllDownloadedTask')
+  sendRPC(IRPCActionType.MANAGE_DELETE_ALL_DOWNLOADED_TASK)
   ElMessage.success($T('MANAGE_BUCKET_DELETE_SUCCESS'))
 }
 
 function handleOpenDownloadedFolder() {
-  ipcRenderer.send('OpenDownloadedFolder', manageStore.config.settings.downloadDir)
+  sendRPC(IRPCActionType.MANAGE_OPEN_DOWNLOADED_FOLDER, manageStore.config.settings.downloadDir)
 }
 
 // 文件列表相关
@@ -1828,7 +1830,7 @@ async function initCustomDomainList() {
     } else if (currentPicBedName.value === 'github') {
       defaultUrl = 'main'
     }
-    const res = await ipcRenderer.invoke('getBucketDomain', configMap.alias, param)
+    const res = await triggerRPC<any>(IRPCActionType.MANAGE_GET_BUCKET_DOMAIN, configMap.alias, param)
     if (res.length > 0) {
       customDomainList.value.length = 0
       res.forEach((item: any) => {
@@ -2165,7 +2167,7 @@ async function handleFolderBatchDownload(item: any) {
     type: 'warning'
   })
     .then(async () => {
-      const defaultDownloadPath = await ipcRenderer.invoke('getDefaultDownloadFolder')
+      const defaultDownloadPath = await triggerRPC<string>(IRPCActionType.MANAGE_GET_DEFAULT_DOWNLOAD_FOLDER)
       const param = {
         downloadPath: manageStore.config.settings.downloadDir ?? defaultDownloadPath,
         maxDownloadFileCount: manageStore.config.settings.maxDownloadFileCount
@@ -2192,7 +2194,7 @@ async function handleFolderBatchDownload(item: any) {
       isLoadingDownloadData.value = true
       const downloadFileTransferStore = useDownloadFileTransferStore()
       downloadFileTransferStore.resetDownloadFileTransferList()
-      ipcRenderer.send('getBucketListRecursively', configMap.alias, paramGet)
+      sendRPC(IRPCActionType.MANAGE_GET_BUCKET_LIST_RECURSIVELY, configMap.alias, paramGet)
       ipcRenderer.on(refreshDownloadFileTransferList, (_: IpcRendererEvent, data) => {
         downloadFileTransferStore.refreshDownloadFileTransferList(data)
       })
@@ -2226,7 +2228,7 @@ async function handleFolderBatchDownload(item: any) {
                 })
               })
             }
-            ipcRenderer.send('downloadBucketFile', configMap.alias, param)
+            sendRPC(IRPCActionType.MANAGE_DOWNLOAD_BUCKET_FILE, configMap.alias, param)
             isShowDownloadPanel.value = true
           } else {
             ElNotification.error({
@@ -2249,7 +2251,7 @@ async function handleFolderBatchDownload(item: any) {
 }
 
 async function handleBatchDownload() {
-  const defaultDownloadPath = await ipcRenderer.invoke('getDefaultDownloadFolder')
+  const defaultDownloadPath = await triggerRPC<string>(IRPCActionType.MANAGE_GET_DEFAULT_DOWNLOAD_FOLDER)
   const param = {
     downloadPath: manageStore.config.settings.downloadDir ?? defaultDownloadPath,
     maxDownloadFileCount: manageStore.config.settings.maxDownloadFileCount
@@ -2274,7 +2276,7 @@ async function handleBatchDownload() {
       })
     }
   })
-  ipcRenderer.send('downloadBucketFile', configMap.alias, param)
+  sendRPC(IRPCActionType.MANAGE_DOWNLOAD_BUCKET_FILE, configMap.alias, param)
   handleCancelCheck()
   isShowDownloadPanel.value = true
 }
@@ -2303,7 +2305,7 @@ function handleCreateFolder() {
         key: currentPrefix.value.slice(1) + formatedPath + '/',
         githubBranch: currentCustomDomain.value
       }
-      const res = await ipcRenderer.invoke('createBucketFolder', configMap.alias, param)
+      const res = await triggerRPC<any>(IRPCActionType.MANAGE_CREATE_BUCKET_FOLDER, configMap.alias, param)
       if (res) {
         ElMessage.success($T('MANAGE_BUCKET_CREATE_FOLDER_SUCCESS'))
       } else {
@@ -2335,7 +2337,7 @@ async function handleUploadFromUrl() {
     type: 'success',
     duration: 1000
   })
-  const res = await ipcRenderer.invoke('downloadFileFromUrl', urlList)
+  const res = await triggerRPC<any>(IRPCActionType.MANAGE_DOWNLOAD_FILE_FROM_URL, urlList)
   for (let i = 0; i < res.length; i++) {
     const fPath = res[i].replace(/\\/g, '/')
     uploadPanelFilesList.value.push({
@@ -2433,7 +2435,7 @@ async function BatchRename() {
         newKey: (item.key.slice(0, item.key.lastIndexOf('/') + 1) + item.newName).replaceAll('//', '/'),
         customUrl: currentCustomDomain.value
       }
-      ipcRenderer.invoke('renameBucketFile', configMap.alias, param).then((res: any) => {
+      triggerRPC<any>(IRPCActionType.MANAGE_RENAME_BUCKET_FILE, configMap.alias, param).then((res: any) => {
         if (res) {
           successCount++
           resolve(true)
@@ -2620,7 +2622,7 @@ async function getBucketFileListBackStage() {
     param.baseDir = configMap.baseDir
     param.webPath = configMap.webPath
   }
-  ipcRenderer.send('getBucketListBackstage', configMap.alias, param)
+  sendRPC(IRPCActionType.MANAGE_GET_BUCKET_LIST_BACKSTAGE, configMap.alias, param)
   ipcRenderer.on('refreshFileTransferList', (_: IpcRendererEvent, data) => {
     fileTransferStore.refreshFileTransferList(data)
   })
@@ -2673,7 +2675,7 @@ async function getBucketFileList() {
     customUrl: currentCustomDomain.value,
     currentPage: currentPageNumber.value
   }
-  return await ipcRenderer.invoke('getBucketFileList', configMap.alias, param)
+  return await triggerRPC<any>(IRPCActionType.MANAGE_GET_BUCKET_FILE_LIST, configMap.alias, param)
 }
 
 function handleBatchDeleteInfo() {
@@ -2699,8 +2701,8 @@ function handleBatchDeleteInfo() {
           githubBranch: currentCustomDomain.value
         }
         const result = item.isDir
-          ? await ipcRenderer.invoke('deleteBucketFolder', configMap.alias, param)
-          : await ipcRenderer.invoke('deleteBucketFile', configMap.alias, param)
+          ? await triggerRPC<any>(IRPCActionType.MANAGE_DELETE_BUCKET_FOLDER, configMap.alias, param)
+          : await triggerRPC<any>(IRPCActionType.MANAGE_DELETE_BUCKET_FILE, configMap.alias, param)
         if (result) {
           successCount++
           currentPageFilesInfo.splice(
@@ -2775,9 +2777,9 @@ function handleDeleteFile(item: any) {
           message: $T('MANAGE_BUCKET_DELETE_ERROR_MSG_MSG'),
           duration: 1000
         })
-        res = await ipcRenderer.invoke('deleteBucketFolder', configMap.alias, param)
+        res = await triggerRPC<any>(IRPCActionType.MANAGE_DELETE_BUCKET_FOLDER, configMap.alias, param)
       } else {
-        res = await ipcRenderer.invoke('deleteBucketFile', configMap.alias, param)
+        res = await triggerRPC<any>(IRPCActionType.MANAGE_DELETE_BUCKET_FILE, configMap.alias, param)
       }
       if (res) {
         ElMessage.success($T('MANAGE_BUCKET_DELETE_SUCCESS'))
@@ -2845,7 +2847,7 @@ function singleRename() {
     newKey: (item.key.slice(0, item.key.lastIndexOf('/') + 1) + itemToBeRenamed.value.newName).replaceAll('//', '/'),
     customUrl: currentCustomDomain.value
   }
-  ipcRenderer.invoke('renameBucketFile', configMap.alias, param).then((res: any) => {
+  triggerRPC<any>(IRPCActionType.MANAGE_RENAME_BUCKET_FILE, configMap.alias, param).then((res: any) => {
     if (res) {
       const oldKey = currentPrefix.value + item.fileName
       if (pagingMarker.value === oldKey.slice(1)) {
@@ -2910,8 +2912,7 @@ async function getPreSignedUrl(item: any) {
     githubPrivate: configMap.bucketConfig.private,
     rawUrl: item.url
   }
-  const res = await ipcRenderer.invoke('getPreSignedUrl', configMap.alias, param)
-  return res
+  return await triggerRPC<any>(IRPCActionType.MANAGE_GET_PRE_SIGNED_URL, configMap.alias, param)
 }
 
 function copyToClipboard(text: string) {
@@ -2954,7 +2955,7 @@ const downloadedTaskColumns: Column<any>[] = [
     cellRenderer: ({ rowData: item }) => (
       <div
         onClick={() => {
-          ipcRenderer.send('OpenLocalFile', item.targetFilePath)
+          sendRPC(IRPCActionType.MANAGE_OPEN_LOCAL_FILE, item.targetFilePath)
         }}
       >
         <ElTooltip effect='dark' content={item.sourceFileName} placement='top'>

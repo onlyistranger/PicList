@@ -7,7 +7,6 @@ export const DEFAULT_AES_PASSWORD = 'aesPassword'
 
 export const cancelDownloadLoadingFileList = 'cancelDownloadLoadingFileList'
 export const refreshDownloadFileTransferList = 'refreshDownloadFileTransferList'
-export const selectDownloadFolder = 'selectDownloadFolder'
 
 export const picBedsCanbeDeleted = [
   'aliyun',

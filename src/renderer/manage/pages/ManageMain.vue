@@ -237,7 +237,8 @@ import { useManageStore } from '@/manage/store/manageStore'
 import { newBucketConfig } from '@/manage/utils/newBucketConfig'
 
 import { T as $T } from '@/i18n'
-import { invokeToMain } from '@/utils/common'
+import { triggerRPC } from '@/utils/common'
+import { IRPCActionType } from 'root/src/universal/types/enum'
 
 const manageStore = useManageStore() as any
 const route = useRoute()
@@ -348,7 +349,7 @@ function createNewBucket(picBedName: string) {
     resultMap.BucketName = `${resultMap.BucketName}-${currentPagePicBedConfig.appId}`
   }
   resultMap.endpoint = currentPagePicBedConfig.endpoint
-  invokeToMain('createBucket', currentAlias, resultMap).then((result: any) => {
+  triggerRPC(IRPCActionType.MANAGE_CREATE_BUCKET, currentAlias, resultMap).then((result: any) => {
     if (result) {
       ElNotification({
         title: $T('MANAGE_MAIN_PAGE_TIPS'),
@@ -374,7 +375,7 @@ async function getBucketList() {
   bucketNameList.value = []
   isLoadingBucketList.value = true
 
-  const result = await invokeToMain('getBucketList', currentAlias.value)
+  const result = await triggerRPC<any>(IRPCActionType.MANAGE_GET_BUCKET_LIST, currentAlias.value)
   isLoadingBucketList.value = false
 
   if (result.length > 0) {

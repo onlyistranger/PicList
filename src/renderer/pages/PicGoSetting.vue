@@ -947,7 +947,7 @@ import { configPaths, ISartModeValues } from '#/utils/configPaths'
 import { getLatestVersion } from '#/utils/getLatestVersion'
 
 import pkg from 'root/package.json'
-import { invokeToMain, sendRPC, triggerRPC } from '@/utils/common'
+import { sendRPC, triggerRPC } from '@/utils/common'
 
 const $router = useRouter()
 const activeName = ref<'system' | 'syncAndConfigure' | 'upload' | 'advanced' | 'upadte'>('system')
@@ -1420,7 +1420,7 @@ function handleMiniWindowOntop(val: ICheckBoxValueType) {
 }
 
 async function handleMiniIconPath(_: Event) {
-  const result = await invokeToMain('openFileSelectDialog')
+  const result = await triggerRPC<string[]>(IRPCActionType.MANAGE_OPEN_FILE_SELECT_DIALOG)
   if (result && result[0]) {
     formOfSetting.value.customMiniIcon = result[0]
     saveConfig(configPaths.settings.customMiniIcon, formOfSetting.value.customMiniIcon)
