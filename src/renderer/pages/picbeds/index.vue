@@ -14,19 +14,13 @@
         <config-form v-if="config.length > 0" :id="type" ref="$configForm" :config="config" type="uploader">
           <el-form-item>
             <el-button-group>
-              <el-button class="confirm-btn" type="info" round @click="handleReset">
+              <el-button type="info" round @click="handleReset">
                 {{ $T('RESET_PICBED_CONFIG') }}
               </el-button>
-              <el-button class="confirm-btn" type="success" round @click="handleConfirm">
+              <el-button type="success" round @click="handleConfirm">
                 {{ $T('CONFIRM') }}
               </el-button>
-              <el-button
-                class="confirm-btn"
-                round
-                type="warning"
-                @mouseenter="handleMouseEnter"
-                @mouseleave="handleMouseLeave"
-              >
+              <el-button round type="warning" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
                 <el-dropdown
                   ref="$dropdown"
                   placement="top"
@@ -194,8 +188,6 @@ export default {
     &:hover
       cursor pointer
       color #409EFF
-  .confirm-btn
-    width: 110px
   .el-form
     label
       line-height 22px
@@ -206,7 +198,7 @@ export default {
     .el-button-group
       width 100%
       .el-button
-        width 33%
+        width calc(33.3333% - 10px)
     .el-radio-group
       margin-left 25px
     .el-switch__label
