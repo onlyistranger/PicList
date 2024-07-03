@@ -11,6 +11,7 @@ export const refreshDownloadFileTransferList = 'refreshDownloadFileTransferList'
 export const picBedsCanbeDeleted = [
   'aliyun',
   'alist',
+  'alistplist',
   'aws-s3',
   'aws-s3-plist',
   'dogecloud',

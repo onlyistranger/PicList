@@ -431,6 +431,7 @@ function handleDetectShiftKey(event: KeyboardEvent) {
 const filterList = computed(() => {
   return getGallery()
 })
+console.log(filterList)
 
 const isAllSelected = computed(() => {
   const values = Object.values(choosedList)
@@ -474,7 +475,7 @@ function getGallery(): IGalleryItem[] {
       .map(item => {
         return {
           ...item,
-          src: item.imgUrl || '',
+          src: item.galleryPath || item.imgUrl || '',
           key: item.id || `${Date.now()}`,
           intro: item.fileName || ''
         }
@@ -483,7 +484,7 @@ function getGallery(): IGalleryItem[] {
     return images.value.map(item => {
       return {
         ...item,
-        src: item.imgUrl || '',
+        src: item.galleryPath || item.imgUrl || '',
         key: item.id || `${Date.now()}`,
         intro: item.fileName || ''
       }

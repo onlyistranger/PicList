@@ -1,4 +1,5 @@
 import AlistApi from '@/apis/alist'
+import AlistplistApi from '@/apis/alistplist'
 import AliyunApi from '@/apis/aliyun'
 import AwsS3Api from '@/apis/awss3'
 import DogeCloudApi from '@/apis/dogecloud'
@@ -17,6 +18,7 @@ import WebdavApi from '@/apis/webdav'
 
 const apiMap: IStringKeyMap = {
   alist: AlistApi,
+  alistplist: AlistplistApi,
   aliyun: AliyunApi,
   'aws-s3': AwsS3Api,
   'aws-s3-plist': AwsS3Api,
