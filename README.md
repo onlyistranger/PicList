@@ -135,6 +135,7 @@ docker-compose up -d
 
 |          Platform          | Album cloud deletion | Cloud storage management |
 | :------------------------: | :------------------: | :----------------------: |
+|       Built-in AList       |          ✔️           |            ✔️             |
 |           SM.MS            |          ✔️           |            ✔️             |
 |           Github           |          ✔️           |            ✔️             |
 |           Imgur            |          ✔️           |            ✔️             |
