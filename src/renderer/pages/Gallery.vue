@@ -384,13 +384,13 @@ const fileSortExtReverse = ref(false)
 const isShowBatchRenameDialog = ref(false)
 const batchRenameMatch = ref('')
 const batchRenameReplace = ref('')
-const mathcedCount = computed(() => {
-  const matchedFiles = filterList.value.filter((item: any) => {
-    return customStrMatch(item.imgUrl, batchRenameMatch.value)
-  })
-  return matchedFiles.length
-})
 const dateRange = ref('')
+const mathcedCount = computed(() => {
+  return filterList.value.filter((item: any) => {
+    return customStrMatch(item.imgUrl, batchRenameMatch.value)
+  }).length
+})
+
 onBeforeRouteUpdate((to, from) => {
   if (from.name === 'gallery') {
     clearChoosedList()
@@ -400,10 +400,8 @@ onBeforeRouteUpdate((to, from) => {
   }
 })
 
-// init deleteCloud
 async function initDeleteCloud() {
-  const config = (await getConfig()) as any
-  deleteCloud.value = config.settings.deleteCloudFile || false
+  deleteCloud.value = (await getConfig<boolean>(configPaths.settings.deleteCloudFile)) || false
 }
 
 onBeforeMount(async () => {
@@ -420,28 +418,16 @@ onBeforeMount(async () => {
 
 function handleDetectShiftKey(event: KeyboardEvent) {
   if (event.key === 'Shift') {
-    if (event.type === 'keydown') {
-      isShiftKeyPress.value = true
-    } else if (event.type === 'keyup') {
-      isShiftKeyPress.value = false
-    }
+    isShiftKeyPress.value = event.type === 'keydown'
   }
 }
 
 const filterList = computed(() => {
   return getGallery()
 })
-console.log(filterList)
 
 const isAllSelected = computed(() => {
-  const values = Object.values(choosedList)
-  if (values.length === 0) {
-    return false
-  } else {
-    return filterList.value.every(item => {
-      return choosedList[item.id!]
-    })
-  }
+  return Object.values(choosedList).length > 0 && filterList.value.every(item => choosedList[item.id!])
 })
 
 function formatFileName(name: string) {
@@ -558,8 +544,6 @@ async function copy(item: ImgInfo) {
   const obj = {
     title: $T('COPY_LINK_SUCCEED'),
     body: copyLink
-    // sometimes will cause lagging
-    // icon: item.url || item.imgUrl
   }
   const myNotification = new Notification(obj.title, obj)
   myNotification.onclick = () => {
@@ -662,7 +646,6 @@ function toggleSelectAll() {
 }
 
 function multiRemove() {
-  // choosedList -> { [id]: true or false }; true means choosed. false means not choosed.
   const multiRemoveNumber = Object.values(choosedList).filter(item => item).length
   if (multiRemoveNumber) {
     $confirm(
@@ -917,11 +900,13 @@ onActivated(async () => {
   initDeleteCloud()
 })
 </script>
+
 <script lang="ts">
 export default {
   name: 'GalleryPage'
 }
 </script>
+
 <style lang="stylus">
 .PhotoSlider
   &__BannerIcon

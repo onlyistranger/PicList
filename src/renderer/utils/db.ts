@@ -6,38 +6,32 @@ import { IRPCActionType } from '#/types/enum'
 import { IGalleryDB } from '#/types/extra-vue'
 
 export class GalleryDB implements IGalleryDB {
+  async #actionHandler<T>(method: IRPCActionType, ...args: any[]): Promise<T | undefined> {
+    return await triggerRPC<T>(method, ...args)
+  }
+
   async get<T>(filter?: IFilter): Promise<IGetResult<T> | undefined> {
-    const res = await this.#msgHandler<IGetResult<T>>(IRPCActionType.GALLERY_GET_DB, filter)
-    return res
+    return await this.#actionHandler<IGetResult<T>>(IRPCActionType.GALLERY_GET_DB, filter)
   }
 
   async insert<T>(value: T): Promise<IResult<T> | undefined> {
-    const res = await this.#msgHandler<IResult<T>>(IRPCActionType.GALLERY_INSERT_DB, value)
-    return res
+    return await this.#actionHandler<IResult<T>>(IRPCActionType.GALLERY_INSERT_DB, value)
   }
 
   async insertMany<T>(value: T[]): Promise<IResult<T>[] | undefined> {
-    const res = await this.#msgHandler<IResult<T>[]>(IRPCActionType.GALLERY_INSERT_DB_BATCH, value)
-    return res
+    return await this.#actionHandler<IResult<T>[]>(IRPCActionType.GALLERY_INSERT_DB_BATCH, value)
   }
 
   async updateById(id: string, value: IObject): Promise<boolean> {
-    const res = (await this.#msgHandler<boolean>(IRPCActionType.GALLERY_UPDATE_BY_ID_DB, id, value)) || false
-    return res
+    return (await this.#actionHandler<boolean>(IRPCActionType.GALLERY_UPDATE_BY_ID_DB, id, value)) || false
   }
 
   async getById<T>(id: string): Promise<IResult<T> | undefined> {
-    const res = await this.#msgHandler<IResult<T> | undefined>(IRPCActionType.GALLERY_GET_BY_ID_DB, id)
-    return res
+    return await this.#actionHandler<IResult<T> | undefined>(IRPCActionType.GALLERY_GET_BY_ID_DB, id)
   }
 
   async removeById(id: string): Promise<void> {
-    const res = await this.#msgHandler<void>(IRPCActionType.GALLERY_REMOVE_BY_ID_DB, id)
-    return res
-  }
-
-  async #msgHandler<T>(method: IRPCActionType, ...args: any[]): Promise<T | undefined> {
-    return await triggerRPC<T>(method, ...args)
+    return await this.#actionHandler<void>(IRPCActionType.GALLERY_REMOVE_BY_ID_DB, id)
   }
 }
 

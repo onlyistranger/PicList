@@ -162,7 +162,6 @@ const latestVersionMap = reactive<{ [key: string]: string }>({})
 const pluginListToolTip = $T('PLUGIN_LIST')
 const importLocalPluginToolTip = $T('PLUGIN_IMPORT_LOCAL')
 const updateAllToolTip = $T('PLUGIN_UPDATE_ALL')
-// const id = ref('')
 const defaultLogo = ref(`this.src="file://${__static.replace(/\\/g, '/')}/roundLogo.png"`)
 const $configForm = ref<InstanceType<typeof ConfigForm> | null>(null)
 const npmSearchText = computed(() => {
