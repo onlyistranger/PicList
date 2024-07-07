@@ -1,3 +1,29 @@
+## :tada: 2.9.1 (2024-07-07)
+
+
+### :sparkles: Features
+
+* **custom:** add alist support ([bead8a2](https://github.com/Kuingsmile/piclist/commit/bead8a2))
+* **custom:** add build in alist support and fix gallery bug ([875d034](https://github.com/Kuingsmile/piclist/commit/875d034)), closes [#218](https://github.com/Kuingsmile/piclist/issues/218)
+* **custom:** optimize upload progress ([0039399](https://github.com/Kuingsmile/piclist/commit/0039399))
+* **custom:** upgrade core ([6aa7311](https://github.com/Kuingsmile/piclist/commit/6aa7311))
+
+
+### :bug: Bug Fixes
+
+* **custom:** fix picbed config page css ([d7e0f56](https://github.com/Kuingsmile/piclist/commit/d7e0f56)), closes [#213](https://github.com/Kuingsmile/piclist/issues/213)
+* **custom:** fix rename window bug ([0b670a8](https://github.com/Kuingsmile/piclist/commit/0b670a8)), closes [#58](https://github.com/Kuingsmile/piclist/issues/58)
+* **custom:** fix s3 delete bug ([b30dc4d](https://github.com/Kuingsmile/piclist/commit/b30dc4d)), closes [#212](https://github.com/Kuingsmile/piclist/issues/212)
+
+
+### :pencil: Documentation
+
+* **custom:** add scoop-lemon as install method ([09bf847](https://github.com/Kuingsmile/piclist/commit/09bf847))
+* **custom:** fix docs typo ([dc70648](https://github.com/Kuingsmile/piclist/commit/dc70648))
+* **custom:** update 2.9.1 changelog ([2bdb79f](https://github.com/Kuingsmile/piclist/commit/2bdb79f))
+
+
+
 # :tada: 2.9.0 (2024-06-14)
 
 
