@@ -27,6 +27,11 @@ jobs:
         os: [ubuntu-latest, macos-12, windows-latest]
 
     steps:
+
+      - name: Set up git config
+        run: |
+          git config --global core.autocrlf false
+
       - name: Check out git repository
         uses: actions/checkout@v2
 
