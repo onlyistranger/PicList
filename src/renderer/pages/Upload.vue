@@ -127,7 +127,9 @@ import { SHOW_INPUT_BOX, SHOW_INPUT_BOX_RESPONSE } from '#/events/constants'
 import { IPasteStyle, IRPCActionType } from '#/types/enum'
 import { isUrl } from '#/utils/common'
 import { configPaths } from '#/utils/configPaths'
+import { useDragEventListeners } from '@/utils/drag'
 
+useDragEventListeners()
 const $router = useRouter()
 
 const imageProcessDialogVisible = ref(false)

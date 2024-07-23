@@ -25,7 +25,6 @@ import db from '@/utils/db'
 import { T } from '@/i18n/index'
 import { store } from '@/store'
 import { initTalkingData } from '@/utils/analytic'
-import { dragMixin } from '@/utils/mixin'
 
 webFrame.setVisualZoomLevelLimits(1, 1)
 
@@ -37,11 +36,12 @@ app.config.globalProperties.triggerRPC = triggerRPC
 app.config.globalProperties.sendRPC = sendRPC
 app.config.globalProperties.sendToMain = sendToMain
 
-app.mixin(dragMixin)
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(VueLazyLoad, {
-  error: `file://${__static.replace(/\\/g, '/')}/unknown-file-type.svg`
+  loading: `file://${__static.replace(/\\/g, '/')}/loading.jpg`,
+  error: `file://${__static.replace(/\\/g, '/')}/unknown-file-type.svg`,
+  delay: 500
 })
 app.use(ElementUI)
 app.use(router)

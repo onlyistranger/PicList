@@ -184,7 +184,12 @@
             class="gallery-list__img"
           >
             <div class="gallery-list__item" @click="zoomImage(index)">
-              <img v-lazy="item.galleryPath || item.imgUrl" class="gallery-list__item-img" />
+              <img
+                v-lazy="{
+                  src: item.galleryPath || item.imgUrl
+                }"
+                class="gallery-list__item-img"
+              />
             </div>
             <div class="gallery-list__file-name" :title="item.fileName">
               {{ formatFileName(item.fileName || '') }}
@@ -385,6 +390,7 @@ const isShowBatchRenameDialog = ref(false)
 const batchRenameMatch = ref('')
 const batchRenameReplace = ref('')
 const dateRange = ref('')
+
 const mathcedCount = computed(() => {
   return filterList.value.filter((item: any) => {
     return customStrMatch(item.imgUrl, batchRenameMatch.value)
@@ -411,7 +417,6 @@ onBeforeMount(async () => {
     })
   })
   updateGallery()
-
   document.addEventListener('keydown', handleDetectShiftKey)
   document.addEventListener('keyup', handleDetectShiftKey)
 })
@@ -423,7 +428,10 @@ function handleDetectShiftKey(event: KeyboardEvent) {
 }
 
 const filterList = computed(() => {
-  return getGallery()
+  const start = new Date().getTime()
+  const res = getGallery()
+  console.log(`filterList: ${new Date().getTime() - start}ms`)
+  return res
 })
 
 const isAllSelected = computed(() => {
@@ -479,7 +487,9 @@ function getGallery(): IGalleryItem[] {
 }
 
 async function updateGallery() {
+  const start = new Date().getTime()
   images.value = (await $$db.get({ orderBy: 'desc' }))!.data
+  console.log(`updateGallery: ${new Date().getTime() - start}ms`)
 }
 
 watch(
