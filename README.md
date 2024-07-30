@@ -141,6 +141,7 @@ docker-compose up -d
 |    PicList(Lasso-Doll)     |          ✔️           |            ✔️             |
 |         Telegra.ph         |          ✔️           |            ×             |
 |          Lsky Pro          |          ✔️           |            ✔️             |
+|    Custom API platform     |          ×           |            ×             |
 
 |                                           Plugin                                           | Album cloud deletion |
 | :----------------------------------------------------------------------------------------: | :------------------: |
