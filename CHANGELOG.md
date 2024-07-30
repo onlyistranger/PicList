@@ -1,3 +1,19 @@
+## :tada: 2.9.2 (2024-07-30)
+
+
+### :sparkles: Features
+
+* **custom:** add advanced picbed ([60d2a01](https://github.com/Kuingsmile/piclist/commit/60d2a01))
+* **custom:** optimize gallery page performance ([3cfa9f5](https://github.com/Kuingsmile/piclist/commit/3cfa9f5)), closes [#225](https://github.com/Kuingsmile/piclist/issues/225)
+
+
+### :pencil: Documentation
+
+* **custom:** prepare for 2.9.2 ([5ebe10c](https://github.com/Kuingsmile/piclist/commit/5ebe10c))
+* **custom:** update readme ([48d24f6](https://github.com/Kuingsmile/piclist/commit/48d24f6))
+
+
+
 ## :tada: 2.9.1 (2024-07-07)
 
 
