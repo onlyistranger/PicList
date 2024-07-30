@@ -58,9 +58,9 @@ PicList的内核使用的是原版PicGo-Core基础上修改的[PicList-core](htt
 
 #### **1.6.0版本及以上**
 
-**Typora 1.6.0-dev以及以上版本现在已经原生支持PicList了**
+**Typora 1.6.0-dev以及以上版本现在已经原生支持PicList了, 但你需要将Typora的语言设置为中文**
 
-目前Typora中需要同时设置上传服务PicList和PicGo（app）的路径为PicList的安装路径，已经在最新的Dev版本中修复。
+1.8.0以下版本的Typora中需要同时设置上传服务PicList和PicGo（app）的路径为PicList的安装路径。
 
 [下载地址](https://typora.io/releases/all)
 
@@ -73,14 +73,6 @@ Windows:
 ![image](https://user-images.githubusercontent.com/96409857/226522101-b3531b7b-534c-4149-b527-8738d4ebb041.png)
 
 或者，您也可以使用 `npm install piclist`命令安装PicList-core，然后上传服务设置为 `PicGo-Core(command line)`。
-
-MacOS:
-
-进入Typora设置界面，选择图像，将上传服务设置为 `Custom Command`，然后在 `Command`中填写 `/Applications/PicList.app/Contents/MacOS/PicList upload`，如下图所示：
-
-![image](https://user-images.githubusercontent.com/96409857/226645570-4c6e06a5-5bd9-40c3-a21d-8446c66325e3.png)
-
-验证上传选项可能会出现问题，可以忽略，直接使用是正常的。
 
 ### 如何在Obsidian中使用
 

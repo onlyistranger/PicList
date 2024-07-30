@@ -58,29 +58,19 @@ Please install my matching plugin [VS-PicList](https://marketplace.visualstudio.
 
 #### **Version 1.6.0-dev and above**
 
-**Typora 1.6.0-dev and above versions now support PicList natively**
+**Typora 1.6.0-dev and above versions now support PicList natively if you set language of Typora to Chinese.**
 
-Now you need to set the upload service PicList and PicGo (app) to the installation path of PicList at the same time, it has been fixed in latest dev version.
+If your Typora version is lower than 1.8.0, you need to set the upload service PicList and PicGo (app) to the installation path of PicList at the same time.
 
 [download link](https://typora.io/releases/all)
 
 #### **Version < 1.6.0-dev**
 
-Windows:
-
-Enter the Typora settings page, select the image, set the upload service to `PicGo(app)`, and then fill in the installation path of PicList in `PicGo path`, as shown below:
+For windows, Enter the Typora settings page, select the image, set the upload service to `PicGo(app)`, and then fill in the installation path of PicList in `PicGo path`, as shown below:
 
 ![image](https://user-images.githubusercontent.com/96409857/226522101-b3531b7b-534c-4149-b527-8738d4ebb041.png)
 
 Or, you can also use the `npm install piclist` command to install PicList-core, and then set the upload service to `PicGo-Core(command line)`.
-
-MacOS:
-
-Enter the Typora settings page, select the image, set the upload service to `Custom Command`, and then fill in `/Applications/PicList.app/Contents/MacOS/PicList upload` in `Command`, as shown below:
-
-![image](https://user-images.githubusercontent.com/96409857/226645570-4c6e06a5-5bd9-40c3-a21d-8446c66325e3.png)
-
-The verification of the upload option may have problems, you can ignore it, and use it directly.
 
 ### How to use in Obsidian
 
