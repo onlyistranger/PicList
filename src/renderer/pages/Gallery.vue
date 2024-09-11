@@ -694,6 +694,9 @@ function multiRemove() {
                       duration: multiRemoveNumber > 5 ? 1000 : 2000
                     })
                   }
+                } else {
+                  files.push(file)
+                  await $$db.removeById(key)
                 }
               }
             }
