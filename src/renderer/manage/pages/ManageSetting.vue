@@ -321,7 +321,7 @@ async function initData() {
 }
 
 async function handleDownloadDirClick() {
-  const result = triggerRPC<any>(IRPCActionType.MANAGE_SELECT_DOWNLOAD_FOLDER)
+  const result = await triggerRPC<any>(IRPCActionType.MANAGE_SELECT_DOWNLOAD_FOLDER)
   if (result) {
     form.value.downloadDir = result
   }
