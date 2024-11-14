@@ -392,6 +392,7 @@ MANAGE_SETTING_CLEAR_CACHE_TIPS: After clearing, the file list will be reloaded 
 MANAGE_SETTING_CLEAR_CACHE_PROMPT: Are you sure you want to clear the file list cache database?
 MANAGE_SETTING_CLEAR_CACHE_BUTTON: Clear
 MANAGE_SETTING_ISSHOWTHUMBNAIL_TITLE: Display the original image instead of format icon (requires public access permissions)
+MANAGE_SETTING_ISUSEPRESIGNEDURL_TITLE: Use presigned URL for image display
 MANAGE_SETTING_ISSHOWLIST_TITLE: Default display mode for the file list
 MANAGE_SETTING_ISSHOWLIST_ON: List
 MANAGE_SETTING_ISSHOWLIST_OFF: Card

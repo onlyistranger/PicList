@@ -214,6 +214,7 @@ const form = ref<IStringKeyMap>({
   isAutoRefresh: false,
   isShowThumbnail: false,
   isShowList: false,
+  isUsePreSignedUrl: false,
   isIgnoreCase: false,
   isForceCustomUrlHttps: false,
   isEncodeUrl: false,
@@ -246,6 +247,7 @@ const switchFieldsList = [
   'isAutoRefresh',
   'isShowThumbnail',
   'isShowList',
+  'isUsePreSignedUrl',
   'isForceCustomUrlHttps',
   'isEncodeUrl',
   'isUploadKeepDirStructure',
@@ -254,7 +256,7 @@ const switchFieldsList = [
   'randomStringRename',
   'customRename'
 ]
-const switchFieldsNoTipsList = ['isShowThumbnail', 'isShowList']
+const switchFieldsNoTipsList = ['isShowThumbnail', 'isShowList', 'isUsePreSignedUrl']
 const switchFieldsHasActiveTextList = ['isShowList']
 
 const switchFieldsConfigList = switchFieldsList.map(item => ({
