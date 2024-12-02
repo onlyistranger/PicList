@@ -423,7 +423,7 @@ function handleSearchResult(item: INPMSearchResultObject) {
   return {
     name,
     fullName: item.package.name,
-    author: item.package.author.name,
+    author: item.package.author?.name || item.package.publisher?.username,
     description: item.package.description,
     logo: `https://cdn.jsdelivr.net/npm/${item.package.name}/logo.png`,
     config: {},
