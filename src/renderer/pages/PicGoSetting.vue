@@ -360,6 +360,28 @@
                     :placeholder="$T('SETTINGS_SHORT_URL_CF_WORKER_HOST')"
                   />
                 </el-form-item>
+                <el-form-item
+                  v-if="formOfSetting.useShortUrl && formOfSetting.shortUrlServer === 'sink'"
+                  :label="$T('SETTINGS_SHORT_SINK_DOMAIN')"
+                >
+                  <el-input
+                    v-model="formOfSetting.sinkDomain"
+                    size="small"
+                    style="width: 50%"
+                    :placeholder="$T('SETTINGS_SHORT_SINK_DOMAIN')"
+                  />
+                </el-form-item>
+                <el-form-item
+                  v-if="formOfSetting.useShortUrl && formOfSetting.shortUrlServer === 'sink'"
+                  :label="$T('SETTINGS_SHORT_SINK_TOKEN')"
+                >
+                  <el-input
+                    v-model="formOfSetting.sinkToken"
+                    size="small"
+                    style="width: 50%"
+                    :placeholder="$T('SETTINGS_SHORT_SINK_TOKEN')"
+                  />
+                </el-form-item>
                 <el-form-item :label="$T('SETTINGS_ENCODE_OUTPUT_URL')">
                   <el-switch
                     v-model="formOfSetting.encodeOutputURL"
@@ -976,6 +998,10 @@ const shortUrlServerList = [
   {
     label: 'xyTom/Url-Shorten-Worker',
     value: 'cf_worker'
+  },
+  {
+    label: 'ccbikai/Sink',
+    value: 'sink'
   }
 ]
 
@@ -1050,6 +1076,8 @@ const formOfSetting = ref<ISettingForm>({
   yourlsDomain: '',
   yourlsSignature: '',
   cfWorkerHost: '',
+  sinkDomain: '',
+  sinkToken: '',
   deleteLocalFile: false,
   serverKey: '',
   aesPassword: 'PicList-aesPassword',
@@ -1089,6 +1117,8 @@ const autoWatchKeys = [
   'yourlsDomain',
   'yourlsSignature',
   'cfWorkerHost',
+  'sinkDomain',
+  'sinkToken',
   'registry',
   'proxy',
   'autoCopy',
@@ -1228,6 +1258,10 @@ async function initData() {
   formOfSetting.value.autoImportPicBed = initArray(settings.autoImportPicBed || [], [])
   currentLanguage.value = valueToOptionItem(settings.language || 'zh-CN', languageList)
   currentStartMode.value = valueToOptionItem(settings.startMode || ISartMode.QUIET, startModeList)
+  if (osGlobal.value === 'darwin' && currentStartMode.value.value === ISartMode.MINI) {
+    currentStartMode.value = valueToOptionItem(ISartMode.QUIET, startModeList)
+    saveConfig(configPaths.settings.startMode, ISartMode.QUIET)
+  }
   currentManualPageOpen.value = valueToOptionItem(settings.manualPageOpen || 'window', manualPageOpenList)
   currentShortUrlServer.value = valueToOptionItem(settings.shortUrlServer || 'c1n', shortUrlServerList)
   customLink.value = settings.customLink || '![$fileName]($url)'

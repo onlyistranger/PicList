@@ -41,18 +41,20 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const handleStartUpFiles = (argv: string[], cwd: string) => {
   const files = getUploadFiles(argv, cwd, logger)
-  if (files === null || files.length > 0) {
-    // 如果有文件列表作为参数，说明是命令行启动
-    if (files === null) {
-      logger.info('cli -> uploading file from clipboard')
-      uploadClipboardFiles()
-    } else {
-      logger.info('cli -> uploading files from cli', ...files.map(item => item.path))
-      const win = windowManager.getAvailableWindow()
-      uploadChoosedFiles(win.webContents, files)
-    }
+
+  if (files === null) {
+    logger.info('cli -> uploading file from clipboard')
+    uploadClipboardFiles()
     return true
   }
+
+  if (files.length > 0) {
+    logger.info('cli -> uploading files from cli', ...files.map(file => file.path))
+    const win = windowManager.getAvailableWindow()
+    uploadChoosedFiles(win.webContents, files)
+    return true
+  }
+
   return false
 }
 
@@ -167,7 +169,10 @@ class LifeCycle {
         db.set(configPaths.settings.isListeningClipboard, false)
       }
       const isHideDock = db.get(configPaths.settings.isHideDock) || false
-      const startMode = db.get(configPaths.settings.startMode) || ISartMode.QUIET
+      let startMode = db.get(configPaths.settings.startMode) || ISartMode.QUIET
+      if (process.platform === 'darwin' && startMode === ISartMode.MINI) {
+        startMode = ISartMode.QUIET
+      }
       const currentPicBed = db.get(configPaths.picBed.uploader) || db.get(configPaths.picBed.current) || 'smms'
       const currentPicBedConfig = db.get(`picBed.${currentPicBed}`)?._configName || 'Default'
       const tooltip = `${currentPicBed} ${currentPicBedConfig}`
@@ -199,7 +204,7 @@ class LifeCycle {
       }
       await remoteNoticeHandler.init()
       remoteNoticeHandler.triggerHook(IRemoteNoticeTriggerHook.APP_START)
-      if (startMode === ISartMode.MINI) {
+      if (startMode === ISartMode.MINI && process.platform !== 'darwin') {
         windowManager.create(IWindowList.MINI_WINDOW)
         const miniWindow = windowManager.get(IWindowList.MINI_WINDOW)!
         miniWindow.removeAllListeners()
